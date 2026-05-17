@@ -1,0 +1,854 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HerSignal — Women's Health Check-In</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#0d4a4a;--teal-mid:#0f5c5c;--teal-light:#1a7a7a;
+  --plum:#4a1a6b;--plum-light:#6b2d99;
+  --grad:linear-gradient(135deg,#0d4a4a 0%,#2d1a5c 50%,#4a1a6b 100%);
+  --warm:#faf9f7;--white:#fff;
+  --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;
+  --g400:#9ca3af;--g500:#6b7280;--g600:#4b5563;--g800:#1f2937;
+  --stable:#16a34a;--monitor:#d97706;--escalate:#dc2626;
+  --font:'Inter',system-ui,sans-serif;
+}
+html,body{height:100%;font-family:var(--font);background:var(--warm);color:var(--g800);overflow-x:hidden}
+
+
+/* MODE BANNER */
+#mode-banner{
+  position:fixed;top:0;left:0;right:0;z-index:999;
+  padding:7px 16px;font-size:12px;font-weight:600;
+  text-align:center;background:#fef3c7;color:#92400e;
+}
+
+
+/* SCREENS */
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+#screen-welcome{flex-direction:row!important}
+
+
+/* WELCOME */
+.hero-left{
+  flex:0 0 58%;background:var(--grad);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:80px 52px 56px;position:relative;overflow:hidden;
+}
+.hero-left::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 70%,rgba(255,255,255,0.06) 0%,transparent 60%);
+  pointer-events:none;
+}
+.brand-mark{display:flex;align-items:center;gap:10px;margin-bottom:32px}
+.brand-logo{height:48px;object-fit:contain;filter:brightness(0) invert(1)}
+.brand-logo-fallback{
+  display:none;font-size:22px;font-weight:900;color:white;letter-spacing:-0.5px;
+}
+.brand-logo-fallback span{color:rgba(255,255,255,0.5);font-weight:300}
+.hero-tagline{
+  font-size:44px;font-weight:900;line-height:1.1;color:white;
+  margin-bottom:18px;letter-spacing:-1.5px;
+}
+.hero-tagline em{color:rgba(255,255,255,0.6);font-style:normal}
+.hero-sub{
+  font-size:16px;color:rgba(255,255,255,0.78);
+  line-height:1.75;margin-bottom:40px;max-width:400px;
+}
+.btn-begin{
+  display:inline-flex;align-items:center;gap:10px;
+  background:white;color:var(--teal);
+  font-size:16px;font-weight:800;font-family:var(--font);
+  padding:16px 34px;border-radius:50px;border:none;
+  cursor:pointer;transition:all 0.2s;
+  box-shadow:0 4px 24px rgba(0,0,0,0.25);width:fit-content;
+}
+.btn-begin:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.btn-begin:active{transform:scale(0.97)}
+.hero-privacy{
+  margin-top:22px;font-size:11px;
+  color:rgba(255,255,255,0.45);line-height:1.6;
+}
+.signal-legend{display:flex;gap:16px;margin-top:18px}
+.sl-item{display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,0.5)}
+.sl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+
+.hero-right{
+  flex:0 0 42%;position:relative;overflow:hidden;
+  background:#0a1a1a;
+}
+.hero-right img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:center top;display:block;
+}
+.hero-right-fallback{
+  width:100%;height:100%;
+  background:linear-gradient(180deg,#0d2a2a 0%,#1a0d35 100%);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 32px;gap:24px;
+}
+.hrf-quote{
+  font-size:20px;font-weight:700;color:rgba(255,255,255,0.8);
+  text-align:center;line-height:1.5;font-style:italic;
+}
+.hrf-dots{display:flex;gap:12px}
+.hrf-dot{width:16px;height:16px;border-radius:50%}
+.hrf-label{font-size:10px;font-weight:600;color:rgba(255,255,255,0.35);letter-spacing:2px}
+
+
+/* CHECK-IN HEADER */
+.ci-wrap{background:var(--warm);padding-top:46px}
+.ci-header{background:var(--grad);padding:20px 24px 16px}
+.ci-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.ci-brand{font-size:18px;font-weight:800;color:white;letter-spacing:-0.3px}
+.ci-step{font-size:12px;font-weight:500;color:rgba(255,255,255,0.6)}
+.progress-bar{height:4px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:white;border-radius:2px;transition:width 0.4s ease}
+.ci-body{padding:28px 24px 100px;max-width:520px;margin:0 auto}
+.step-title{font-size:22px;font-weight:800;color:var(--teal);margin-bottom:6px;letter-spacing:-0.5px}
+.step-sub{font-size:14px;color:var(--g600);margin-bottom:24px;line-height:1.6}
+.sec-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--g400);margin-bottom:10px;display:block}
+
+
+/* SYMPTOMS */
+.symptom-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px}
+.symptom-chip{
+  padding:12px 14px;border-radius:12px;border:2px solid var(--g200);
+  background:white;cursor:pointer;font-size:14px;font-weight:500;
+  color:var(--g600);text-align:left;transition:all 0.15s;
+  display:flex;align-items:center;gap:8px;font-family:var(--font);
+}
+.symptom-chip:hover{border-color:var(--teal-light);background:#f0fafa;transform:translateY(-1px)}
+.symptom-chip.selected{border-color:var(--teal);background:var(--teal);color:white}
+.symptom-chip.selected.hr{border-color:var(--escalate);background:var(--escalate)}
+.chip-dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:0.4;flex-shrink:0}
+
+
+/* SCALE */
+.scale-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:24px}
+.scale-btn{
+  padding:12px 4px;border-radius:12px;border:2px solid var(--g200);
+  background:white;cursor:pointer;text-align:center;
+  transition:all 0.15s;display:flex;flex-direction:column;
+  align-items:center;gap:4px;font-family:var(--font);
+}
+.scale-btn:hover{border-color:var(--teal-light);transform:translateY(-1px)}
+.scale-btn.selected{border-color:var(--teal);background:var(--teal);color:white}
+.s-emoji{font-size:20px}
+.s-num{font-size:13px;font-weight:800}
+.s-lbl{font-size:9px;font-weight:500;opacity:0.75;line-height:1.2;text-align:center}
+
+
+/* CYCLE */
+.cycle-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.cycle-opt{
+  padding:14px 18px;border-radius:12px;border:2px solid var(--g200);
+  background:white;cursor:pointer;font-size:14px;font-weight:500;
+  color:var(--g600);text-align:left;transition:all 0.15s;
+  display:flex;align-items:center;gap:12px;font-family:var(--font);
+}
+.cycle-opt:hover{border-color:var(--plum-light);transform:translateY(-1px)}
+.cycle-opt.selected{border-color:var(--plum);background:var(--plum);color:white}
+.c-icon{font-size:20px}
+
+
+/* CLARITY */
+.clarity-display{text-align:center;margin-bottom:20px}
+.clarity-num{font-size:80px;font-weight:900;color:var(--teal);line-height:1}
+.clarity-lbl{font-size:14px;color:var(--g400);margin-top:4px}
+input[type=range]{
+  width:100%;-webkit-appearance:none;height:8px;border-radius:4px;
+  background:var(--g200);outline:none;margin:16px 0;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:28px;height:28px;border-radius:50%;
+  background:var(--teal);cursor:pointer;box-shadow:0 2px 8px rgba(13,74,74,0.4);
+}
+.clarity-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--g400)}
+
+
+/* BUTTONS */
+.btn-next{
+  width:100%;padding:16px;background:var(--grad);color:white;
+  border:none;border-radius:14px;cursor:pointer;
+  font-size:16px;font-weight:700;font-family:var(--font);transition:all 0.2s;
+}
+.btn-next:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-next:active{transform:scale(0.98)}
+.btn-next:disabled{opacity:0.35;cursor:not-allowed;transform:none}
+.btn-back{
+  background:none;border:none;color:var(--g400);font-size:14px;
+  font-weight:500;cursor:pointer;padding:12px 0;margin-top:8px;
+  width:100%;text-align:center;font-family:var(--font);
+}
+.btn-back:hover{color:var(--g600)}
+
+
+/* RESULTS */
+.results-top{background:var(--grad);padding:70px 24px 24px;text-align:center;color:white}
+.results-title{font-size:20px;font-weight:800}
+.results-date{font-size:12px;opacity:0.65;margin-top:4px}
+.results-body{padding:24px;max-width:520px;margin:0 auto}
+.signal-card{border-radius:16px;padding:28px;margin-bottom:20px;text-align:center}
+.signal-card.stable{background:#f0fdf4;border:2px solid #bbf7d0}
+.signal-card.monitor{background:#fffbeb;border:2px solid #fde68a}
+.signal-card.escalate{background:#fef2f2;border:2px solid #fecaca}
+.sig-icon{font-size:52px;margin-bottom:12px;display:block}
+.sig-status{font-size:22px;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.signal-card.stable .sig-status{color:var(--stable)}
+.signal-card.monitor .sig-status{color:var(--monitor)}
+.signal-card.escalate .sig-status{color:var(--escalate)}
+.sig-desc{font-size:14px;color:var(--g600);line-height:1.7}
+.sum-card{background:white;border-radius:14px;padding:18px;border:1px solid var(--g200);margin-bottom:14px}
+.sym-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.sym-tag{padding:4px 10px;border-radius:20px;background:var(--teal);color:white;font-size:12px;font-weight:600}
+.sym-tag.hr{background:var(--escalate)}
+.three-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;margin-top:10px}
+.three-stats .t-num{font-size:26px;font-weight:900;color:var(--teal)}
+.three-stats .t-lbl{font-size:11px;color:var(--g400);margin-top:2px}
+.algo-card{background:#fafafa;border-radius:14px;padding:18px;border:1px solid var(--g200);margin-bottom:14px;font-size:13px;color:var(--g600);line-height:1.8}
+.algo-card strong.s{color:var(--stable)}
+.algo-card strong.m{color:var(--monitor)}
+.algo-card strong.e{color:var(--escalate)}
+
+
+/* DASHBOARD */
+#screen-dashboard{flex-direction:column!important;background:var(--warm)}
+.dash-banner{width:100%;max-height:130px;object-fit:cover;display:block;flex-shrink:0}
+.dash-banner-fallback{
+  height:90px;background:var(--grad);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.dash-banner-fallback span{font-size:26px;font-weight:900;color:white;letter-spacing:-0.5px}
+.dash-body{padding:20px;max-width:600px;margin:0 auto;width:100%}
+.dash-greeting{font-size:22px;font-weight:800;color:var(--teal);margin-bottom:4px;letter-spacing:-0.5px}
+.dash-sub{font-size:13px;color:var(--g400);margin-bottom:20px}
+.sig-hist-panel{background:white;border-radius:16px;border:1px solid var(--g200);padding:18px;margin-bottom:16px}
+.cur-sig-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;margin-bottom:14px}
+.cur-sig-row.stable{background:#f0fdf4}
+.cur-sig-row.monitor{background:#fffbeb}
+.cur-sig-row.escalate{background:#fef2f2}
+.cur-sig-row.none{background:var(--g50)}
+.sig-dot-lg{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.stable .sig-dot-lg{background:var(--stable)}
+.monitor .sig-dot-lg{background:var(--monitor)}
+.escalate .sig-dot-lg{background:var(--escalate)}
+.none .sig-dot-lg{background:var(--g400)}
+.cur-sig-text{flex:1}
+.cur-sig-text strong{font-size:14px;font-weight:800;display:block;text-transform:capitalize}
+.stable .cur-sig-text strong{color:var(--stable)}
+.monitor .cur-sig-text strong{color:var(--monitor)}
+.escalate .cur-sig-text strong{color:var(--escalate)}
+.cur-sig-text span{font-size:12px;color:var(--g500)}
+.hist-dots{display:flex;align-items:flex-end;gap:6px}
+.hd-wrap{text-align:center;flex:1}
+.hd{width:10px;height:10px;border-radius:50%;margin:0 auto 4px}
+.hd.stable{background:var(--stable)}
+.hd.monitor{background:var(--monitor)}
+.hd.escalate{background:var(--escalate)}
+.hd.empty{background:var(--g200)}
+.hd-lbl{font-size:9px;color:var(--g400)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat-card{background:white;border-radius:12px;border:1px solid var(--g200);padding:14px;text-align:center}
+.stat-num{font-size:30px;font-weight:900;color:var(--teal)}
+.stat-lbl{font-size:11px;color:var(--g400);margin-top:2px}
+.chart-panel{background:white;border-radius:16px;border:1px solid var(--g200);padding:18px;margin-bottom:16px}
+.chart-wrap{height:180px}
+.btn-new{
+  width:100%;padding:16px;background:var(--grad);color:white;
+  border:none;border-radius:14px;cursor:pointer;
+  font-size:16px;font-weight:700;font-family:var(--font);margin-bottom:16px;transition:all 0.2s;
+}
+.btn-new:hover{opacity:0.9;transform:translateY(-1px)}
+.dash-footer{font-size:11px;color:var(--g400);text-align:center;line-height:1.8;padding:0 8px 24px}
+
+
+/* SAVING OVERLAY */
+.saving-overlay{
+  position:fixed;inset:0;z-index:9999;background:rgba(13,74,74,0.88);
+  display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;
+}
+.saving-overlay.active{display:flex}
+.spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,0.25);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite}
+.saving-txt{color:white;font-size:16px;font-weight:700}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  #screen-welcome{flex-direction:column!important}
+  .hero-left{flex:none;padding:64px 24px 36px;min-height:62vh}
+  .hero-tagline{font-size:32px}
+  .hero-right{flex:none;height:220px}
+  .hero-right img{height:220px}
+  .s-lbl{display:none}
+}
+</style>
+</head>
+<body>
+
+
+<!-- BANNER -->
+<div id="mode-banner">⚡ Demo Mode — data saved locally on this device</div>
+
+
+<!-- SAVING OVERLAY -->
+<div id="saving-overlay" class="saving-overlay">
+  <div class="spinner"></div>
+  <div class="saving-txt">Saving your check-in…</div>
+</div>
+
+
+<!-- ══ SCREEN 1: WELCOME ══ -->
+<div id="screen-welcome" class="screen active">
+  <div class="hero-left">
+    <div class="brand-mark">
+      <img
+        src="/v1/files/prod-memory-sources/hbs-foundry/69f3627ca37a927074be97bb/data_sources/8687b6e4/A2CB207B-D3D7-4D1A-8C3C-721B089AF718.PNG"
+        alt="HerSignal" class="brand-logo"
+        onerror="this.style.display='none';document.getElementById('brand-txt').style.display='block'"/>
+      <div id="brand-txt" class="brand-logo-fallback">Her<span>Signal</span></div>
+    </div>
+    <div class="hero-tagline">
+      Your body is<br><em>telling you</em><br>something.
+    </div>
+    <p class="hero-sub">
+      A weekly check-in that tracks your perimenopause and menopause symptoms over time — so you always know what your body is saying, and when it's time to act.
+    </p>
+    <button class="btn-begin" id="btn-begin">✦ Begin Check-In</button>
+    <p class="hero-privacy">🔒 No personal information collected. All data is anonymised at point of entry.</p>
+    <div class="signal-legend">
+      <div class="sl-item"><div class="sl-dot" style="background:#16a34a"></div>Stable</div>
+      <div class="sl-item"><div class="sl-dot" style="background:#d97706"></div>Monitor</div>
+      <div class="sl-item"><div class="sl-dot" style="background:#dc2626"></div>Escalate</div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img
+      src="/v1/files/prod-memory-sources/hbs-foundry/69f3627ca37a927074be97bb/data_sources/d265b201/IMG_0281%20_2_.jpg"
+      alt="HerSignal women"
+      onerror="this.style.display='none';document.getElementById('hero-fallback').style.display='flex'"/>
+    <div id="hero-fallback" class="hero-right-fallback" style="display:none">
+      <p class="hrf-quote">"Your symptoms have a pattern.<br>HerSignal finds it."</p>
+      <div class="hrf-dots">
+        <div class="hrf-dot" style="background:#16a34a"></div>
+        <div class="hrf-dot" style="background:#d97706"></div>
+        <div class="hrf-dot" style="background:#dc2626"></div>
+      </div>
+      <div class="hrf-label">STABLE · MONITOR · ESCALATE</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ SCREEN 2: SYMPTOMS ══ -->
+<div id="screen-symptoms" class="screen ci-wrap">
+  <div class="ci-header">
+    <div class="ci-top"><div class="ci-brand">HerSignal</div><div class="ci-step">Step 1 of 4</div></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+  </div>
+  <div class="ci-body">
+    <div class="step-title">What are you experiencing?</div>
+    <div class="step-sub">Select all that apply this week. High-risk symptoms turn red when selected.</div>
+    <div class="symptom-grid" id="symptom-grid"></div>
+    <button class="btn-next" id="btn-sym-next" disabled>Continue →</button>
+    <button class="btn-back" id="btn-sym-back">← Back</button>
+  </div>
+</div>
+
+
+<!-- ══ SCREEN 3: INTENSITY ══ -->
+<div id="screen-intensity" class="screen ci-wrap">
+  <div class="ci-header">
+    <div class="ci-top"><div class="ci-brand">HerSignal</div><div class="ci-step">Step 2 of 4</div></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
+  </div>
+  <div class="ci-body">
+    <div class="step-title">Overall intensity</div>
+    <div class="step-sub">How intense are your symptoms overall this week?</div>
+    <div class="scale-grid" id="intensity-grid"></div>
+    <button class="btn-next" id="btn-int-next" disabled>Continue →</button>
+    <button class="btn-back" id="btn-int-back">← Back</button>
+  </div>
+</div>
+
+
+<!-- ══ SCREEN 4: CONTEXT ══ -->
+<div id="screen-context" class="screen ci-wrap">
+  <div class="ci-header">
+    <div class="ci-top"><div class="ci-brand">HerSignal</div><div class="ci-step">Step 3 of 4</div></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div>
+  </div>
+  <div class="ci-body">
+    <div class="step-title">Your context this week</div>
+    <div class="step-sub">Stress and cycle status help HerSignal calculate your signal accurately.</div>
+    <span class="sec-label">Stress level</span>
+    <div class="scale-grid" id="stress-grid"></div>
+    <span class="sec-label" style="margin-top:16px;display:block">Cycle status</span>
+    <div class="cycle-opts" id="cycle-opts"></div>
+    <button class="btn-next" id="btn-ctx-next" disabled>Continue →</button>
+    <button class="btn-back" id="btn-ctx-back">← Back</button>
+  </div>
+</div>
+
+
+<!-- ══ SCREEN 5: CLARITY ══ -->
+<div id="screen-clarity" class="screen ci-wrap">
+  <div class="ci-header">
+    <div class="ci-top"><div class="ci-brand">HerSignal</div><div class="ci-step">Step 4 of 4</div></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div>
+  </div>
+  <div class="ci-body">
+    <div class="step-title">Clarity score</div>
+    <div class="step-sub">How clearly can you think and function this week? 1 = foggy, 10 = sharp.</div>
+    <div class="clarity-display">
+      <div class="clarity-num" id="clarity-num">5</div>
+      <div class="clarity-lbl" id="clarity-lbl">Moderate</div>
+    </div>
+    <input type="range" min="1" max="10" value="5" id="clarity-slider"/>
+    <div class="clarity-labels"><span>1 — Foggy</span><span>10 — Sharp</span></div>
+    <button class="btn-next" id="btn-submit" style="margin-top:28px">✦ Get My Signal</button>
+    <button class="btn-back" id="btn-cla-back">← Back</button>
+  </div>
+</div>
+
+
+<!-- ══ SCREEN 6: RESULTS ══ -->
+<div id="screen-results" class="screen">
+  <div style="background:var(--warm);min-height:100vh">
+    <div class="results-top">
+      <div class="results-title">Your HerSignal Result</div>
+      <div class="results-date" id="results-date"></div>
+    </div>
+    <div class="results-body">
+      <div class="signal-card" id="signal-card">
+        <span class="sig-icon" id="sig-icon">✅</span>
+        <div class="sig-status" id="sig-status">Stable</div>
+        <div class="sig-desc" id="sig-desc"></div>
+      </div>
+      <div class="algo-card">
+        <span class="sec-label">How Your Signal Is Calculated</span>
+        <strong class="e">Escalate</strong> — a high-risk symptom is present and stress is very low (your body may be struggling silently).<br>
+        <strong class="m">Monitor</strong> — 5 or more symptoms, or a high-risk symptom with elevated stress.<br>
+        <strong class="s">Stable</strong> — symptoms are within a manageable range this week.
+      </div>
+      <div class="sum-card">
+        <span class="sec-label">Symptoms Logged</span>
+        <div class="sym-tags" id="res-symptoms"></div>
+      </div>
+      <div class="sum-card">
+        <span class="sec-label">This Week's Numbers</span>
+        <div class="three-stats">
+          <div><div class="t-num" id="res-int">—</div><div class="t-lbl">Intensity</div></div>
+          <div><div class="t-num" id="res-str" style="color:var(--plum)">—</div><div class="t-lbl">Stress</div></div>
+          <div><div class="t-num" id="res-cla" style="color:var(--teal-light)">—</div><div class="t-lbl">Clarity</div></div>
+        </div>
+      </div>
+      <button class="btn-next" id="btn-to-dash">View My Dashboard →</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ SCREEN 7: DASHBOARD ══ -->
+<div id="screen-dashboard" class="screen">
+  <img
+    src="/v1/files/prod-memory-sources/hbs-foundry/69f3627ca37a927074be97bb/data_sources/8459fd98/HerSignal%20Image.jpg"
+    alt="HerSignal" class="dash-banner"
+    onerror="this.style.display='none';document.getElementById('banner-fallback').style.display='flex'"/>
+  <div id="banner-fallback" class="dash-banner-fallback" style="display:none">
+    <span>✦ HerSignal</span>
+  </div>
+  <div class="dash-body">
+    <div class="dash-greeting">Your Health Dashboard</div>
+    <div class="dash-sub" id="dash-sub">Tracking your perimenopause journey</div>
+    <div class="sig-hist-panel">
+      <span class="sec-label">Current Signal</span>
+      <div class="cur-sig-row none" id="cur-sig-row">
+        <div class="sig-dot-lg"></div>
+        <div class="cur-sig-text">
+          <strong id="cur-sig-name">No data yet</strong>
+          <span id="cur-sig-desc">Complete your first check-in to see your signal</span>
+        </div>
+      </div>
+      <span class="sec-label">Last 7 Check-Ins</span>
+      <div class="hist-dots" id="hist-dots"></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="stat-ci">0</div><div class="stat-lbl">Check-Ins</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-sym">—</div><div class="stat-lbl">Avg Symptoms</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-str">0</div><div class="stat-lbl">Week Streak</div></div>
+    </div>
+    <div class="chart-panel">
+      <span class="sec-label">Intensity &amp; Clarity Trend</span>
+      <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+    </div>
+    <button class="btn-new" id="btn-new-ci">+ New Check-In</button>
+    <div class="dash-footer">
+      Your data is de-identified. No personal information is ever stored.<br>
+      All check-ins are anonymous — linked only to a random device ID.<br>
+      <em>HerSignal by Oncovanta Digital Health &amp; Automation (ODHAi)</em>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ── CONFIG ──────────────────────
+const SUPABASE_URL      = 'kwriboxxujqrypxopthl';
+const SUPABASE_ANON_KEY = 'kwriboxxujqrypxopthl';
+const DEMO_MODE         = !(SUPABASE_URL && SUPABASE_ANON_KEY);
+
+
+// ── CONSTANTS ───────────────────
+const HIGH_RISK = ['Hot Flashes','Night Sweats','Heart Palpitations','Heavy Bleeding'];
+
+
+const SYMPTOMS = [
+  'Hot Flashes','Night Sweats','Brain Fog','Mood Shifts',
+  'Sleep Problems','Heart Palpitations','Heavy Bleeding','Fatigue',
+  'Joint Pain','Anxiety','Memory Changes','Weight Changes'
+];
+
+
+const INTENSITY_DATA = {
+  1:{e:'🌿',l:'Barely there'},2:{e:'🌤',l:'Mild'},
+  3:{e:'⛅',l:'Moderate'},4:{e:'⛈',l:'Strong'},5:{e:'🌪',l:'Severe'}
+};
+
+
+const STRESS_DATA = {
+  1:{e:'😌',l:'Very calm'},2:{e:'🙂',l:'Calm'},
+  3:{e:'😐',l:'Moderate'},4:{e:'😟',l:'Stressed'},5:{e:'😰',l:'Very stressed'}
+};
+
+
+const CYCLES = [
+  {v:'regular',i:'🔵',l:'Regular cycle'},
+  {v:'irregular',i:'🟡',l:'Irregular cycle'},
+  {v:'peri',i:'🟠',l:'Perimenopause'},
+  {v:'meno',i:'🔴',l:'Menopause / Post'},
+  {v:'none',i:'⚪',l:'Prefer not to say'}
+];
+
+
+const CLARITY_LBLS = {
+  1:'Very foggy',2:'Foggy',3:'Hazy',4:'Somewhat unclear',5:'Moderate',
+  6:'Mostly clear',7:'Clear',8:'Very clear',9:'Sharp',10:'Crystal clear'
+};
+
+
+// ── STATE ────────────────────────
+var ST = {syms:[],intensity:null,stress:null,cycle:'',clarity:5,last:null};
+var trendChart = null;
+
+
+// ── HELPERS ──────────────────────
+function uuid(){
+  if(window.crypto&&crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){
+    var r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);
+  });
+}
+function uid(){
+  var u=localStorage.getItem('hs_uid');
+  if(!u){u=uuid();localStorage.setItem('hs_uid',u);}
+  return u;
+}
+function signal(syms,stress){
+  var hr=syms.some(function(s){return HIGH_RISK.indexOf(s.name)>-1;});
+  if(hr&&stress<=2) return 'escalate';
+  if(syms.length>=5||(hr&&stress>2)) return 'monitor';
+  return 'stable';
+}
+function $id(id){return document.getElementById(id);}
+function show(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  var el=$id(id);
+  if(el){el.classList.add('active');window.scrollTo(0,0);}
+}
+function loadData(){
+  return JSON.parse(localStorage.getItem('hs_data')||'[]');
+}
+
+
+// ── SAVE ─────────────────────────
+async function doSave(){
+  var rec={
+    user_id:uid(),session_id:uuid(),
+    checked_at:new Date().toISOString(),
+    symptoms:ST.syms,stress_level:ST.stress,
+    cycle_status:ST.cycle,clarity_score:ST.clarity,
+    intensity:ST.intensity,
+    signal:signal(ST.syms,ST.stress),
+    app_version:'2.0',de_identified:true
+  };
+  if(DEMO_MODE){
+    var ex=loadData();ex.push(rec);
+    localStorage.setItem('hs_data',JSON.stringify(ex));
+    await new Promise(function(r){setTimeout(r,600);});
+  } else {
+    try{
+      await fetch(SUPABASE_URL+'/rest/v1/checkins',{
+        method:'POST',
+        headers:{
+          'apikey':SUPABASE_ANON_KEY,
+          'Authorization':'Bearer '+SUPABASE_ANON_KEY,
+          'Content-Type':'application/json',
+          'Prefer':'return=minimal'
+        },
+        body:JSON.stringify(rec)
+      });
+    }catch(e){
+      var ex=loadData();ex.push(rec);
+      localStorage.setItem('hs_data',JSON.stringify(ex));
+    }
+  }
+  return rec;
+}
+
+
+// ── BUILD GRIDS ──────────────────
+function buildSymptoms(){
+  var g=$id('symptom-grid');g.innerHTML='';
+  SYMPTOMS.forEach(function(name){
+    var isHR=HIGH_RISK.indexOf(name)>-1;
+    var btn=document.createElement('button');
+    btn.className='symptom-chip';
+    btn.innerHTML='<span class="chip-dot"></span><span>'+name+'</span>';
+    btn.addEventListener('click',function(){
+      var i=ST.syms.findIndex(function(s){return s.name===name;});
+      if(i>-1){
+        ST.syms.splice(i,1);
+        btn.classList.remove('selected','hr');
+      } else {
+        ST.syms.push({name:name,highRisk:isHR});
+        btn.classList.add('selected');
+        if(isHR) btn.classList.add('hr');
+      }
+      $id('btn-sym-next').disabled=ST.syms.length===0;
+    });
+    g.appendChild(btn);
+  });
+}
+
+
+function buildScale(gid,data,max,cb){
+  var g=$id(gid);g.innerHTML='';
+  for(var i=1;i<=max;i++){
+    (function(val){
+      var d=data[val]||{e:'',l:''};
+      var btn=document.createElement('button');
+      btn.className='scale-btn';
+      btn.innerHTML='<span class="s-emoji">'+d.e+'</span><span class="s-num">'+val+'</span><span class="s-lbl">'+d.l+'</span>';
+      btn.addEventListener('click',function(){
+        g.querySelectorAll('.scale-btn').forEach(function(b){b.classList.remove('selected');});
+        btn.classList.add('selected');cb(val);
+      });
+      g.appendChild(btn);
+    })(i);
+  }
+}
+
+
+function buildCycles(){
+  var c=$id('cycle-opts');c.innerHTML='';
+  CYCLES.forEach(function(opt){
+    var btn=document.createElement('button');
+    btn.className='cycle-opt';
+    btn.innerHTML='<span class="c-icon">'+opt.i+'</span><span>'+opt.l+'</span>';
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.cycle-opt').forEach(function(b){b.classList.remove('selected');});
+      btn.classList.add('selected');
+      ST.cycle=opt.v;
+      $id('btn-ctx-next').disabled=!ST.stress;
+    });
+    c.appendChild(btn);
+  });
+}
+
+
+// ── CLARITY ──────────────────────
+function updateClarity(v){
+  ST.clarity=parseInt(v);
+  $id('clarity-num').textContent=v;
+  $id('clarity-lbl').textContent=CLARITY_LBLS[v]||'';
+}
+
+
+// ── RESULTS RENDER ────────────────
+function renderResults(r){
+  var sig=r.signal;
+  $id('signal-card').className='signal-card '+sig;
+  var icons={stable:'✅',monitor:'⚠️',escalate:'🆘'};
+  var descs={
+    stable:'Your symptoms are within a manageable range this week. Keep tracking — consistency reveals patterns.',
+    monitor:'You have multiple symptoms or a significant symptom. Consider discussing with your healthcare provider.',
+    escalate:'A high-risk symptom is present while stress is low — this can mask severity. We recommend speaking with a provider soon.'
+  };
+  $id('sig-icon').textContent=icons[sig];
+  $id('sig-status').textContent=sig.charAt(0).toUpperCase()+sig.slice(1);
+  $id('sig-desc').textContent=descs[sig];
+  $id('results-date').textContent=new Date(r.checked_at).toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+
+  var tc=$id('res-symptoms');tc.innerHTML='';
+  r.symptoms.forEach(function(s){
+    var t=document.createElement('span');
+    t.className='sym-tag'+(HIGH_RISK.indexOf(s.name)>-1?' hr':'');
+    t.textContent=s.name;tc.appendChild(t);
+  });
+  $id('res-int').textContent=(r.intensity||'—')+'/5';
+  $id('res-str').textContent=(r.stress_level||'—')+'/5';
+  $id('res-cla').textContent=(r.clarity_score||'—')+'/10';
+}
+
+
+// ── DASHBOARD RENDER ──────────────
+function renderDashboard(){
+  var data=loadData();
+  $id('stat-ci').textContent=data.length;
+  if(data.length>0){
+    var avg=(data.reduce(function(a,c){return a+(c.symptoms||[]).length;},0)/data.length).toFixed(1);
+    $id('stat-sym').textContent=avg;
+    $id('stat-str').textContent=Math.min(data.length,12);
+    var lat=data[data.length-1];var sig=lat.signal;
+    var row=$id('cur-sig-row');
+    row.className='cur-sig-row '+sig;
+    var desc={stable:'Symptoms manageable — keep tracking.',monitor:'Multiple or significant symptoms present.',escalate:'High-risk symptom detected — consider speaking with a provider.'};
+    $id('cur-sig-name').textContent=sig.charAt(0).toUpperCase()+sig.slice(1);
+    $id('cur-sig-desc').textContent=desc[sig]||'';
+  }
+
+
+  var dr=$id('hist-dots');dr.innerHTML='';
+  var days=['Mo','Tu','We','Th','Fr','Sa','Su'];
+  var last7=data.slice(-7);
+  for(var i=0;i<7;i++){
+    var e=last7[i];
+    var w=document.createElement('div');w.className='hd-wrap';
+    var d=document.createElement('div');d.className='hd '+(e?e.signal:'empty');
+    var l=document.createElement('div');l.className='hd-lbl';l.textContent=days[i];
+    w.appendChild(d);w.appendChild(l);dr.appendChild(w);
+  }
+
+
+  var lbls=data.slice(-8).map(function(_,i){return 'Wk '+(i+1);});
+  var intD=data.slice(-8).map(function(c){return c.intensity||0;});
+  var claD=data.slice(-8).map(function(c){return c.clarity_score||0;});
+  if(trendChart) trendChart.destroy();
+  var ctx=$id('trend-chart').getContext('2d');
+  trendChart=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:lbls,
+      datasets:[
+        {label:'Intensity',data:intD,borderColor:'#0d4a4a',backgroundColor:'rgba(13,74,74,0.1)',tension:0.4,fill:true,pointRadius:5},
+        {label:'Clarity',data:claD,borderColor:'#4a1a6b',backgroundColor:'rgba(74,26,107,0.08)',tension:0.4,fill:false,pointRadius:5}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}},
+      scales:{
+        y:{min:0,max:10,grid:{color:'#f3f4f6'},ticks:{font:{size:10}}},
+        x:{grid:{display:false},ticks:{font:{size:10}}}
+      }
+    }
+  });
+  $id('dash-sub').textContent=data.length===0?'Complete your first check-in to see your trends':data.length+' check-in'+(data.length>1?'s':'')+' recorded';
+}
+
+
+// ── START CHECKIN ─────────────────
+function startCheckin(){
+  ST.syms=[];ST.intensity=null;ST.stress=null;ST.cycle='';ST.clarity=5;
+  $id('clarity-slider').value=5;updateClarity(5);
+  document.querySelectorAll('.symptom-chip').forEach(function(b){b.classList.remove('selected','hr');});
+  document.querySelectorAll('.scale-btn').forEach(function(b){b.classList.remove('selected');});
+  document.querySelectorAll('.cycle-opt').forEach(function(b){b.classList.remove('selected');});
+  $id('btn-sym-next').disabled=true;
+  $id('btn-int-next').disabled=true;
+  $id('btn-ctx-next').disabled=true;
+  show('screen-symptoms');
+}
+
+
+// ── WIRE ALL BUTTONS ──────────────
+function wireButtons(){
+  // Welcome
+  $id('btn-begin').addEventListener('click',function(){startCheckin();});
+
+
+  // Symptoms
+  $id('btn-sym-next').addEventListener('click',function(){
+    if(ST.syms.length>0) show('screen-intensity');
+  });
+  $id('btn-sym-back').addEventListener('click',function(){show('screen-welcome');});
+
+
+  // Intensity
+  $id('btn-int-next').addEventListener('click',function(){
+    if(ST.intensity) show('screen-context');
+  });
+  $id('btn-int-back').addEventListener('click',function(){show('screen-symptoms');});
+
+
+  // Context
+  $id('btn-ctx-next').addEventListener('click',function(){
+    if(ST.stress&&ST.cycle) show('screen-clarity');
+  });
+  $id('btn-ctx-back').addEventListener('click',function(){show('screen-intensity');});
+
+
+  // Clarity
+  $id('clarity-slider').addEventListener('input',function(){updateClarity(this.value);});
+  $id('btn-cla-back').addEventListener('click',function(){show('screen-context');});
+  $id('btn-submit').addEventListener('click',async function(){
+    var ov=$id('saving-overlay');ov.classList.add('active');
+    try{
+      var rec=await doSave();ST.last=rec;renderResults(rec);
+    }catch(e){console.error(e);}
+    finally{ov.classList.remove('active');show('screen-results');}
+  });
+
+
+  // Results
+  $id('btn-to-dash').addEventListener('click',function(){renderDashboard();show('screen-dashboard');});
+
+
+  // Dashboard
+  $id('btn-new-ci').addEventListener('click',function(){startCheckin();});
+}
+
+
+// ── INIT (runs immediately) ───────
+(function init(){
+  // Mode banner
+  var mb=$id('mode-banner');
+  if(!DEMO_MODE){
+    mb.style.background='#d1fae5';mb.style.color='#065f46';
+    mb.textContent='☁️ Cloud sync enabled — check-ins securely saved';
+  }
+  buildSymptoms();
+  buildScale('intensity-grid',INTENSITY_DATA,5,function(v){
+    ST.intensity=v;$id('btn-int-next').disabled=false;
+  });
+  buildScale('stress-grid',STRESS_DATA,5,function(v){
+    ST.stress=v;
+    $id('btn-ctx-next').disabled=!(ST.stress&&ST.cycle);
+  });
+  buildCycles();
+  wireButtons();
+})();
+</script>
+</body>
+</html>
