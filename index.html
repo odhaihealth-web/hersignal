@@ -1,1039 +1,651 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>HerSignal — Women's Health Check-In</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HerSignal">
+<meta name="theme-color" content="#1A0A2E">
+<title>HerSignal — Clarity. Confidence. Control.</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --teal:#0d4a4a;--teal-mid:#0f5c5c;--teal-light:#1a7a7a;
-  --plum:#4a1a6b;--plum-light:#6b2d99;
-  --gradient:linear-gradient(135deg,#0d4a4a 0%,#2d1a5c 50%,#4a1a6b 100%);
-  --warm-white:#faf9f7;
-  --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;
-  --gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-800:#1f2937;
-  --stable:#16a34a;--monitor:#d97706;--escalate:#dc2626;
-  --font:'Inter',system-ui,sans-serif;
-}
-html,body{height:100%;font-family:var(--font);background:var(--warm-white);color:var(--gray-800);overflow-x:hidden}
-.mode-banner{position:fixed;top:0;left:0;right:0;z-index:200;padding:7px 16px;font-size:12px;font-weight:600;text-align:center;background:#fef3c7;color:#92400e;transition:all 0.4s}
-.screen{display:none;min-height:100vh}
-.screen.active{display:flex;flex-direction:column}
-#screen-welcome{flex-direction:row}
-
-
-/* ── ONBOARDING ── */
-#screen-onboard{background:var(--gradient);align-items:center;justify-content:center;padding:40px 24px;text-align:center}
-.ob-logo{width:72px;height:72px;border-radius:20px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(4px)}
-.ob-title{font-size:clamp(1.6rem,5vw,2.2rem);font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:10px;line-height:1.1}
-.ob-sub{font-size:.95rem;color:rgba(255,255,255,.72);line-height:1.7;max-width:340px;margin:0 auto 36px}
-.ob-input-wrap{width:100%;max-width:360px;margin:0 auto}
-.ob-label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.55);margin-bottom:.5rem;text-align:left}
-.ob-input{width:100%;padding:16px 20px;border-radius:14px;border:2px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:#fff;font-family:var(--font);font-size:1.1rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;outline:none;transition:border-color .2s;backdrop-filter:blur(4px)}
-.ob-input::placeholder{color:rgba(255,255,255,.35);text-transform:none;font-weight:400;letter-spacing:0}
-.ob-input:focus{border-color:rgba(255,255,255,.6)}
-.ob-hint{font-size:.75rem;color:rgba(255,255,255,.45);margin-top:.5rem;text-align:left}
-.ob-btn{width:100%;max-width:360px;margin:20px auto 0;display:block;padding:16px;background:#fff;color:var(--teal);border:none;border-radius:14px;font-family:var(--font);font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 4px 24px rgba(0,0,0,.25)}
-.ob-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
-.ob-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
-.ob-privacy{margin-top:20px;font-size:.72rem;color:rgba(255,255,255,.38);line-height:1.7}
-
-
-/* HERO */
-.hero-left{flex:0 0 58%;background:var(--gradient);display:flex;flex-direction:column;justify-content:center;padding:80px 56px 56px;position:relative;overflow:hidden}
-.hero-left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 70%,rgba(255,255,255,0.05) 0%,transparent 60%);pointer-events:none}
-.brand-mark{display:flex;align-items:center;gap:10px;margin-bottom:36px}
-.brand-icon{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:22px}
-.brand-name{font-size:24px;font-weight:800;color:white;letter-spacing:-0.5px}
-.brand-name span{color:rgba(255,255,255,0.55);font-weight:300}
-.hero-tagline{font-size:46px;font-weight:900;line-height:1.1;color:white;margin-bottom:20px;letter-spacing:-1.5px}
-.hero-tagline em{color:rgba(255,255,255,0.65);font-style:normal}
-.hero-sub{font-size:16px;color:rgba(255,255,255,0.78);line-height:1.7;margin-bottom:40px;max-width:400px}
-.btn-begin{display:inline-flex;align-items:center;gap:10px;background:white;color:var(--teal);font-size:16px;font-weight:700;font-family:var(--font);padding:16px 32px;border-radius:50px;border:none;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 24px rgba(0,0,0,0.25);width:fit-content}
-.btn-begin:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
-.hero-privacy{margin-top:24px;font-size:11px;color:rgba(255,255,255,0.48);line-height:1.6}
-.signal-legend{display:flex;align-items:center;gap:16px;margin-top:20px}
-.sig-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,0.55)}
-.sig-leg-dot{width:8px;height:8px;border-radius:50%}
-.hero-right{flex:0 0 42%;background:linear-gradient(180deg,#0d2a2a 0%,#1a0d35 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;gap:32px;position:relative;overflow:hidden}
-.hero-right::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%,rgba(106,45,153,0.25) 0%,transparent 65%);pointer-events:none}
-.panel-signal-ring{width:120px;height:120px;border-radius:50%;border:3px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center}
-.panel-signal-inner{width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:36px}
-.panel-quote{font-size:18px;font-weight:700;color:rgba(255,255,255,0.85);text-align:center;line-height:1.5;font-style:italic;max-width:220px}
-.panel-dots{display:flex;gap:12px;align-items:center}
-.panel-dot{width:18px;height:18px;border-radius:50%}
-.panel-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.35)}
-
-
-/* CHECK-IN */
-.checkin-screen{background:var(--warm-white);padding-top:46px}
-.ci-header{background:var(--gradient);padding:20px 24px 16px}
-.ci-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.ci-brand{font-size:18px;font-weight:800;color:white}
-.ci-step-label{font-size:12px;font-weight:500;color:rgba(255,255,255,0.6)}
-.progress-bar{height:4px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden}
-.progress-fill{height:100%;background:white;border-radius:2px;transition:width 0.4s ease}
-.ci-body{padding:28px 24px 100px;max-width:520px;margin:0 auto}
-.step-title{font-size:22px;font-weight:800;color:var(--teal);margin-bottom:6px;letter-spacing:-0.5px}
-.step-sub{font-size:14px;color:var(--gray-600);margin-bottom:24px;line-height:1.6}
-.symptom-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px}
-.symptom-chip{padding:12px 14px;border-radius:12px;border:2px solid var(--gray-200);background:white;cursor:pointer;font-size:14px;font-weight:500;color:var(--gray-700);text-align:left;transition:all 0.15s;display:flex;align-items:center;gap:8px;font-family:var(--font)}
-.symptom-chip:hover{border-color:var(--teal-light);background:#f0fafa}
-.symptom-chip.selected{border-color:var(--teal);background:var(--teal);color:white}
-.symptom-chip.selected.high-risk{border-color:var(--escalate);background:var(--escalate)}
-.chip-dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:0.4;flex-shrink:0}
-.scale-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:24px}
-.scale-btn{padding:12px 4px;border-radius:12px;border:2px solid var(--gray-200);background:white;cursor:pointer;text-align:center;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--font)}
-.scale-btn:hover{border-color:var(--teal-light)}
-.scale-btn.selected{border-color:var(--teal);background:var(--teal);color:white}
-.scale-emoji{font-size:20px}
-.scale-num{font-size:13px;font-weight:800}
-.scale-label{font-size:9px;font-weight:500;opacity:0.75;line-height:1.2;text-align:center}
-.cycle-options{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
-.cycle-opt{padding:14px 18px;border-radius:12px;border:2px solid var(--gray-200);background:white;cursor:pointer;font-size:14px;font-weight:500;color:var(--gray-700);text-align:left;transition:all 0.15s;display:flex;align-items:center;gap:12px;font-family:var(--font)}
-.cycle-opt:hover{border-color:var(--plum-light)}
-.cycle-opt.selected{border-color:var(--plum);background:var(--plum);color:white}
-.cycle-icon{font-size:20px}
-.clarity-display{text-align:center;margin-bottom:24px}
-.clarity-num{font-size:80px;font-weight:900;color:var(--teal);line-height:1}
-.clarity-lbl{font-size:14px;color:var(--gray-400);margin-top:4px}
-input[type=range]{width:100%;-webkit-appearance:none;height:8px;border-radius:4px;background:var(--gray-200);outline:none;margin:16px 0;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:var(--teal);cursor:pointer;box-shadow:0 2px 8px rgba(13,74,74,0.4)}
-.clarity-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--gray-400)}
-.notes-box{width:100%;min-height:100px;padding:14px;border-radius:12px;border:2px solid var(--gray-200);font-family:var(--font);font-size:14px;color:var(--gray-800);resize:vertical;background:white;transition:border-color 0.15s;margin-bottom:24px;line-height:1.6}
-.notes-box:focus{outline:none;border-color:var(--teal)}
-.notes-box::placeholder{color:var(--gray-400)}
-.btn-next{width:100%;padding:16px;background:var(--gradient);color:white;border:none;border-radius:14px;cursor:pointer;font-size:16px;font-weight:700;font-family:var(--font);transition:all 0.2s}
-.btn-next:hover{opacity:0.92;transform:translateY(-1px)}
-.btn-next:active{transform:scale(0.98)}
-.btn-next:disabled{opacity:0.38;cursor:not-allowed;transform:none}
-.btn-back{background:none;border:none;color:var(--gray-400);font-size:14px;font-weight:500;cursor:pointer;padding:12px 0;margin-top:8px;width:100%;text-align:center;font-family:var(--font);transition:color 0.15s}
-.btn-back:hover{color:var(--gray-600)}
-.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gray-400);margin-bottom:10px;display:block}
-
-
-/* RESULTS */
-#screen-results{background:var(--warm-white)}
-.results-header{background:var(--gradient);padding:24px;text-align:center;color:white;padding-top:70px}
-.results-title{font-size:20px;font-weight:800}
-.results-date{font-size:12px;opacity:0.65;margin-top:4px}
-.results-disclaimer{font-size:11px;opacity:0.55;margin-top:6px;font-style:italic}
-.results-body{padding:24px;max-width:520px;margin:0 auto}
-.signal-card{border-radius:16px;padding:28px;margin-bottom:20px;text-align:center}
-.signal-card.stable{background:#f0fdf4;border:2px solid #bbf7d0}
-.signal-card.monitor{background:#fffbeb;border:2px solid #fde68a}
-.signal-card.escalate{background:#fef2f2;border:2px solid #fecaca}
-.sig-icon{font-size:52px;margin-bottom:12px;display:block}
-.sig-status{font-size:22px;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.signal-card.stable .sig-status{color:var(--stable)}
-.signal-card.monitor .sig-status{color:var(--monitor)}
-.signal-card.escalate .sig-status{color:var(--escalate)}
-.sig-desc{font-size:14px;color:var(--gray-600);line-height:1.7}
-.summary-card{background:white;border-radius:14px;padding:18px;border:1px solid var(--gray-200);margin-bottom:14px}
-.summary-card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gray-400);margin-bottom:10px;display:block}
-.symptom-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
-.symptom-tag{padding:4px 10px;border-radius:20px;background:var(--teal);color:white;font-size:12px;font-weight:600}
-.symptom-tag.high-risk{background:var(--escalate)}
-.three-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;margin-top:8px}
-.three-stats .num{font-size:26px;font-weight:800;color:var(--teal)}
-.three-stats .lbl{font-size:11px;color:var(--gray-400);margin-top:2px}
-.notes-display{font-size:14px;color:var(--gray-600);line-height:1.7;font-style:italic;margin-top:6px}
-.algo-card{background:#fafafa;border-radius:14px;padding:18px;border:1px solid var(--gray-200);margin-bottom:14px;font-size:13px;color:var(--gray-600);line-height:1.8}
-.btn-clinician{width:100%;padding:16px;background:white;color:var(--teal);border:2px solid var(--teal);border-radius:14px;cursor:pointer;font-size:15px;font-weight:700;font-family:var(--font);transition:all 0.2s;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-clinician:hover{background:#f0fafa;transform:translateY(-1px)}
-
-
-/* CLINICIAN MODAL */
-.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.6);display:none;align-items:flex-end;justify-content:center}
-.modal-overlay.active{display:flex}
-.modal-sheet{background:white;border-radius:24px 24px 0 0;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:28px 24px 40px}
-.modal-handle{width:40px;height:4px;background:var(--gray-200);border-radius:2px;margin:0 auto 24px}
-.modal-title{font-size:20px;font-weight:800;color:var(--teal);margin-bottom:4px}
-.modal-sub{font-size:13px;color:var(--gray-500);margin-bottom:24px;line-height:1.6}
-.clinician-report{background:#faf9f7;border-radius:14px;padding:20px;border:1px solid var(--gray-200);font-size:13px;line-height:1.9;color:var(--gray-700);white-space:pre-wrap;word-break:break-word;font-family:'Courier New',monospace;margin-bottom:20px;max-height:340px;overflow-y:auto}
-.modal-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
-.btn-copy{padding:14px;background:var(--gradient);color:white;border:none;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;font-family:var(--font);transition:all 0.2s;text-align:center}
-.btn-copy:hover{opacity:0.9}
-.btn-copy.copied{background:#16a34a}
-.btn-email{padding:14px;background:white;color:var(--plum);border:2px solid var(--plum);border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;font-family:var(--font);transition:all 0.2s;text-align:center}
-.btn-email:hover{background:#f5f0fa}
-.btn-print{padding:14px;background:white;color:var(--teal);border:2px solid var(--teal);border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;font-family:var(--font);transition:all 0.2s;text-align:center}
-.btn-print:hover{background:#f0fafa}
-.btn-modal-close{width:100%;padding:12px;background:none;border:none;color:var(--gray-400);font-size:14px;cursor:pointer;font-family:var(--font);margin-top:4px}
-
-
-/* DASHBOARD */
-#screen-dashboard{background:var(--warm-white);flex-direction:column;padding-top:46px}
-.dash-banner{height:90px;background:var(--gradient);flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.dash-banner span{font-size:28px;font-weight:900;color:white;letter-spacing:-0.5px}
-.dash-body{padding:20px;max-width:600px;margin:0 auto;width:100%}
-.dash-greeting{font-size:22px;font-weight:800;color:var(--teal);margin-bottom:4px;letter-spacing:-0.5px}
-.dash-sub{font-size:13px;color:var(--gray-400);margin-bottom:4px}
-.dash-built{font-size:11px;color:var(--gray-400);margin-bottom:20px;font-style:italic}
-.signal-history-panel{background:white;border-radius:16px;border:1px solid var(--gray-200);padding:18px;margin-bottom:16px}
-.current-signal-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;margin-bottom:14px}
-.current-signal-row.stable{background:#f0fdf4}
-.current-signal-row.monitor{background:#fffbeb}
-.current-signal-row.escalate{background:#fef2f2}
-.current-signal-row.none{background:var(--gray-50)}
-.sig-dot-lg{width:14px;height:14px;border-radius:50%;flex-shrink:0}
-.stable .sig-dot-lg{background:var(--stable)}
-.monitor .sig-dot-lg{background:var(--monitor)}
-.escalate .sig-dot-lg{background:var(--escalate)}
-.none .sig-dot-lg{background:var(--gray-300)}
-.cur-sig-text{flex:1}
-.cur-sig-text strong{font-size:14px;font-weight:800;display:block;text-transform:capitalize}
-.stable .cur-sig-text strong{color:var(--stable)}
-.monitor .cur-sig-text strong{color:var(--monitor)}
-.escalate .cur-sig-text strong{color:var(--escalate)}
-.cur-sig-text span{font-size:12px;color:var(--gray-500)}
-.history-dots-row{display:flex;align-items:flex-end;gap:6px}
-.h-dot-wrap{text-align:center;flex:1}
-.h-dot{width:10px;height:10px;border-radius:50%;margin:0 auto 4px}
-.h-dot.stable{background:var(--stable)}
-.h-dot.monitor{background:var(--monitor)}
-.h-dot.escalate{background:var(--escalate)}
-.h-dot.empty{background:var(--gray-200)}
-.h-dot-lbl{font-size:9px;color:var(--gray-400)}
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-.stat-card{background:white;border-radius:12px;border:1px solid var(--gray-200);padding:14px;text-align:center}
-.stat-num{font-size:30px;font-weight:900;color:var(--teal)}
-.stat-lbl{font-size:11px;color:var(--gray-400);margin-top:2px}
-.chart-panel{background:white;border-radius:16px;border:1px solid var(--gray-200);padding:18px;margin-bottom:16px}
-.chart-wrap{height:180px;position:relative}
-.btn-dash-clinician{width:100%;padding:14px;background:white;color:var(--teal);border:2px solid var(--teal);border-radius:14px;cursor:pointer;font-size:14px;font-weight:700;font-family:var(--font);margin-bottom:12px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-dash-clinician:hover{background:#f0fafa}
-.btn-new-checkin{width:100%;padding:16px;background:var(--gradient);color:white;border:none;border-radius:14px;cursor:pointer;font-size:16px;font-weight:700;font-family:var(--font);margin-bottom:12px;transition:all 0.2s}
-.btn-new-checkin:hover{opacity:0.92;transform:translateY(-1px)}
-.dash-footer{font-size:11px;color:var(--gray-400);text-align:center;line-height:1.8;padding:0 8px 24px}
-
-
-/* SAVING OVERLAY */
-.saving-overlay{position:fixed;inset:0;z-index:999;background:rgba(13,74,74,0.88);display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
-.saving-overlay.active{display:flex}
-.spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,0.25);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite}
-.saving-text{color:white;font-size:16px;font-weight:700}
-@keyframes spin{to{transform:rotate(360deg)}}
-.sync-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;margin-left:8px}
-.sync-badge.ok{background:#d1fae5;color:#065f46}
-.sync-badge.warn{background:#fef3c7;color:#92400e}
-.sync-badge.err{background:#fee2e2;color:#991b1b}
-
-
-@media print{
-  .mode-banner,.btn-clinician,.btn-new-checkin,.btn-back,.btn-next,.modal-actions,.btn-modal-close,.modal-handle,.saving-overlay{display:none!important}
-  .clinician-report{max-height:none;overflow:visible}
-}
-@media(max-width:768px){
-  #screen-welcome{flex-direction:column}
-  .hero-left{flex:none;padding:64px 24px 36px;min-height:65vh}
-  .hero-tagline{font-size:34px}
-  .hero-right{flex:none;height:240px}
-  .scale-label{display:none}
-  .modal-actions{grid-template-columns:1fr}
-}
+  :root {
+    --bg: #1A0A2E;
+    --primary: #6B4FA0;
+    --secondary: #4ABFBF;
+    --card: rgba(255,255,255,0.07);
+    --card-border: rgba(255,255,255,0.12);
+    --text: #FFFFFF;
+    --muted: #C4B5E0;
+    --radius: 20px;
+    --stable-bg: #1B4332; --stable-text: #4ADE80;
+    --monitor-bg: #3D2B00; --monitor-text: #FCD34D;
+    --escalate-bg: #3D0000; --escalate-text: #F87171;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { height:100%; font-family: system-ui,-apple-system,'SF Pro Display',sans-serif; background:var(--bg); color:var(--text); overflow:hidden; }
+  #app { width:100%; max-width:430px; height:100vh; margin:0 auto; display:flex; flex-direction:column; position:relative; overflow:hidden; }
+  .screen { position:absolute; inset:0; display:flex; flex-direction:column; background:var(--bg); transition:transform 0.35s cubic-bezier(.4,0,.2,1), opacity 0.35s ease; }
+  .screen.hidden { transform:translateX(100%); opacity:0; pointer-events:none; }
+  .screen.hidden-left { transform:translateX(-100%); opacity:0; pointer-events:none; }
+  .scroll-content { flex:1; overflow-y:auto; padding:0 20px 100px; -webkit-overflow-scrolling:touch; }
+  .scroll-content::-webkit-scrollbar { display:none; }
+  .nav-bar { position:absolute; bottom:0; left:0; right:0; height:75px; background:rgba(26,10,46,0.95); backdrop-filter:blur(20px); border-top:1px solid var(--card-border); display:flex; align-items:center; justify-content:space-around; padding-bottom:10px; z-index:100; }
+  .nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; padding:8px 20px; border-radius:12px; transition:all 0.2s; }
+  .nav-item .nav-icon { font-size:22px; }
+  .nav-item .nav-label { font-size:10px; color:var(--muted); font-weight:500; }
+  .nav-item.active .nav-label { color:var(--secondary); }
+  .nav-item.active .nav-icon { filter:drop-shadow(0 0 6px var(--secondary)); }
+  .app-header { padding:56px 20px 16px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+  .app-header h1 { font-size:22px; font-weight:700; background:linear-gradient(135deg,var(--secondary),var(--primary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .header-badge { background:var(--card); border:1px solid var(--card-border); padding:6px 14px; border-radius:30px; font-size:13px; color:var(--secondary); font-weight:600; }
+  .card { background:var(--card); border:1px solid var(--card-border); border-radius:var(--radius); padding:20px; margin-bottom:16px; }
+  .btn { width:100%; padding:16px; border:none; border-radius:30px; font-size:16px; font-weight:700; cursor:pointer; transition:all 0.2s; letter-spacing:0.3px; }
+  .btn:active { transform:scale(0.97); }
+  .btn-primary { background:linear-gradient(135deg,var(--primary),var(--secondary)); color:#fff; }
+  .btn-secondary { background:var(--card); border:1px solid var(--card-border); color:var(--text); }
+  .btn-ghost { background:transparent; color:var(--muted); font-size:14px; }
+  .signal-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 16px; border-radius:30px; font-size:13px; font-weight:700; letter-spacing:0.5px; }
+  .signal-pill.stable { background:var(--stable-bg); color:var(--stable-text); }
+  .signal-pill.monitor { background:var(--monitor-bg); color:var(--monitor-text); }
+  .signal-pill.escalate { background:var(--escalate-bg); color:var(--escalate-text); }
+  #screen-onboarding { background:linear-gradient(160deg,#2D1B69 0%,#1A0A2E 50%,#0D1B2A 100%); justify-content:center; padding:40px 28px; }
+  .onboard-logo { width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--secondary)); display:flex; align-items:center; justify-content:center; font-size:42px; margin:0 auto 28px; box-shadow:0 0 40px rgba(107,79,160,0.5); }
+  .onboard-title { font-size:30px; font-weight:800; text-align:center; margin-bottom:8px; }
+  .onboard-sub { font-size:15px; color:var(--muted); text-align:center; line-height:1.6; margin-bottom:32px; }
+  .input-group { margin-bottom:20px; }
+  .input-label { font-size:13px; color:var(--muted); margin-bottom:8px; display:block; font-weight:600; letter-spacing:0.5px; }
+  .input-field { width:100%; background:rgba(255,255,255,0.06); border:1.5px solid var(--card-border); border-radius:14px; padding:14px 18px; color:#fff; font-size:16px; outline:none; transition:border-color 0.2s; }
+  .input-field:focus { border-color:var(--primary); }
+  .input-field::placeholder { color:rgba(196,181,224,0.5); }
+  .privacy-note { font-size:12px; color:var(--muted); text-align:center; margin-top:16px; line-height:1.6; opacity:0.8; }
+  .welcome-text { font-size:24px; font-weight:700; margin-bottom:4px; }
+  .welcome-sub { font-size:14px; color:var(--muted); margin-bottom:20px; }
+  .signal-card { border-radius:var(--radius); padding:24px; margin-bottom:20px; position:relative; overflow:hidden; }
+  .signal-card::before { content:''; position:absolute; top:-30px; right:-30px; width:120px; height:120px; border-radius:50%; opacity:0.15; background:var(--secondary); }
+  .signal-label { font-size:11px; letter-spacing:2px; color:var(--muted); font-weight:600; margin-bottom:8px; }
+  .signal-value { font-size:42px; font-weight:800; margin-bottom:6px; }
+  .signal-desc { font-size:14px; color:var(--muted); line-height:1.5; }
+  .quick-stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+  .stat-card { background:var(--card); border:1px solid var(--card-border); border-radius:16px; padding:16px; }
+  .stat-value { font-size:24px; font-weight:700; color:var(--secondary); }
+  .stat-label { font-size:11px; color:var(--muted); margin-top:2px; }
+  .checkin-header { padding:56px 20px 16px; flex-shrink:0; }
+  .progress-bar-wrap { height:4px; background:rgba(255,255,255,0.1); border-radius:4px; margin-bottom:8px; }
+  .progress-bar-fill { height:4px; background:linear-gradient(90deg,var(--primary),var(--secondary)); border-radius:4px; transition:width 0.4s ease; }
+  .step-label { font-size:12px; color:var(--muted); }
+  .step-question { font-size:22px; font-weight:700; line-height:1.3; margin:20px 0 8px; }
+  .step-hint { font-size:13px; color:var(--muted); margin-bottom:24px; }
+  .chip-grid { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:24px; }
+  .chip { padding:10px 16px; border-radius:30px; border:1.5px solid var(--card-border); background:rgba(255,255,255,0.04); font-size:14px; cursor:pointer; transition:all 0.2s; color:var(--text); }
+  .chip.selected { background:var(--primary); border-color:var(--primary); color:#fff; box-shadow:0 4px 15px rgba(107,79,160,0.4); }
+  .slider-wrap { margin:8px 0 24px; }
+  .slider { width:100%; -webkit-appearance:none; height:6px; border-radius:6px; background:rgba(255,255,255,0.1); outline:none; }
+  .slider::-webkit-slider-thumb { -webkit-appearance:none; width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--secondary)); cursor:pointer; box-shadow:0 4px 12px rgba(107,79,160,0.5); }
+  .slider-labels { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-top:6px; }
+  .slider-value { text-align:center; font-size:28px; font-weight:800; color:var(--secondary); margin:8px 0; }
+  .radio-options { display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
+  .radio-opt { padding:16px 20px; border-radius:14px; border:1.5px solid var(--card-border); background:rgba(255,255,255,0.04); cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:12px; }
+  .radio-opt.selected { border-color:var(--primary); background:rgba(107,79,160,0.2); }
+  .radio-dot { width:18px; height:18px; border-radius:50%; border:2px solid var(--card-border); transition:all 0.2s; flex-shrink:0; }
+  .radio-opt.selected .radio-dot { background:var(--primary); border-color:var(--primary); }
+  .radio-text { font-size:15px; font-weight:500; }
+  .notes-area { width:100%; background:rgba(255,255,255,0.06); border:1.5px solid var(--card-border); border-radius:14px; padding:14px 18px; color:#fff; font-size:15px; min-height:100px; resize:none; outline:none; font-family:inherit; line-height:1.6; transition:border-color 0.2s; }
+  .notes-area:focus { border-color:var(--primary); }
+  .notes-area::placeholder { color:rgba(196,181,224,0.5); }
+  .notes-label { font-size:13px; color:var(--muted); margin-bottom:10px; line-height:1.6; }
+  .checkin-nav { padding:16px 20px 32px; display:flex; gap:12px; flex-shrink:0; }
+  .companion-header { padding:60px 20px 20px; text-align:center; flex-shrink:0; }
+  .companion-icon { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--secondary)); display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 16px; box-shadow:0 0 30px rgba(107,79,160,0.4); }
+  .companion-title { font-size:22px; font-weight:700; margin-bottom:4px; }
+  .companion-sub { font-size:13px; color:var(--muted); }
+  .companion-message { font-size:16px; line-height:1.7; color:var(--text); }
+  .loading-dots { display:flex; justify-content:center; gap:8px; padding:20px 0; }
+  .loading-dots span { width:10px; height:10px; border-radius:50%; background:var(--primary); animation:bounce 1.2s infinite; }
+  .loading-dots span:nth-child(2) { animation-delay:0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay:0.4s; }
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-12px)} }
+  .chart-container { position:relative; height:180px; margin-bottom:8px; }
+  .section-title { font-size:13px; letter-spacing:1.5px; color:var(--muted); font-weight:600; margin-bottom:12px; margin-top:4px; }
+  .history-item { display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--card-border); }
+  .history-item:last-child { border-bottom:none; }
+  .history-date { font-size:13px; color:var(--muted); }
+  .history-symptoms { font-size:12px; color:var(--muted); margin-top:2px; }
+  .report-card { background:rgba(255,255,255,0.96); border-radius:var(--radius); padding:22px; margin-bottom:20px; color:#1A0A2E; }
+  .report-title { font-size:18px; font-weight:800; color:#1A0A2E; margin-bottom:4px; }
+  .report-date { font-size:12px; color:#666; margin-bottom:16px; }
+  .report-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee; font-size:14px; }
+  .report-row:last-child { border-bottom:none; }
+  .report-key { color:#555; }
+  .report-val { font-weight:700; color:#1A0A2E; }
+  .share-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:16px; border:none; border-radius:16px; font-size:16px; font-weight:700; cursor:pointer; margin-bottom:12px; transition:all 0.2s; }
+  .share-btn:active { transform:scale(0.97); }
+  .share-btn.copy { background:var(--primary); color:#fff; }
+  .share-btn.email { background:var(--secondary); color:#fff; }
+  .share-btn.print { background:var(--card); border:1px solid var(--card-border); color:#fff; }
+  .disclaimer { font-size:11px; color:var(--muted); text-align:center; line-height:1.6; margin-top:8px; }
+  .toast { position:fixed; bottom:100px; left:50%; transform:translateX(-50%) translateY(20px); background:rgba(75,191,191,0.95); color:#fff; padding:12px 24px; border-radius:30px; font-size:14px; font-weight:600; opacity:0; transition:all 0.3s; pointer-events:none; z-index:999; white-space:nowrap; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
+<div id="app">
 
-
-<div id="mode-banner" class="mode-banner">⚡ Connecting to cloud…</div>
-<div id="saving-overlay" class="saving-overlay">
-  <div class="spinner"></div>
-  <div class="saving-text" id="saving-text">Saving your check-in…</div>
-</div>
-
-
-<!-- CLINICIAN MODAL -->
-<div class="modal-overlay" id="clinician-modal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">📋 Share With Your Clinician</div>
-    <div class="modal-sub">Copy, email, or print this summary to bring to your next appointment.<br><em>Not a diagnosis · Your clinician makes all clinical decisions.</em></div>
-    <div class="clinician-report" id="clinician-report-text"></div>
-    <div class="modal-actions">
-      <button class="btn-copy" id="btn-copy-report">📋 Copy</button>
-      <button class="btn-email" id="btn-email-report">📧 Email</button>
-      <button class="btn-print" id="btn-print-report">🖨️ Print</button>
+  <!-- ONBOARDING -->
+  <div id="screen-onboarding" class="screen">
+    <div class="onboard-logo">💜</div>
+    <h1 class="onboard-title">HerSignal</h1>
+    <p class="onboard-sub">Your weekly companion for navigating perimenopause with clarity, confidence, and control.</p>
+    <div class="input-group">
+      <label class="input-label">YOUR INITIALS</label>
+      <input id="initials-input" class="input-field" type="text" placeholder="e.g. R.O." maxlength="5" autocomplete="off" autocorrect="off" spellcheck="false">
     </div>
-    <button class="btn-modal-close" id="btn-close-modal">Close</button>
+    <button class="btn btn-primary" id="btn-get-started">Get Started 💜</button>
+    <p class="privacy-note">Your initials stay on your device only.<br>Your health data is stored anonymously — we never know who you are.</p>
   </div>
-</div>
 
-
-<!-- SCREEN 0 — ONBOARDING (first launch only) -->
-<div id="screen-onboard" class="screen">
-  <div class="ob-logo">🌿</div>
-  <div class="ob-title">Welcome to<br>HerSignal</div>
-  <div class="ob-sub">Your weekly perimenopause check-in. Before we begin, enter your initials so your data stays yours — even across devices.</div>
-  <div class="ob-input-wrap">
-    <label class="ob-label" for="ob-initials-input">Your Initials</label>
-    <input class="ob-input" id="ob-initials-input" type="text" maxlength="4" placeholder="e.g. R.O." autocomplete="off" autocorrect="off" spellcheck="false" />
-    <div class="ob-hint">2–4 characters · Never shared · Used only to identify your check-ins</div>
-  </div>
-  <button class="ob-btn" id="ob-continue-btn" disabled>Start Tracking →</button>
-  <div class="ob-privacy">🔒 No account required · De-identified · Your data is yours</div>
-</div>
-
-
-<!-- SCREEN 1 — WELCOME -->
-<div id="screen-welcome" class="screen">
-  <div class="hero-left">
-    <div class="brand-mark">
-      <div class="brand-icon">💜</div>
-      <div class="brand-name">Her<span>Signal</span></div>
+  <!-- HOME -->
+  <div id="screen-home" class="screen hidden">
+    <div class="app-header">
+      <h1>HerSignal</h1>
+      <div class="header-badge" id="home-initials-badge"></div>
     </div>
-    <div class="hero-tagline">Your body is<br><em>telling you</em><br>something.</div>
-    <p class="hero-sub">This is your weekly check-in. About 3 minutes. Your answers build the pattern picture that helps you understand what your body is telling you — and when it's time to talk to your doctor.</p>
-    <button class="btn-begin" id="btn-begin">✦ Begin Check-In</button>
-    <p class="hero-privacy">🔒 Not a diagnosis · Your clinician makes all clinical decisions · Data saved securely.</p>
-    <div class="signal-legend">
-      <div class="sig-leg-item"><div class="sig-leg-dot" style="background:#16a34a"></div>Stable</div>
-      <div class="sig-leg-item"><div class="sig-leg-dot" style="background:#d97706"></div>Monitor</div>
-      <div class="sig-leg-item"><div class="sig-leg-dot" style="background:#dc2626"></div>Escalate</div>
-    </div>
-  </div>
-  <div class="hero-right">
-    <div class="panel-signal-ring">
-      <div class="panel-signal-inner">💜</div>
-    </div>
-    <p class="panel-quote">"Your symptoms have a pattern.<br>HerSignal finds it."</p>
-    <div class="panel-dots">
-      <div class="panel-dot" style="background:#16a34a"></div>
-      <div class="panel-dot" style="background:#d97706"></div>
-      <div class="panel-dot" style="background:#dc2626"></div>
-    </div>
-    <div class="panel-label">Signal Tracking</div>
-  </div>
-</div>
-
-
-<!-- SCREEN 2 — SYMPTOMS -->
-<div id="screen-symptoms" class="screen checkin-screen">
-  <div class="ci-header">
-    <div class="ci-header-top"><div class="ci-brand">HerSignal</div><div class="ci-step-label">Step 1 of 5</div></div>
-    <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
-  </div>
-  <div class="ci-body">
-    <div class="step-title">What are you experiencing?</div>
-    <div class="step-sub">Select everything that felt present, even if mild. Patterns matter more than severity right now.</div>
-    <div class="symptom-grid" id="symptom-grid"></div>
-    <button class="btn-next" id="btn-symptoms-next" disabled>Continue →</button>
-    <button class="btn-back" id="btn-symptoms-back">← Back</button>
-  </div>
-</div>
-
-
-<!-- SCREEN 3 — INTENSITY -->
-<div id="screen-intensity" class="screen checkin-screen">
-  <div class="ci-header">
-    <div class="ci-header-top"><div class="ci-brand">HerSignal</div><div class="ci-step-label">Step 2 of 5</div></div>
-    <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
-  </div>
-  <div class="ci-body">
-    <div class="step-title">Overall intensity</div>
-    <div class="step-sub">1 = barely noticeable · 5 = significantly disruptive to your day.</div>
-    <div class="scale-grid" id="intensity-grid"></div>
-    <button class="btn-next" id="btn-intensity-next" disabled>Continue →</button>
-    <button class="btn-back" id="btn-intensity-back">← Back</button>
-  </div>
-</div>
-
-
-<!-- SCREEN 4 — CONTEXT -->
-<div id="screen-context" class="screen checkin-screen">
-  <div class="ci-header">
-    <div class="ci-header-top"><div class="ci-brand">HerSignal</div><div class="ci-step-label">Step 3 of 5</div></div>
-    <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
-  </div>
-  <div class="ci-body">
-    <div class="step-title">Your context this week</div>
-    <div class="step-sub">Stress and hormonal changes can produce similar symptoms — tracking both helps HerSignal tell them apart.</div>
-    <span class="section-label">Stress level</span>
-    <div class="scale-grid" id="stress-grid"></div>
-    <span class="section-label" style="margin-top:16px;display:block">Cycle status</span>
-    <div class="cycle-options" id="cycle-options"></div>
-    <button class="btn-next" id="btn-context-next" disabled>Continue →</button>
-    <button class="btn-back" id="btn-context-back">← Back</button>
-  </div>
-</div>
-
-
-<!-- SCREEN 5 — CLARITY + NOTES -->
-<div id="screen-clarity" class="screen checkin-screen">
-  <div class="ci-header">
-    <div class="ci-header-top"><div class="ci-brand">HerSignal</div><div class="ci-step-label">Step 4 of 5</div></div>
-    <div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div>
-  </div>
-  <div class="ci-body">
-    <div class="step-title">Clarity score</div>
-    <div class="step-sub">How clearly are you able to think and function this week? 1 = foggy, 10 = sharp.</div>
-    <div class="clarity-display">
-      <div class="clarity-num" id="clarity-display">5</div>
-      <div class="clarity-lbl" id="clarity-label-text">Moderate</div>
-    </div>
-    <input type="range" min="1" max="10" value="5" id="clarity-slider"/>
-    <div class="clarity-labels"><span>1 — Foggy</span><span>10 — Sharp</span></div>
-    <div style="margin-top:28px">
-      <span class="section-label">Notes for your doctor (optional)</span>
-      <textarea class="notes-box" id="notes-field" placeholder="Anything specific you want to remember — something that felt different, a question forming, or something to tell your doctor…"></textarea>
-    </div>
-    <button class="btn-next" id="btn-submit" style="margin-top:8px">✦ Get My Signal</button>
-    <button class="btn-back" id="btn-clarity-back">← Back</button>
-  </div>
-</div>
-
-
-<!-- SCREEN 6 — RESULTS -->
-<div id="screen-results" class="screen">
-  <div style="background:var(--warm-white);min-height:100vh">
-    <div class="results-header">
-      <div class="results-title">Here's what HerSignal recorded for you.</div>
-      <div class="results-date" id="results-date"></div>
-      <div class="results-disclaimer">Not a diagnosis · Your clinician makes all clinical decisions</div>
-    </div>
-    <div class="results-body">
-      <div class="signal-card" id="signal-card">
-        <span class="sig-icon" id="signal-icon">✅</span>
-        <div class="sig-status" id="signal-status">Stable</div>
-        <div class="sig-desc" id="signal-desc"></div>
+    <div class="scroll-content">
+      <p class="welcome-text" id="home-welcome">Welcome back 💜</p>
+      <p class="welcome-sub" id="home-subtitle">Here's where you stand today.</p>
+      <div class="signal-card" id="home-signal-card" style="background:var(--monitor-bg);">
+        <div class="signal-label">YOUR SIGNAL</div>
+        <div class="signal-value" id="home-signal-value" style="color:var(--monitor-text)">Monitor</div>
+        <p class="signal-desc" id="home-signal-desc">Some patterns worth watching. Stay consistent with your check-ins.</p>
       </div>
-      <div class="summary-card">
-        <span class="summary-card-title">Symptoms Logged</span>
-        <div class="symptom-tags" id="results-symptoms"></div>
-      </div>
-      <div class="summary-card">
-        <span class="summary-card-title">This Week's Numbers</span>
-        <div class="three-stats">
-          <div><div class="num" id="res-intensity">—</div><div class="lbl">Intensity</div></div>
-          <div><div class="num" id="res-stress" style="color:var(--plum)">—</div><div class="lbl">Stress</div></div>
-          <div><div class="num" id="res-clarity" style="color:var(--teal-light)">—</div><div class="lbl">Clarity</div></div>
+      <div class="quick-stats">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-checkins">0</div>
+          <div class="stat-label">Total Check-Ins</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-streak">—</div>
+          <div class="stat-label">Last Check-In</div>
         </div>
       </div>
-      <div class="summary-card" id="notes-result-card" style="display:none">
-        <span class="summary-card-title">Your Notes</span>
-        <div class="notes-display" id="notes-result-display"></div>
-      </div>
-      <div class="algo-card">
-        <span class="section-label">How Your Signal Is Calculated</span>
-        <strong style="color:var(--escalate)">Escalate</strong> — a high-risk symptom is present and stress is very low.<br>
-        <strong style="color:var(--monitor)">Monitor</strong> — 5 or more symptoms, or a high-risk symptom with elevated stress.<br>
-        <strong style="color:var(--stable)">Stable</strong> — symptoms are within a manageable range this week.
-      </div>
-      <button class="btn-clinician" id="btn-share-clinician">📋 Share With My Clinician</button>
-      <button class="btn-next" id="btn-go-dashboard">View My Dashboard →</button>
+      <button class="btn btn-primary" id="btn-start-checkin" style="margin-bottom:12px;">Check In Now</button>
+      <button class="btn btn-secondary" id="btn-go-share">Share with My Clinician</button>
     </div>
+    <nav class="nav-bar">
+      <div class="nav-item active" data-nav="home"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></div>
+      <div class="nav-item" data-nav="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Trends</span></div>
+      <div class="nav-item" data-nav="share"><span class="nav-icon">👩‍⚕️</span><span class="nav-label">Clinician</span></div>
+    </nav>
   </div>
-</div>
 
-
-<!-- SCREEN 7 — DASHBOARD -->
-<div id="screen-dashboard" class="screen">
-  <div class="dash-banner"><span>✦ HerSignal</span></div>
-  <div class="dash-body">
-    <div class="dash-greeting" id="dash-greeting">Your Health Dashboard</div>
-    <div class="dash-sub" id="dash-sub">Built from your check-ins · updated each week</div>
-    <div class="dash-built">Not a diagnostic tool · All decisions made by you and your clinician</div>
-    <div class="signal-history-panel">
-      <span class="section-label">Current Signal</span>
-      <div class="current-signal-row none" id="cur-signal-row">
-        <div class="sig-dot-lg"></div>
-        <div class="cur-sig-text">
-          <strong id="cur-signal-name">No data yet</strong>
-          <span id="cur-signal-desc">Complete your first check-in to see your signal</span>
+  <!-- CHECK-IN -->
+  <div id="screen-checkin" class="screen hidden">
+    <div class="checkin-header">
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="ci-progress" style="width:20%"></div></div>
+      <div class="step-label" id="ci-step-label">Step 1 of 5</div>
+    </div>
+    <div class="scroll-content" id="ci-content">
+      <!-- Step 1: Symptoms -->
+      <div id="ci-step-1">
+        <p class="step-question">What have you been experiencing this week?</p>
+        <p class="step-hint">Select all that apply</p>
+        <div class="chip-grid" id="symptom-chips">
+          <div class="chip" data-sym="Hot Flashes">Hot Flashes</div>
+          <div class="chip" data-sym="Night Sweats">Night Sweats</div>
+          <div class="chip" data-sym="Sleep Disruption">Sleep Disruption</div>
+          <div class="chip" data-sym="Brain Fog">Brain Fog</div>
+          <div class="chip" data-sym="Mood Changes">Mood Changes</div>
+          <div class="chip" data-sym="Anxiety">Anxiety</div>
+          <div class="chip" data-sym="Fatigue">Fatigue</div>
+          <div class="chip" data-sym="Joint Pain">Joint Pain</div>
+          <div class="chip" data-sym="Headaches">Headaches</div>
+          <div class="chip" data-sym="Heart Palpitations">Heart Palpitations</div>
         </div>
       </div>
-      <span class="section-label">Recent Check-Ins</span>
-      <div class="history-dots-row" id="history-dots-row"></div>
+      <!-- Step 2: Intensity -->
+      <div id="ci-step-2" style="display:none">
+        <p class="step-question">How intense have your symptoms been overall?</p>
+        <p class="step-hint">Slide to rate your experience</p>
+        <div class="slider-value" id="intensity-val">3</div>
+        <div class="slider-wrap">
+          <input type="range" class="slider" id="intensity-slider" min="1" max="5" step="1" value="3">
+          <div class="slider-labels"><span>Very Mild</span><span>Moderate</span><span>Very Intense</span></div>
+        </div>
+      </div>
+      <!-- Step 3: Stress -->
+      <div id="ci-step-3" style="display:none">
+        <p class="step-question">How would you rate your stress level this week?</p>
+        <p class="step-hint">1 = very low, 5 = very high</p>
+        <div class="slider-value" id="stress-val">3</div>
+        <div class="slider-wrap">
+          <input type="range" class="slider" id="stress-slider" min="1" max="5" step="1" value="3">
+          <div class="slider-labels"><span>Very Low</span><span>Moderate</span><span>Very High</span></div>
+        </div>
+      </div>
+      <!-- Step 4: Cycle -->
+      <div id="ci-step-4" style="display:none">
+        <p class="step-question">How would you describe your cycle right now?</p>
+        <p class="step-hint">Choose the closest option</p>
+        <div class="radio-options" id="cycle-options">
+          <div class="radio-opt" data-cycle="Regular"><div class="radio-dot"></div><span class="radio-text">Regular — mostly on schedule</span></div>
+          <div class="radio-opt" data-cycle="Irregular"><div class="radio-dot"></div><span class="radio-text">Irregular — unpredictable timing</span></div>
+          <div class="radio-opt" data-cycle="Skipped"><div class="radio-dot"></div><span class="radio-text">Skipped — missed this cycle</span></div>
+          <div class="radio-opt" data-cycle="Stopped"><div class="radio-dot"></div><span class="radio-text">Stopped — no period in 12+ months</span></div>
+        </div>
+      </div>
+      <!-- Step 5: Clarity & Notes -->
+      <div id="ci-step-5" style="display:none">
+        <p class="step-question">How clear-headed have you felt?</p>
+        <p class="step-hint">Mental clarity, focus, and memory</p>
+        <div class="slider-value" id="clarity-val">3</div>
+        <div class="slider-wrap">
+          <input type="range" class="slider" id="clarity-slider" min="1" max="5" step="1" value="3">
+          <div class="slider-labels"><span>Very Foggy</span><span>Okay</span><span>Very Clear</span></div>
+        </div>
+        <div style="margin-top:20px">
+          <p class="notes-label">Anything specific you want to remember — something that felt different, a question forming, or something to tell your doctor?</p>
+          <textarea class="notes-area" id="ci-notes" placeholder="Write anything here..."></textarea>
+        </div>
+      </div>
     </div>
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-num" id="stat-checkins">0</div><div class="stat-lbl">Check-Ins</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-symptoms">—</div><div class="stat-lbl">Avg Symptoms</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-streak">0</div><div class="stat-lbl">Week Streak</div></div>
-    </div>
-    <div class="chart-panel">
-      <span class="section-label">Intensity &amp; Clarity Trend</span>
-      <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
-    </div>
-    <button class="btn-dash-clinician" id="btn-dash-share">📋 Share Full History With My Clinician</button>
-    <button class="btn-new-checkin" id="btn-new-checkin">+ New Check-In</button>
-    <div class="dash-footer">
-      Your data is de-identified. No personal information is ever stored.<br>
-      All check-ins are anonymous — linked only to your initials + a unique device ID.<br>
-      <em>HerSignal™ Beta · Not a diagnostic tool · ODHAi © 2026</em>
+    <div class="checkin-nav">
+      <button class="btn btn-ghost" id="ci-btn-back" style="width:auto;padding:16px 20px;">← Back</button>
+      <button class="btn btn-primary" id="ci-btn-next" style="flex:1">Next →</button>
+      <button class="btn btn-primary" id="ci-btn-submit" style="flex:1;display:none">Submit 💜</button>
     </div>
   </div>
-</div>
 
+  <!-- COMPANION -->
+  <div id="screen-companion" class="screen hidden">
+    <div class="companion-header">
+      <div class="companion-icon">💜</div>
+      <h2 class="companion-title">Your Signal</h2>
+      <p class="companion-sub">Based on today's check-in</p>
+    </div>
+    <div class="scroll-content">
+      <div class="card" style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:13px;color:var(--muted)">SIGNAL STATUS</span>
+        <span class="signal-pill" id="companion-signal-pill">Monitor</span>
+      </div>
+      <div class="card" id="companion-card">
+        <div class="loading-dots" id="companion-loading"><span></span><span></span><span></span></div>
+        <p class="companion-message" id="companion-text" style="display:none"></p>
+      </div>
+      <button class="btn btn-primary" id="btn-view-trends" style="margin-bottom:12px">View My Trends</button>
+      <button class="btn btn-secondary" id="btn-companion-done">Done</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="screen-dashboard" class="screen hidden">
+    <div class="app-header">
+      <h1>Trends</h1>
+      <div class="header-badge">Last 6 Weeks</div>
+    </div>
+    <div class="scroll-content">
+      <div class="section-title">SYMPTOM INTENSITY</div>
+      <div class="card"><div class="chart-container"><canvas id="intensity-chart"></canvas></div></div>
+      <div class="section-title">MENTAL CLARITY</div>
+      <div class="card"><div class="chart-container"><canvas id="clarity-chart"></canvas></div></div>
+      <div class="section-title">RECENT CHECK-INS</div>
+      <div class="card" id="history-list">
+        <p style="color:var(--muted);font-size:14px;text-align:center;padding:12px 0">Complete your first check-in to see your history.</p>
+      </div>
+    </div>
+    <nav class="nav-bar">
+      <div class="nav-item" data-nav="home"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></div>
+      <div class="nav-item active" data-nav="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Trends</span></div>
+      <div class="nav-item" data-nav="share"><span class="nav-icon">👩‍⚕️</span><span class="nav-label">Clinician</span></div>
+    </nav>
+  </div>
+
+  <!-- CLINICIAN SHARE -->
+  <div id="screen-share" class="screen hidden">
+    <div class="app-header"><h1>Share Report</h1></div>
+    <div class="scroll-content">
+      <div class="report-card" id="report-card">
+        <div class="report-title">HerSignal Clinical Summary</div>
+        <div class="report-date" id="report-date">Generated: —</div>
+        <div class="report-row"><span class="report-key">Signal Status</span><span class="report-val" id="r-signal">—</span></div>
+        <div class="report-row"><span class="report-key">Total Check-Ins</span><span class="report-val" id="r-total">—</span></div>
+        <div class="report-row"><span class="report-key">Avg. Intensity</span><span class="report-val" id="r-intensity">—</span></div>
+        <div class="report-row"><span class="report-key">Avg. Clarity</span><span class="report-val" id="r-clarity">—</span></div>
+        <div class="report-row"><span class="report-key">Avg. Stress</span><span class="report-val" id="r-stress">—</span></div>
+        <div class="report-row"><span class="report-key">Top Symptoms</span><span class="report-val" id="r-symptoms" style="text-align:right;max-width:60%;">—</span></div>
+        <div class="report-row"><span class="report-key">Cycle Status</span><span class="report-val" id="r-cycle">—</span></div>
+      </div>
+      <button class="share-btn copy" id="btn-copy-report">📋 Copy Report</button>
+      <button class="share-btn email" id="btn-email-report">✉️ Email to Provider</button>
+      <button class="share-btn print" id="btn-print-report">🖨️ Print Report</button>
+      <p class="disclaimer">This summary is based on self-reported check-ins and is not a medical diagnosis. Please discuss with your healthcare provider.</p>
+    </div>
+    <nav class="nav-bar">
+      <div class="nav-item" data-nav="home"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></div>
+      <div class="nav-item" data-nav="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Trends</span></div>
+      <div class="nav-item active" data-nav="share"><span class="nav-icon">👩‍⚕️</span><span class="nav-label">Clinician</span></div>
+    </nav>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
 
 <script>
-/* ─── CONFIG ─────────────────────────────────────────────── */
-var SUPABASE_URL = 'https://kwriboxxujqrypxopthl.supabase.co';
-var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3cmlib3h4dWpxcnlweG9wdGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5ODk2OTYsImV4cCI6MjA5NDU2NTY5Nn0.qoxQ9tPEoEnBPAT3M0ru3uxJDvTMcBnlP6lL9MYSDHw';
-var LS_KEY  = 'hsig_checkins_v3';
-var LS_UID  = 'hsig_uid';
-var LS_OB   = 'hsig_onboarded';
+const SUPABASE_URL = 'https://kwriboxxujqrypxopthl.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3cmlib3h4dWpxcnlweG9wdGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5ODk2OTYsImV4cCI6MjA5NDU2NTY5Nn0.qoxQ9tPEoEnBPAT3M0ru3uxJDvTMcBnlP6lL9MYSDHw';
+const OPENAI_KEY = 'PASTE_YOUR_NEW_KEY_HERE';
 
+let state = {
+  screen: 'onboarding',
+  userUUID: localStorage.getItem('hs_uuid') || '',
+  userInitials: localStorage.getItem('hs_initials') || '',
+  isOnboarded: localStorage.getItem('hs_onboarded') === 'true',
+  lastSignal: localStorage.getItem('hs_signal') || 'Stable',
+  checkins: JSON.parse(localStorage.getItem('hsig_checkins_v3') || '[]'),
+  ciStep: 0, ciSymptoms: [], ciIntensity: 3, ciStress: 3,
+  ciCycle: '', ciClarity: 3, ciNotes: '',
+};
 
-/* ─── CONSTANTS ──────────────────────────────────────────── */
-var HIGH_RISK = ['Hot Flashes','Night Sweats','Heart Palpitations','Heavy Bleeding'];
-var SYMPTOMS  = ['Hot Flashes','Night Sweats','Brain Fog','Mood Shifts','Sleep Problems',
-                 'Heart Palpitations','Heavy Bleeding','Fatigue','Joint Pain',
-                 'Anxiety','Memory Changes','Weight Changes'];
-var INTENSITY = {1:{emoji:'🌿',label:'Barely there'},2:{emoji:'🌤',label:'Mild'},
-                 3:{emoji:'⛅',label:'Moderate'},4:{emoji:'⛈',label:'Strong'},5:{emoji:'🌪',label:'Severe'}};
-var STRESS    = {1:{emoji:'😌',label:'Very calm'},2:{emoji:'🙂',label:'Calm'},
-                 3:{emoji:'😐',label:'Moderate'},4:{emoji:'😟',label:'Stressed'},5:{emoji:'😰',label:'Very stressed'}};
-var CYCLES    = [{value:'regular',icon:'🔵',label:'Regular cycle'},
-                 {value:'irregular',icon:'🟡',label:'Irregular cycle'},
-                 {value:'peri',icon:'🟠',label:'Perimenopause'},
-                 {value:'meno',icon:'🔴',label:'Menopause / Post'},
-                 {value:'prefer-not',icon:'⚪',label:'Prefer not to say'}];
-var CLARITY_LBLS = {1:'Very foggy',2:'Foggy',3:'Hazy',4:'Somewhat unclear',5:'Moderate',
-                    6:'Mostly clear',7:'Clear',8:'Very clear',9:'Sharp',10:'Crystal clear'};
-
-
-/* ─── STATE ──────────────────────────────────────────────── */
-var S = {symptoms:[],intensity:null,stress:null,cycle:'',clarity:5,notes:'',last:null};
-var trendChart = null;
-
-
-/* ─── ONBOARDING ─────────────────────────────────────────── */
-function hasOnboarded() {
-  return !!localStorage.getItem(LS_OB);
+if (state.checkins.length === 0) {
+  const now = Date.now(), day = 86400000;
+  state.checkins = [
+    { checked_at: new Date(now-42*day).toISOString(), intensity:2, clarity:4, stress:2, signal:'Stable', symptoms:['Fatigue'], cycle_status:'Regular' },
+    { checked_at: new Date(now-35*day).toISOString(), intensity:3, clarity:3, stress:3, signal:'Monitor', symptoms:['Hot Flashes','Fatigue'], cycle_status:'Irregular' },
+    { checked_at: new Date(now-28*day).toISOString(), intensity:3, clarity:3, stress:4, signal:'Monitor', symptoms:['Night Sweats','Brain Fog'], cycle_status:'Irregular' },
+    { checked_at: new Date(now-21*day).toISOString(), intensity:4, clarity:2, stress:4, signal:'Escalate', symptoms:['Hot Flashes','Night Sweats','Brain Fog','Anxiety'], cycle_status:'Skipped' },
+    { checked_at: new Date(now-14*day).toISOString(), intensity:3, clarity:3, stress:3, signal:'Monitor', symptoms:['Hot Flashes','Sleep Disruption'], cycle_status:'Skipped' },
+    { checked_at: new Date(now-7*day).toISOString(), intensity:3, clarity:3, stress:3, signal:'Monitor', symptoms:['Fatigue','Mood Changes'], cycle_status:'Irregular' },
+  ];
+  localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
 }
 
-
-function completeOnboarding(initials) {
-  var clean = initials.replace(/[^A-Za-z]/g,'').toUpperCase().slice(0,4);
-  var uid   = clean + '_' + Date.now().toString(36);
-  localStorage.setItem(LS_UID, uid);
-  localStorage.setItem(LS_OB, '1');
-  return uid;
+function showScreen(name, direction='forward') {
+  const current = document.getElementById('screen-'+state.screen);
+  const next = document.getElementById('screen-'+name);
+  if (!next || name === state.screen) return;
+  current.classList.add(direction === 'back' ? 'hidden' : 'hidden-left');
+  next.classList.remove('hidden','hidden-left');
+  state.screen = name;
+  if (name === 'dashboard') setTimeout(renderCharts, 80);
+  if (name === 'share') updateShareReport();
+  if (name === 'home') updateHome();
 }
 
-
-/* ─── HELPERS ────────────────────────────────────────────── */
-function genUUID() {
-  if(crypto && crypto.randomUUID) return crypto.randomUUID();
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){
-    var r=Math.random()*16|0; return(c==='x'?r:(r&0x3|0x8)).toString(16);
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const target = item.dataset.nav;
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll(`[data-nav="${target}"]`).forEach(n => n.classList.add('active'));
+    showScreen(target);
   });
-}
-
-
-function getUserId() {
-  var u = localStorage.getItem(LS_UID);
-  if(!u){ u = genUUID(); localStorage.setItem(LS_UID, u); }
-  return u;
-}
-
-
-function getInitialsFromUid() {
-  var uid = getUserId();
-  var parts = uid.split('_');
-  return parts.length >= 2 ? parts[0] : '';
-}
-
-
-function getSignal(symptoms, stress) {
-  var hasHR = symptoms.some(function(s){ return HIGH_RISK.indexOf(s.name) > -1; });
-  if(hasHR && stress <= 2) return 'escalate';
-  if(symptoms.length >= 5 || (hasHR && stress > 2)) return 'monitor';
-  return 'stable';
-}
-
-
-/* ─── LOCAL STORAGE ──────────────────────────────────────── */
-function lsLoad() {
-  try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
-  catch(e){ return []; }
-}
-function lsSave(records) {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(records)); } catch(e){}
-}
-function lsAppend(rec) {
-  var all = lsLoad();
-  if(!all.some(function(r){ return r.session_id === rec.session_id; })){
-    all.push(rec);
-    lsSave(all);
-  }
-  return all;
-}
-
-
-/* ─── SUPABASE SYNC ──────────────────────────────────────── */
-function supabaseHeaders() {
-  return {
-    'apikey': SUPABASE_KEY,
-    'Authorization': 'Bearer ' + SUPABASE_KEY,
-    'Content-Type': 'application/json',
-    'Prefer': 'return=representation'
-  };
-}
-
-
-function syncToSupabase(rec) {
-  fetch(SUPABASE_URL + '/rest/v1/checkins', {
-    method: 'POST',
-    headers: supabaseHeaders(),
-    body: JSON.stringify(rec)
-  }).then(function(res){
-    if(res.ok){
-      setBanner('☁️ Cloud sync enabled — data saved securely', 'ok');
-    } else {
-      res.text().then(function(t){ console.warn('Supabase insert:', res.status, t); });
-      setBanner('⚡ Saved locally — cloud sync pending', 'warn');
-    }
-  }).catch(function(e){
-    console.warn('Supabase unreachable:', e);
-    setBanner('⚡ Saved locally — cloud sync pending', 'warn');
-  });
-}
-
-
-function syncFromSupabase() {
-  var uid = getUserId();
-  var controller = new AbortController();
-  var timeout = setTimeout(function(){ controller.abort(); }, 3000);
-  fetch(SUPABASE_URL + '/rest/v1/checkins?user_id=eq.' + uid + '&order=checked_at.asc', {
-    signal: controller.signal,
-    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-  }).then(function(r){ clearTimeout(timeout); return r.json(); })
-  .then(function(remote){
-    if(Array.isArray(remote) && remote.length > 0){
-      var local = lsLoad(), merged = local.slice();
-      remote.forEach(function(rec){
-        if(!merged.some(function(l){ return l.session_id === rec.session_id; })) merged.push(rec);
-      });
-      if(merged.length > local.length) lsSave(merged);
-      setBanner('☁️ Cloud sync enabled — ' + merged.length + ' check-in' + (merged.length!==1?'s':'') + ' synced', 'ok');
-    }
-  }).catch(function(){
-    setBanner('⚡ Ready — offline mode active', 'warn');
-  });
-}
-
-
-/* ─── BANNER ─────────────────────────────────────────────── */
-function setBanner(msg, type) {
-  var b = document.getElementById('mode-banner');
-  b.textContent = msg;
-  var styles = {
-    ok:  {background:'#d1fae5',color:'#065f46'},
-    warn:{background:'#fef3c7',color:'#92400e'},
-    err: {background:'#fee2e2',color:'#991b1b'}
-  };
-  var s = styles[type] || styles.warn;
-  b.style.background = s.background;
-  b.style.color = s.color;
-}
-
-
-/* ─── SAVE CHECK-IN ──────────────────────────────────────── */
-function saveCheckin(d) {
-  var sig = getSignal(d.symptoms, d.stress);
-  var rec = {
-    user_id:       getUserId(),
-    session_id:    genUUID(),
-    checked_at:    new Date().toISOString(),
-    symptoms:      d.symptoms,
-    stress_level:  d.stress,
-    cycle_status:  d.cycle,
-    clarity_score: d.clarity,
-    intensity:     d.intensity,
-    signal:        sig,
-    notes:         d.notes || ''
-  };
-  lsAppend(rec);
-  return new Promise(function(resolve){
-    setTimeout(function(){
-      syncToSupabase(rec);
-      resolve(rec);
-    }, 600);
-  });
-}
-
-
-function loadCheckins() {
-  return Promise.resolve(lsLoad());
-}
-
-
-/* ─── SCREEN NAV ─────────────────────────────────────────── */
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
-  var el = document.getElementById(id);
-  if(el){ el.classList.add('active'); window.scrollTo(0,0); }
-}
-
-
-/* ─── CHECK-IN FLOW ──────────────────────────────────────── */
-function startCheckin() {
-  S.symptoms=[]; S.intensity=null; S.stress=null; S.cycle=''; S.clarity=5; S.notes='';
-  var slider = document.getElementById('clarity-slider');
-  if(slider) slider.value = 5;
-  updateClarity(5);
-  var nf = document.getElementById('notes-field');
-  if(nf) nf.value = '';
-  document.querySelectorAll('.symptom-chip').forEach(function(b){ b.classList.remove('selected','high-risk'); });
-  document.querySelectorAll('#intensity-grid .scale-btn,#stress-grid .scale-btn').forEach(function(b){ b.classList.remove('selected'); });
-  document.querySelectorAll('.cycle-opt').forEach(function(b){ b.classList.remove('selected'); });
-  document.getElementById('btn-symptoms-next').disabled = true;
-  document.getElementById('btn-intensity-next').disabled = true;
-  document.getElementById('btn-context-next').disabled = true;
-  showScreen('screen-symptoms');
-}
-
-
-function buildSymptoms() {
-  var g = document.getElementById('symptom-grid'); g.innerHTML = '';
-  SYMPTOMS.forEach(function(name){
-    var isHR = HIGH_RISK.indexOf(name) > -1;
-    var btn = document.createElement('button');
-    btn.className = 'symptom-chip';
-    btn.innerHTML = '<span class="chip-dot"></span><span>' + name + '</span>';
-    btn.addEventListener('click', function(){
-      var i = S.symptoms.findIndex(function(s){ return s.name === name; });
-      if(i > -1){ S.symptoms.splice(i,1); btn.classList.remove('selected','high-risk'); }
-      else{ S.symptoms.push({name:name,highRisk:isHR}); btn.classList.add('selected'); if(isHR) btn.classList.add('high-risk'); }
-      document.getElementById('btn-symptoms-next').disabled = S.symptoms.length === 0;
-    });
-    g.appendChild(btn);
-  });
-}
-
-
-function buildScale(id, labels, max, cb) {
-  var g = document.getElementById(id); g.innerHTML = '';
-  for(var i = 1; i <= max; i++){
-    (function(val){
-      var btn = document.createElement('button'); btn.className = 'scale-btn';
-      var info = labels[val] || {emoji:'',label:''};
-      btn.innerHTML = '<span class="scale-emoji">'+info.emoji+'</span><span class="scale-num">'+val+'</span><span class="scale-label">'+info.label+'</span>';
-      btn.addEventListener('click', function(){
-        g.querySelectorAll('.scale-btn').forEach(function(b){ b.classList.remove('selected'); });
-        btn.classList.add('selected'); cb(val);
-      });
-      g.appendChild(btn);
-    })(i);
-  }
-}
-
-
-function buildCycles() {
-  var c = document.getElementById('cycle-options'); c.innerHTML = '';
-  CYCLES.forEach(function(opt){
-    var btn = document.createElement('button'); btn.className = 'cycle-opt';
-    btn.innerHTML = '<span class="cycle-icon">'+opt.icon+'</span><span>'+opt.label+'</span>';
-    btn.addEventListener('click', function(){
-      document.querySelectorAll('.cycle-opt').forEach(function(b){ b.classList.remove('selected'); });
-      btn.classList.add('selected'); S.cycle = opt.value;
-      document.getElementById('btn-context-next').disabled = !(S.stress && S.cycle);
-    });
-    c.appendChild(btn);
-  });
-}
-
-
-function updateClarity(v) {
-  S.clarity = parseInt(v);
-  document.getElementById('clarity-display').textContent = v;
-  document.getElementById('clarity-label-text').textContent = CLARITY_LBLS[v] || '';
-}
-
-
-function submitCheckin() {
-  S.notes = document.getElementById('notes-field').value.trim();
-  var ov = document.getElementById('saving-overlay'); ov.classList.add('active');
-  saveCheckin({symptoms:S.symptoms,stress:S.stress,cycle:S.cycle,clarity:S.clarity,intensity:S.intensity,notes:S.notes})
-    .then(function(rec){
-      S.last = rec;
-      renderResults(rec);
-      ov.classList.remove('active');
-      showScreen('screen-results');
-    }).catch(function(e){
-      console.error(e);
-      ov.classList.remove('active');
-    });
-}
-
-
-/* ─── RESULTS ────────────────────────────────────────────── */
-function renderResults(r) {
-  var sig = r.signal;
-  document.getElementById('signal-card').className = 'signal-card ' + sig;
-  var icons  = {stable:'✅', monitor:'⚠️', escalate:'🆘'};
-  var descs  = {
-    stable:   'Your symptoms are within a manageable range this week. Keep tracking — consistency is how patterns emerge.',
-    monitor:  'You have multiple symptoms or a significant symptom present. Consider discussing with your healthcare provider.',
-    escalate: 'A high-risk symptom is present while stress is low. We recommend speaking with a healthcare provider soon.'
-  };
-  document.getElementById('signal-icon').textContent   = icons[sig];
-  document.getElementById('signal-status').textContent = sig.charAt(0).toUpperCase() + sig.slice(1);
-  document.getElementById('signal-desc').textContent   = descs[sig];
-  document.getElementById('results-date').textContent  = new Date(r.checked_at).toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  var tc = document.getElementById('results-symptoms'); tc.innerHTML = '';
-  r.symptoms.forEach(function(s){
-    var t = document.createElement('span');
-    t.className = 'symptom-tag' + (HIGH_RISK.indexOf(s.name)>-1?' high-risk':'');
-    t.textContent = s.name; tc.appendChild(t);
-  });
-  document.getElementById('res-intensity').textContent = (r.intensity||'—') + '/5';
-  document.getElementById('res-stress').textContent    = (r.stress_level||'—') + '/5';
-  document.getElementById('res-clarity').textContent   = (r.clarity_score||'—') + '/10';
-  var nc = document.getElementById('notes-result-card');
-  if(r.notes && r.notes.length > 0){
-    nc.style.display = 'block';
-    document.getElementById('notes-result-display').textContent = '"' + r.notes + '"';
-  } else { nc.style.display = 'none'; }
-}
-
-
-/* ─── CLINICIAN REPORT ───────────────────────────────────── */
-function buildClinicianReport(mode) {
-  var data = lsLoad();
-  var now  = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  var lines = [];
-  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  lines.push('  HERSIGNAL™ — CLINICIAN SUMMARY REPORT');
-  lines.push('  Generated: ' + now);
-  lines.push('  Not a diagnostic tool · For clinical review only');
-  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  lines.push('');
-  if(mode === 'single' && S.last){
-    var r = S.last;
-    lines.push('LATEST CHECK-IN');
-    lines.push('Date:     ' + new Date(r.checked_at).toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}));
-    lines.push('Signal:   ' + r.signal.toUpperCase());
-    lines.push('Symptoms: ' + r.symptoms.map(function(s){ return s.name + (HIGH_RISK.indexOf(s.name)>-1?' [HIGH-RISK]':''); }).join(', '));
-    lines.push('Intensity: '+(r.intensity||'—')+'/5  |  Stress: '+(r.stress_level||'—')+'/5  |  Clarity: '+(r.clarity_score||'—')+'/10');
-    lines.push('Cycle: ' + (r.cycle_status||'—'));
-    if(r.notes) lines.push('Patient Notes: "' + r.notes + '"');
-    lines.push('');
-  }
-  if(data.length > 0){
-    lines.push('CHECK-IN HISTORY (' + data.length + ' session' + (data.length!==1?'s':'') + ')');
-    lines.push('──────────────────────────────────────');
-    var recent = data.slice(-10).reverse();
-    recent.forEach(function(r, i){
-      var d = new Date(r.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-      lines.push((i+1)+'. '+d+' — Signal: '+r.signal.toUpperCase()+' | Intensity: '+(r.intensity||'—')+'/5 | Stress: '+(r.stress_level||'—')+'/5 | Clarity: '+(r.clarity_score||'—')+'/10');
-      lines.push('   Symptoms: ' + r.symptoms.map(function(s){ return s.name; }).join(', '));
-      if(r.notes) lines.push('   Notes: "' + r.notes + '"');
-    });
-    lines.push('');
-    var stable   = data.filter(function(r){ return r.signal==='stable'; }).length;
-    var monitor  = data.filter(function(r){ return r.signal==='monitor'; }).length;
-    var escalate = data.filter(function(r){ return r.signal==='escalate'; }).length;
-    lines.push('SIGNAL SUMMARY');
-    lines.push('──────────────────────────────────────');
-    lines.push('Stable:   ' + stable   + ' session' + (stable!==1?'s':''));
-    lines.push('Monitor:  ' + monitor  + ' session' + (monitor!==1?'s':''));
-    lines.push('Escalate: ' + escalate + ' session' + (escalate!==1?'s':''));
-    var freq = {};
-    data.forEach(function(r){ r.symptoms.forEach(function(s){ freq[s.name]=(freq[s.name]||0)+1; }); });
-    var sorted = Object.keys(freq).sort(function(a,b){ return freq[b]-freq[a]; }).slice(0,5);
-    if(sorted.length > 0){
-      lines.push('');
-      lines.push('TOP RECURRING SYMPTOMS');
-      lines.push('──────────────────────────────────────');
-      sorted.forEach(function(s){ lines.push('• '+s+': '+freq[s]+' occurrence'+(freq[s]!==1?'s':'')+(HIGH_RISK.indexOf(s)>-1?' [HIGH-RISK]':'')); });
-    }
-    var withNotes = data.filter(function(r){ return r.notes && r.notes.length > 0; });
-    if(withNotes.length > 0){
-      lines.push('');
-      lines.push('PATIENT NOTES FOR CLINICIAN');
-      lines.push('──────────────────────────────────────');
-      withNotes.forEach(function(r){
-        var d = new Date(r.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-        lines.push(d + ': "' + r.notes + '"');
-      });
-    }
-  }
-  lines.push('');
-  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  lines.push('HerSignal™ Beta · Not a diagnostic tool');
-  lines.push('All decisions made by you and your clinician');
-  lines.push('ODHAi © 2026 · contact@odhai.health');
-  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  return lines.join('\n');
-}
-
-
-function openClinicianModal(mode) {
-  var report = buildClinicianReport(mode || 'full');
-  document.getElementById('clinician-report-text').textContent = report;
-  document.getElementById('btn-copy-report').textContent = '📋 Copy';
-  document.getElementById('btn-copy-report').classList.remove('copied');
-  document.getElementById('clinician-modal').classList.add('active');
-}
-
-
-/* ─── DASHBOARD ──────────────────────────────────────────── */
-function renderDashboard() {
-  loadCheckins().then(function(data){
-    // Personalize greeting with initials
-    var initials = getInitialsFromUid();
-    if(initials) document.getElementById('dash-greeting').textContent = 'Welcome back, ' + initials;
-
-
-    document.getElementById('stat-checkins').textContent = data.length;
-    if(data.length > 0){
-      var avg = (data.reduce(function(a,c){ return a + (c.symptoms||[]).length; }, 0) / data.length).toFixed(1);
-      document.getElementById('stat-symptoms').textContent = avg;
-      document.getElementById('stat-streak').textContent   = Math.min(data.length, 52);
-      var lat = data[data.length - 1]; var sig = lat.signal;
-      var row = document.getElementById('cur-signal-row');
-      row.className = 'current-signal-row ' + sig;
-      var desc = {
-        stable:   'Symptoms are manageable — keep tracking.',
-        monitor:  'Multiple or significant symptoms present.',
-        escalate: 'High-risk symptom detected — consider speaking with a provider.'
-      };
-      document.getElementById('cur-signal-name').textContent = sig.charAt(0).toUpperCase() + sig.slice(1);
-      document.getElementById('cur-signal-desc').textContent = desc[sig] || '';
-    }
-    var dr = document.getElementById('history-dots-row'); dr.innerHTML = '';
-    var last7 = data.slice(-7);
-    for(var i = 0; i < 7; i++){
-      var e = last7[i];
-      var w = document.createElement('div'); w.className = 'h-dot-wrap'; w.style.flex = '1';
-      var dot = document.createElement('div'); dot.className = 'h-dot ' + (e ? e.signal : 'empty');
-      var lbl = document.createElement('div'); lbl.className = 'h-dot-lbl';
-      lbl.textContent = e ? new Date(e.checked_at).toLocaleDateString('en-US',{month:'numeric',day:'numeric'}) : '—';
-      w.appendChild(dot); w.appendChild(lbl); dr.appendChild(w);
-    }
-    document.getElementById('dash-sub').textContent = data.length === 0
-      ? 'Complete your first check-in to see your trends'
-      : 'Built from your check-ins · ' + data.length + ' session' + (data.length!==1?'s':'') + ' recorded';
-    setTimeout(function(){
-      var slice   = data.slice(-10);
-      var lbls    = slice.map(function(c){ return new Date(c.checked_at).toLocaleDateString('en-US',{month:'numeric',day:'numeric'}); });
-      var intData = slice.map(function(c){ return c.intensity     || 0; });
-      var clrData = slice.map(function(c){ return c.clarity_score || 0; });
-      if(trendChart){ trendChart.destroy(); trendChart = null; }
-      var canvas = document.getElementById('trend-chart');
-      if(!canvas) return;
-      trendChart = new Chart(canvas.getContext('2d'), {
-        type: 'line',
-        data: { labels: lbls, datasets: [
-          {label:'Intensity', data:intData, borderColor:'#0d4a4a', backgroundColor:'rgba(13,74,74,0.1)', tension:0.4, fill:true,  pointRadius:5, pointHoverRadius:7},
-          {label:'Clarity',   data:clrData, borderColor:'#4a1a6b', backgroundColor:'rgba(74,26,107,0.08)',tension:0.4, fill:false, pointRadius:5, pointHoverRadius:7}
-        ]},
-        options:{
-          responsive:true, maintainAspectRatio:false, animation:{duration:600},
-          plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}},
-          scales:{
-            y:{min:0,max:10,grid:{color:'#f3f4f6'},ticks:{font:{size:10},stepSize:2}},
-            x:{grid:{display:false},ticks:{font:{size:10}}}
-          }
-        }
-      });
-    }, 80);
-  });
-}
-
-
-/* ─── INIT ───────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', function(){
-
-
-  // ── Onboarding gate ──
-  if(!hasOnboarded()){
-    showScreen('screen-onboard');
-
-
-    var obInput = document.getElementById('ob-initials-input');
-    var obBtn   = document.getElementById('ob-continue-btn');
-
-
-    obInput.addEventListener('input', function(){
-      var val = this.value.replace(/[^A-Za-z.]/g,'');
-      this.value = val;
-      var letters = val.replace(/\./g,'');
-      obBtn.disabled = letters.length < 2;
-    });
-
-
-    obBtn.addEventListener('click', function(){
-      var val = obInput.value.replace(/[^A-Za-z]/g,'');
-      if(val.length < 2) return;
-      completeOnboarding(val);
-      initApp();
-      showScreen('screen-welcome');
-    });
-
-
-    obInput.addEventListener('keydown', function(e){
-      if(e.key === 'Enter' && !obBtn.disabled) obBtn.click();
-    });
-
-
-  } else {
-    initApp();
-    showScreen('screen-welcome');
-  }
 });
 
+document.getElementById('btn-get-started').addEventListener('click', () => {
+  const val = document.getElementById('initials-input').value.trim().toUpperCase();
+  if (!val) { showToast('Please enter your initials 💜'); return; }
+  const uuid = 'hs-' + Math.random().toString(36).substr(2,8);
+  state.userInitials = val; state.userUUID = uuid; state.isOnboarded = true;
+  localStorage.setItem('hs_initials', val);
+  localStorage.setItem('hs_uuid', uuid);
+  localStorage.setItem('hs_onboarded', 'true');
+  showScreen('home'); updateHome();
+});
 
-function initApp(){
-  setBanner('⚡ Connecting…', 'warn');
-  setTimeout(function(){ syncFromSupabase(); }, 500);
+if (state.isOnboarded && state.userInitials) { showScreen('home'); updateHome(); }
 
+function updateHome() {
+  document.getElementById('home-initials-badge').textContent = state.userInitials || '';
+  document.getElementById('home-welcome').textContent = `Welcome back, ${state.userInitials} 💜`;
+  document.getElementById('stat-checkins').textContent = state.checkins.length;
+  const last = state.checkins[state.checkins.length-1];
+  if (last) {
+    const d = new Date(last.checked_at);
+    document.getElementById('stat-streak').textContent = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  }
+  const sig = state.lastSignal;
+  const bgs = {Stable:'var(--stable-bg)',Monitor:'var(--monitor-bg)',Escalate:'var(--escalate-bg)'};
+  const txts = {Stable:'var(--stable-text)',Monitor:'var(--monitor-text)',Escalate:'var(--escalate-text)'};
+  const descs = {
+    Stable:'Your patterns are steady. Keep checking in consistently.',
+    Monitor:'Some patterns worth watching. Stay consistent with your check-ins.',
+    Escalate:"Your body is asking for attention. This pattern is worth discussing with your provider."
+  };
+  document.getElementById('home-signal-card').style.background = bgs[sig]||bgs.Monitor;
+  document.getElementById('home-signal-value').style.color = txts[sig]||txts.Monitor;
+  document.getElementById('home-signal-value').textContent = sig;
+  document.getElementById('home-signal-desc').textContent = descs[sig]||descs.Monitor;
+}
 
-  buildSymptoms();
-  buildScale('intensity-grid', INTENSITY, 5, function(v){ S.intensity = v; document.getElementById('btn-intensity-next').disabled = false; });
-  buildScale('stress-grid',    STRESS,    5, function(v){ S.stress    = v; document.getElementById('btn-context-next').disabled = !(S.stress && S.cycle); });
-  buildCycles();
+document.getElementById('btn-start-checkin').addEventListener('click', () => { resetCheckin(); showScreen('checkin'); });
+document.getElementById('btn-go-share').addEventListener('click', () => {
+  showScreen('share');
+  document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); if(n.dataset.nav==='share') n.classList.add('active'); });
+});
 
+function resetCheckin() {
+  state.ciStep=0; state.ciSymptoms=[]; state.ciIntensity=3; state.ciStress=3; state.ciCycle=''; state.ciClarity=3; state.ciNotes='';
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('.radio-opt').forEach(r=>r.classList.remove('selected'));
+  ['intensity-slider','stress-slider','clarity-slider'].forEach(id=>document.getElementById(id).value=3);
+  ['intensity-val','stress-val','clarity-val'].forEach(id=>document.getElementById(id).textContent=3);
+  document.getElementById('ci-notes').value='';
+  renderCheckinStep();
+}
 
-  document.getElementById('btn-begin').addEventListener('click', startCheckin);
-  document.getElementById('btn-symptoms-next').addEventListener('click', function(){ if(S.symptoms.length > 0) showScreen('screen-intensity'); });
-  document.getElementById('btn-symptoms-back').addEventListener('click', function(){ showScreen('screen-welcome'); });
-  document.getElementById('btn-intensity-next').addEventListener('click', function(){ if(S.intensity) showScreen('screen-context'); });
-  document.getElementById('btn-intensity-back').addEventListener('click', function(){ showScreen('screen-symptoms'); });
-  document.getElementById('btn-context-next').addEventListener('click', function(){ if(S.stress && S.cycle) showScreen('screen-clarity'); });
-  document.getElementById('btn-context-back').addEventListener('click', function(){ showScreen('screen-intensity'); });
-  document.getElementById('clarity-slider').addEventListener('input', function(){ updateClarity(this.value); });
-  document.getElementById('btn-submit').addEventListener('click', submitCheckin);
-  document.getElementById('btn-clarity-back').addEventListener('click', function(){ showScreen('screen-context'); });
-  document.getElementById('btn-go-dashboard').addEventListener('click', function(){ showScreen('screen-dashboard'); renderDashboard(); });
-  document.getElementById('btn-new-checkin').addEventListener('click', startCheckin);
+function renderCheckinStep() {
+  const step = state.ciStep;
+  [1,2,3,4,5].forEach(i => document.getElementById('ci-step-'+i).style.display = (i===step+1)?'':'none');
+  document.getElementById('ci-progress').style.width = ((step+1)/5*100)+'%';
+  document.getElementById('ci-step-label').textContent = `Step ${step+1} of 5`;
+  document.getElementById('ci-btn-back').style.display = step===0?'none':'';
+  document.getElementById('ci-btn-next').style.display = step<4?'':'none';
+  document.getElementById('ci-btn-submit').style.display = step===4?'':'none';
+  document.getElementById('ci-content').scrollTop=0;
+}
 
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    chip.classList.toggle('selected');
+    const sym = chip.dataset.sym;
+    if (chip.classList.contains('selected')) { if(!state.ciSymptoms.includes(sym)) state.ciSymptoms.push(sym); }
+    else { state.ciSymptoms = state.ciSymptoms.filter(s=>s!==sym); }
+  });
+});
 
-  document.getElementById('btn-share-clinician').addEventListener('click', function(){ openClinicianModal('single'); });
-  document.getElementById('btn-dash-share').addEventListener('click',     function(){ openClinicianModal('full'); });
-  document.getElementById('btn-close-modal').addEventListener('click',    function(){ document.getElementById('clinician-modal').classList.remove('active'); });
-  document.getElementById('clinician-modal').addEventListener('click',    function(e){ if(e.target === this) this.classList.remove('active'); });
+document.getElementById('intensity-slider').addEventListener('input', e => { state.ciIntensity=+e.target.value; document.getElementById('intensity-val').textContent=e.target.value; });
+document.getElementById('stress-slider').addEventListener('input', e => { state.ciStress=+e.target.value; document.getElementById('stress-val').textContent=e.target.value; });
+document.getElementById('clarity-slider').addEventListener('input', e => { state.ciClarity=+e.target.value; document.getElementById('clarity-val').textContent=e.target.value; });
 
+document.querySelectorAll('.radio-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.radio-opt').forEach(r=>r.classList.remove('selected'));
+    opt.classList.add('selected'); state.ciCycle=opt.dataset.cycle;
+  });
+});
 
-  document.getElementById('btn-copy-report').addEventListener('click', function(){
-    var text = document.getElementById('clinician-report-text').textContent;
-    navigator.clipboard.writeText(text).then(function(){
-      var btn = document.getElementById('btn-copy-report');
-      btn.textContent = '✅ Copied!'; btn.classList.add('copied');
-      setTimeout(function(){ btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2500);
-    }).catch(function(){
-      var ta = document.createElement('textarea'); ta.value = text;
-      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-      document.getElementById('btn-copy-report').textContent = '✅ Copied!';
+document.getElementById('ci-notes').addEventListener('input', e => state.ciNotes=e.target.value);
+document.getElementById('ci-btn-back').addEventListener('click', () => { if(state.ciStep===0){showScreen('home','back');return;} state.ciStep--; renderCheckinStep(); });
+document.getElementById('ci-btn-next').addEventListener('click', () => { if(state.ciStep<4){state.ciStep++;renderCheckinStep();} });
+
+document.getElementById('ci-btn-submit').addEventListener('click', async () => {
+  document.getElementById('ci-btn-submit').disabled=true;
+  document.getElementById('ci-btn-submit').textContent='Saving...';
+  const sig = calcSignal();
+  state.lastSignal=sig; localStorage.setItem('hs_signal',sig);
+  const record = {
+    user_id:state.userUUID, session_id:state.userUUID+'-'+Date.now(),
+    checked_at:new Date().toISOString(), symptoms:state.ciSymptoms,
+    stress_level:state.ciStress, cycle_status:state.ciCycle,
+    clarity_score:state.ciClarity, intensity:state.ciIntensity,
+    signal:sig, notes:state.ciNotes
+  };
+  state.checkins.push(record);
+  localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
+  syncToSupabase(record);
+  showScreen('companion');
+  updateCompanionSignal(sig);
+  generateCompanionResponse(sig);
+});
+
+function calcSignal() {
+  if (state.ciIntensity>=4||state.ciStress>=4) return 'Escalate';
+  if (state.ciIntensity>=3||state.ciStress>=3) return 'Monitor';
+  return 'Stable';
+}
+
+function updateCompanionSignal(sig) {
+  const pill = document.getElementById('companion-signal-pill');
+  pill.textContent=sig; pill.className='signal-pill '+sig.toLowerCase();
+}
+
+async function generateCompanionResponse(sig) {
+  document.getElementById('companion-loading').style.display='flex';
+  document.getElementById('companion-text').style.display='none';
+  const recent = state.checkins.slice(-4);
+  const avgIntensity = (recent.reduce((a,c)=>a+(c.intensity||0),0)/recent.length).toFixed(1);
+  const prompt = `A woman just completed her weekly perimenopause check-in. De-identified pattern only:
+Symptoms: ${state.ciSymptoms.join(', ')||'none'}.
+Intensity: ${state.ciIntensity}/5. Stress: ${state.ciStress}/5. Clarity: ${state.ciClarity}/5. Cycle: ${state.ciCycle||'not specified'}. Signal: ${sig}.
+Recent average intensity: ${avgIntensity}/5.
+Write a warm, empathetic companion response (max 100 words). Validate her experience, reflect patterns with compassion, gently encourage provider conversation if Monitor or Escalate. Never diagnose. Speak like a caring knowledgeable friend. End warmly.`;
+
+  if (OPENAI_KEY === 'PASTE_YOUR_NEW_KEY_HERE') {
+    await new Promise(r=>setTimeout(r,1800));
+    const fallbacks = {
+      Stable:`You're doing well 💜 Your patterns look steady this week. The consistency you're building with your check-ins creates real clarity over time. Keep listening to your body — it's communicating with you.`,
+      Monitor:`Thank you for checking in 💜 Your body is sending some signals worth paying attention to. What you're tracking is real — you're not imagining this. Consider noting today's check-in for your next provider visit. You're doing something powerful by paying attention.`,
+      Escalate:`Your body has been working hard lately 💜 What you're experiencing is real and deserves real attention. This pattern is worth a conversation with your provider soon. You don't have to figure this out alone.`
+    };
+    showCompanionText(fallbacks[sig]||fallbacks.Monitor); return;
+  }
+
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${OPENAI_KEY}`},
+      body:JSON.stringify({
+        model:'gpt-4o-mini',
+        messages:[
+          {role:'system',content:'You are a warm, empathetic health companion for women navigating perimenopause. Speak like a knowledgeable friend — never clinical. Validate experience, reflect patterns with compassion, encourage provider conversations when needed. Never diagnose.'},
+          {role:'user',content:prompt}
+        ],
+        max_tokens:150, temperature:0.8
+      })
     });
+    const data = await res.json();
+    showCompanionText(data.choices?.[0]?.message?.content || 'You showed up today — and that matters 💜');
+  } catch {
+    showCompanionText(`You showed up today — and that matters 💜 Keep checking in.`);
+  }
+}
+
+function showCompanionText(text) {
+  document.getElementById('companion-loading').style.display='none';
+  const el = document.getElementById('companion-text');
+  el.textContent=text; el.style.display='block';
+}
+
+document.getElementById('btn-view-trends').addEventListener('click', () => {
+  showScreen('dashboard');
+  document.querySelectorAll('.nav-item').forEach(n=>{n.classList.remove('active');if(n.dataset.nav==='dashboard')n.classList.add('active');});
+});
+document.getElementById('btn-companion-done').addEventListener('click', () => {
+  showScreen('home','back'); updateHome();
+  document.getElementById('ci-btn-submit').disabled=false;
+  document.getElementById('ci-btn-submit').textContent='Submit 💜';
+});
+
+let intensityChart=null, clarityChart=null;
+function renderCharts() {
+  const data = state.checkins.slice(-6);
+  const labels = data.map(c=>new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}));
+  const opts = {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:11}}},
+      y:{min:0,max:5,grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:11},stepSize:1}}
+    }
+  };
+  if(intensityChart) intensityChart.destroy();
+  intensityChart = new Chart(document.getElementById('intensity-chart'),{
+    type:'line',
+    data:{labels,datasets:[{data:data.map(c=>c.intensity||0),borderColor:'#6B4FA0',backgroundColor:'rgba(107,79,160,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#6B4FA0',pointRadius:5,borderWidth:2.5}]},
+    options:opts
   });
-
-
-  document.getElementById('btn-email-report').addEventListener('click', function(){
-    var text    = document.getElementById('clinician-report-text').textContent;
-    var subject = encodeURIComponent('HerSignal Clinician Summary Report');
-    var body    = encodeURIComponent(text);
-    window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+  if(clarityChart) clarityChart.destroy();
+  clarityChart = new Chart(document.getElementById('clarity-chart'),{
+    type:'line',
+    data:{labels,datasets:[{data:data.map(c=>c.clarity_score||c.clarity||0),borderColor:'#4ABFBF',backgroundColor:'rgba(74,191,191,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#4ABFBF',pointRadius:5,borderWidth:2.5}]},
+    options:opts
   });
+  const histEl = document.getElementById('history-list');
+  const recent = [...state.checkins].reverse().slice(0,5);
+  histEl.innerHTML = recent.map(c=>{
+    const d = new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const sym = Array.isArray(c.symptoms)?c.symptoms.slice(0,3).join(' · '):'';
+    const sc = (c.signal||'Monitor').toLowerCase();
+    return `<div class="history-item"><div><div style="font-size:14px;font-weight:600">${d}</div><div class="history-symptoms">${sym||'No symptoms logged'}</div></div><span class="signal-pill ${sc}">${c.signal||'Monitor'}</span></div>`;
+  }).join('');
+}
 
+function updateShareReport() {
+  const data = state.checkins;
+  if(!data.length) return;
+  const avg = key=>(data.reduce((a,c)=>a+(c[key]||0),0)/data.length).toFixed(1);
+  const symMap={};
+  data.forEach(c=>(c.symptoms||[]).forEach(s=>symMap[s]=(symMap[s]||0)+1));
+  const topSyms = Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ');
+  const last = data[data.length-1];
+  document.getElementById('report-date').textContent=`Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
+  document.getElementById('r-signal').textContent=state.lastSignal;
+  document.getElementById('r-total').textContent=data.length;
+  document.getElementById('r-intensity').textContent=avg('intensity')+' / 5';
+  document.getElementById('r-clarity').textContent=avg('clarity_score')+' / 5';
+  document.getElementById('r-stress').textContent=avg('stress_level')+' / 5';
+  document.getElementById('r-symptoms').textContent=topSyms||'—';
+  document.getElementById('r-cycle').textContent=last?.cycle_status||'—';
+}
 
-  document.getElementById('btn-print-report').addEventListener('click', function(){ window.print(); });
+function buildReportText() {
+  const data=state.checkins;
+  const avg=key=>(data.reduce((a,c)=>a+(c[key]||0),0)/data.length).toFixed(1);
+  const symMap={};
+  data.forEach(c=>(c.symptoms||[]).forEach(s=>symMap[s]=(symMap[s]||0)+1));
+  const topSyms=Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ');
+  return `HerSignal Clinical Summary
+Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}
+
+Signal Status: ${state.lastSignal}
+Total Check-Ins: ${data.length}
+Average Symptom Intensity: ${avg('intensity')} / 5
+Average Mental Clarity: ${avg('clarity_score')} / 5
+Average Stress Level: ${avg('stress_level')} / 5
+Most Frequent Symptoms: ${topSyms||'None'}
+Cycle Status (most recent): ${data[data.length-1]?.cycle_status||'—'}
+
+This summary is based on self-reported weekly check-ins and is not a medical diagnosis.`;
+}
+
+document.getElementById('btn-copy-report').addEventListener('click', ()=>navigator.clipboard.writeText(buildReportText()).then(()=>showToast('Report copied ✓')));
+document.getElementById('btn-email-report').addEventListener('click', ()=>{ window.location.href=`mailto:?subject=HerSignal%20Health%20Summary&body=${encodeURIComponent(buildReportText())}`; });
+document.getElementById('btn-print-report').addEventListener('click', ()=>window.print());
+
+async function syncToSupabase(record) {
+  try {
+    const ctrl=new AbortController(); setTimeout(()=>ctrl.abort(),5000);
+    await fetch(`${SUPABASE_URL}/rest/v1/checkins`,{
+      method:'POST', signal:ctrl.signal,
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},
+      body:JSON.stringify(record)
+    });
+  } catch(e){}
+}
+
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
 }
 </script>
 </body>
