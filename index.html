@@ -368,10 +368,10 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const OPENAI_KEY = 'PASTE_YOUR_NEW_KEY_HERE';
 
 const COMPANIONS = {
-  maya:   { name:'Maya',   trait:'Warm · Nurturing · Real',         emoji:'💜', photo:'https://odhaihealth-web.github.io/hersignal/maya.jpg' },
-  nia:    { name:'Nia',    trait:'Calm · Grounding · Wise',         emoji:'🌿', photo:'https://odhaihealth-web.github.io/hersignal/nia.jpg' },
+  maya:   { name:'Maya',   trait:'Warm · Nurturing · Real',         emoji:'💜', photo:'https://odhaihealth-web.github.io/hersignal/Maya.jpg' },
+  nia:    { name:'Nia',    trait:'Calm · Grounding · Wise',         emoji:'🌿', photo:'https://odhaihealth-web.github.io/hersignal/Nia.jpg' },
   renee:  { name:'Renee',  trait:'Honest · Spirited · Funny',       emoji:'🔥', photo:'https://odhaihealth-web.github.io/hersignal/renee.jpg' },
-  diane:  { name:'Diane',  trait:'Steady · Experienced · Maternal', emoji:'🌸', photo:'https://odhaihealth-web.github.io/hersignal/diane.jpg' },
+  diane:  { name:'Diane',  trait:'Steady · Experienced · Maternal', emoji:'🌸', photo:'https://odhaihealth-web.github.io/hersignal/Diane.jpg' },
   lauren: { name:'Lauren', trait:'Gentle · Intuitive · Thoughtful', emoji:'✨', photo:'https://odhaihealth-web.github.io/hersignal/lauren.jpg' }
 };
 
@@ -451,7 +451,6 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
-// ── ONBOARDING ──
 document.getElementById('btn-get-started').addEventListener('click', () => {
   const val = document.getElementById('initials-input').value.trim().toUpperCase();
   if (!val) { showToast('Please enter your initials 💜'); return; }
@@ -469,7 +468,6 @@ if (state.isOnboarded && state.userInitials) {
   else { buildCompanionGrid(); showScreen('companion-select'); }
 }
 
-// ── COMPANION SELECT ──
 let selectedCompanionKey = '';
 
 function buildCompanionGrid() {
@@ -504,7 +502,6 @@ document.getElementById('btn-companion-confirm').addEventListener('click', () =>
   showScreen('home'); updateHome();
 });
 
-// ── HOME ──
 function updateHome() {
   document.getElementById('home-initials-badge').textContent = state.userInitials || '';
   document.getElementById('home-welcome').textContent = `Welcome back, ${state.userInitials} 💜`;
@@ -535,13 +532,11 @@ document.getElementById('btn-go-share').addEventListener('click', () => {
   document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); if(n.dataset.nav==='share') n.classList.add('active'); });
 });
 
-// ── MODE CHOOSER ──
 document.getElementById('mc-btn-chat').addEventListener('click', () => { startChatCheckin(); showScreen('chat'); });
 document.getElementById('mc-btn-form').addEventListener('click', () => { startQuickForm(); showScreen('quick-form'); });
 document.getElementById('mc-btn-just-chat').addEventListener('click', () => { startJustChat(); showScreen('just-chat'); });
 document.getElementById('mc-back-btn').addEventListener('click', () => { showScreen('home','back'); updateHome(); });
 
-// ── CHAT HELPERS ──
 function getCompanion() { return COMPANIONS[state.companionKey] || COMPANIONS.maya; }
 
 function addBubble(msgsEl, text, role, comp) {
@@ -585,7 +580,6 @@ function autoResizeTextarea(el) {
   el.addEventListener('input', () => { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,80)+'px'; });
 }
 
-// ── CHAT CHECK-IN ──
 function startChatCheckin() {
   const comp = getCompanion();
   state.chatPhase=0; state.ciSymptoms=[]; state.ciIntensity=3; state.ciStress=3; state.ciCycle=''; state.ciClarity=3; state.ciNotes='';
@@ -683,9 +677,8 @@ async function advanceChatPhase(phase) {
       showNoteInput(); state.chatPhase = 6; break;
     case 'done':
       await saveCheckin();
-      const sig = state.lastSignal;
-      const closings = ['You\'re doing great by checking in consistently. I see you. 💜','Every check-in is an act of self-care. I\'m proud of you.','You showed up for yourself today. That matters.','Keep listening to your body — you know it better than anyone.'];
-      await showTypingThenSpeak(msgs, comp, `Thanks for checking in, ${initials}. Your signal this week: ${sig}. ${closings[Math.floor(Math.random()*closings.length)]}`, 1000);
+      const closings = ["You're doing great by checking in consistently. I see you. 💜","Every check-in is an act of self-care. I'm proud of you.","You showed up for yourself today. That matters.","Keep listening to your body — you know it better than anyone."];
+      await showTypingThenSpeak(msgs, comp, `Thanks for checking in, ${initials}. Your signal this week: ${state.lastSignal}. ${closings[Math.floor(Math.random()*closings.length)]}`, 1000);
       document.getElementById('chat-action-btns').style.display='flex';
       state.chatPhase = 7; break;
   }
@@ -707,7 +700,6 @@ function handleUserReply(text, type, raw=[]) {
   }
 }
 
-// ── QUICK FORM ──
 let qfStep = 0;
 const QF_STEPS = [
   { id:'intensity', title:'Symptom Intensity', sub:'How strong have your symptoms been this week?', type:'slider', min:1, max:5, labels:['Very mild','Very strong'] },
@@ -721,42 +713,39 @@ let qfData = {};
 function startQuickForm() { qfStep=0; qfData={intensity:3,stress:3,clarity:3,symptoms:[],cycle:''}; renderQFStep(); }
 
 function renderQFStep() {
-  const body = document.getElementById('qf-body');
-  const nav  = document.getElementById('qf-nav');
-  const dots = document.getElementById('qf-dots');
+  const body=document.getElementById('qf-body'), nav=document.getElementById('qf-nav'), dots=document.getElementById('qf-dots');
   dots.innerHTML='';
-  QF_STEPS.forEach((_,i) => { const d=document.createElement('div'); d.className='qf-dot'+(i===qfStep?' active':i<qfStep?' done':''); dots.appendChild(d); });
-  const step = QF_STEPS[qfStep];
-  let html = `<div class="qf-step active"><div class="qf-step-title">${step.title}</div><div class="qf-step-sub">${step.sub}</div>`;
+  QF_STEPS.forEach((_,i)=>{ const d=document.createElement('div'); d.className='qf-dot'+(i===qfStep?' active':i<qfStep?' done':''); dots.appendChild(d); });
+  const step=QF_STEPS[qfStep];
+  let html=`<div class="qf-step active"><div class="qf-step-title">${step.title}</div><div class="qf-step-sub">${step.sub}</div>`;
   if (step.type==='slider') {
-    const val = qfData[step.id]||3;
-    html += `<div class="qf-slider-val" id="qf-sv">${val}</div><div class="qf-slider-wrap"><input class="qf-slider" type="range" min="${step.min}" max="${step.max}" value="${val}" id="qf-slider"><div class="qf-slider-labels"><span>${step.labels[0]}</span><span>${step.labels[1]}</span></div></div>`;
+    const val=qfData[step.id]||3;
+    html+=`<div class="qf-slider-val" id="qf-sv">${val}</div><div class="qf-slider-wrap"><input class="qf-slider" type="range" min="${step.min}" max="${step.max}" value="${val}" id="qf-slider"><div class="qf-slider-labels"><span>${step.labels[0]}</span><span>${step.labels[1]}</span></div></div>`;
   } else if (step.type==='chips') {
-    const sel = qfData[step.id]||[];
-    html += `<div class="qf-chips">`;
-    step.chips.forEach(c => { html += `<div class="qf-chip${sel.includes(c)?' selected':''}" data-val="${c}">${c}</div>`; });
-    html += `</div>`;
-  } else if (step.type==='chips-single') {
-    const sel = qfData[step.id]||'';
-    html += `<div class="qf-chips">`;
-    step.chips.forEach(c => { html += `<div class="qf-chip${sel===c?' selected':''}" data-val="${c}">${c}</div>`; });
-    html += `</div>`;
+    const sel=qfData[step.id]||[];
+    html+=`<div class="qf-chips">`;
+    step.chips.forEach(c=>{ html+=`<div class="qf-chip${sel.includes(c)?' selected':''}" data-val="${c}">${c}</div>`; });
+    html+=`</div>`;
+  } else {
+    const sel=qfData[step.id]||'';
+    html+=`<div class="qf-chips">`;
+    step.chips.forEach(c=>{ html+=`<div class="qf-chip${sel===c?' selected':''}" data-val="${c}">${c}</div>`; });
+    html+=`</div>`;
   }
-  html += `</div>`;
-  body.innerHTML = html;
+  html+=`</div>`; body.innerHTML=html;
   if (step.type==='slider') {
-    const sl=document.getElementById('qf-slider'); const sv=document.getElementById('qf-sv');
+    const sl=document.getElementById('qf-slider'),sv=document.getElementById('qf-sv');
     sl.addEventListener('input',()=>{ sv.textContent=sl.value; qfData[step.id]=parseInt(sl.value); });
   } else if (step.type==='chips') {
-    body.querySelectorAll('.qf-chip').forEach(c => { c.addEventListener('click',()=>{ c.classList.toggle('selected'); const v=c.dataset.val; if(c.classList.contains('selected')) qfData[step.id].push(v); else qfData[step.id]=qfData[step.id].filter(x=>x!==v); }); });
+    body.querySelectorAll('.qf-chip').forEach(c=>{ c.addEventListener('click',()=>{ c.classList.toggle('selected'); const v=c.dataset.val; if(c.classList.contains('selected')) qfData[step.id].push(v); else qfData[step.id]=qfData[step.id].filter(x=>x!==v); }); });
   } else {
-    body.querySelectorAll('.qf-chip').forEach(c => { c.addEventListener('click',()=>{ body.querySelectorAll('.qf-chip').forEach(x=>x.classList.remove('selected')); c.classList.add('selected'); qfData[step.id]=c.dataset.val; }); });
+    body.querySelectorAll('.qf-chip').forEach(c=>{ c.addEventListener('click',()=>{ body.querySelectorAll('.qf-chip').forEach(x=>x.classList.remove('selected')); c.classList.add('selected'); qfData[step.id]=c.dataset.val; }); });
   }
   nav.innerHTML='';
-  if (qfStep > 0) { const back=document.createElement('button'); back.className='btn btn-secondary'; back.textContent='← Back'; back.addEventListener('click',()=>{ qfStep--; renderQFStep(); }); nav.appendChild(back); }
+  if (qfStep>0) { const back=document.createElement('button'); back.className='btn btn-secondary'; back.textContent='← Back'; back.addEventListener('click',()=>{ qfStep--; renderQFStep(); }); nav.appendChild(back); }
   const next=document.createElement('button'); next.className='btn btn-primary';
-  next.textContent = qfStep===QF_STEPS.length-1 ? 'Submit ✓' : 'Next →';
-  next.addEventListener('click', async () => {
+  next.textContent=qfStep===QF_STEPS.length-1?'Submit ✓':'Next →';
+  next.addEventListener('click', async ()=>{
     if (qfStep===QF_STEPS.length-1) {
       state.ciIntensity=qfData.intensity; state.ciStress=qfData.stress; state.ciClarity=qfData.clarity;
       state.ciSymptoms=qfData.symptoms; state.ciCycle=qfData.cycle||'Not tracking'; state.ciNotes='';
@@ -768,9 +757,8 @@ function renderQFStep() {
   nav.appendChild(next);
 }
 
-document.getElementById('qf-back-btn').addEventListener('click', () => { showScreen('home','back'); updateHome(); });
+document.getElementById('qf-back-btn').addEventListener('click', ()=>{ showScreen('home','back'); updateHome(); });
 
-// ── JUST CHAT ──
 const JC_OFFLINE = [
   "I hear you. Sometimes just naming what you're feeling is the first step.",
   "That sounds really hard. You're not alone in this — so many women navigate these exact feelings.",
@@ -810,21 +798,18 @@ function startJustChat() {
 }
 
 document.getElementById('jc-send-btn').addEventListener('click', sendJustChat);
-document.getElementById('jc-text-input').addEventListener('keydown', e => { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendJustChat();} });
-document.getElementById('jc-back-btn').addEventListener('click', () => { showScreen('home','back'); updateHome(); });
+document.getElementById('jc-text-input').addEventListener('keydown', e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendJustChat();} });
+document.getElementById('jc-back-btn').addEventListener('click', ()=>{ showScreen('home','back'); updateHome(); });
 
 async function sendJustChat() {
-  const comp = getCompanion();
-  const input = document.getElementById('jc-text-input');
-  const msgs  = document.getElementById('jc-messages');
-  const text  = input.value.trim();
-  if (!text) return;
+  const comp=getCompanion(), input=document.getElementById('jc-text-input'), msgs=document.getElementById('jc-messages');
+  const text=input.value.trim(); if (!text) return;
   input.value=''; input.style.height='auto';
   addBubble(msgs, text, 'user', comp);
   state.jcHistory.push({ role:'user', content:text });
-  if (state.jcHistory.length > 24) state.jcHistory = state.jcHistory.slice(-24);
+  if (state.jcHistory.length>24) state.jcHistory=state.jcHistory.slice(-24);
   const { row:typingRow } = addTypingBubble(msgs, comp);
-  const sysMsg = { role:'system', content: (COMPANION_PROMPTS[state.companionKey]||COMPANION_PROMPTS.maya) + ' Keep responses warm, concise (2-3 sentences), and supportive.' };
+  const sysMsg = { role:'system', content:(COMPANION_PROMPTS[state.companionKey]||COMPANION_PROMPTS.maya)+' Keep responses warm, concise (2-3 sentences), and supportive.' };
   const reply = await callOpenAI([sysMsg, ...state.jcHistory]);
   typingRow.remove();
   const response = reply || JC_OFFLINE[jcOfflineIdx++ % JC_OFFLINE.length];
@@ -832,92 +817,74 @@ async function sendJustChat() {
   state.jcHistory.push({ role:'assistant', content:response });
 }
 
-// ── SAVE CHECK-IN ──
 function calcSignal(intensity, stress, clarity) {
-  const score = (intensity + stress + (6-clarity)) / 3;
-  if (score <= 2.2) return 'Stable';
-  if (score <= 3.5) return 'Monitor';
+  const score=(intensity+stress+(6-clarity))/3;
+  if (score<=2.2) return 'Stable';
+  if (score<=3.5) return 'Monitor';
   return 'Escalate';
 }
 
 async function saveCheckin() {
-  const signal = calcSignal(state.ciIntensity, state.ciStress, state.ciClarity);
-  state.lastSignal = signal;
-  localStorage.setItem('hs_signal', signal);
-  const record = { checked_at:new Date().toISOString(), intensity:state.ciIntensity, clarity_score:state.ciClarity, stress_level:state.ciStress, signal, symptoms:state.ciSymptoms, cycle_status:state.ciCycle, notes:state.ciNotes, user_uuid:state.userUUID };
-  state.checkins.push(record);
-  localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
+  const signal=calcSignal(state.ciIntensity,state.ciStress,state.ciClarity);
+  state.lastSignal=signal; localStorage.setItem('hs_signal',signal);
+  const record={ checked_at:new Date().toISOString(), intensity:state.ciIntensity, clarity_score:state.ciClarity, stress_level:state.ciStress, signal, symptoms:state.ciSymptoms, cycle_status:state.ciCycle, notes:state.ciNotes, user_uuid:state.userUUID };
+  state.checkins.push(record); localStorage.setItem('hsig_checkins_v3',JSON.stringify(state.checkins));
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/checkins`, {
+    await fetch(`${SUPABASE_URL}/rest/v1/checkins`,{
       method:'POST',
       headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
-      body: JSON.stringify({ user_uuid:record.user_uuid, checked_at:record.checked_at, intensity:record.intensity, clarity_score:record.clarity_score, stress_level:record.stress_level, signal:record.signal, symptoms:record.symptoms, cycle_status:record.cycle_status, notes:record.notes })
+      body:JSON.stringify({ user_uuid:record.user_uuid, checked_at:record.checked_at, intensity:record.intensity, clarity_score:record.clarity_score, stress_level:record.stress_level, signal:record.signal, symptoms:record.symptoms, cycle_status:record.cycle_status, notes:record.notes })
     });
-  } catch(e) { console.warn('Supabase sync failed:', e); }
+  } catch(e){ console.warn('Supabase sync failed:',e); }
 }
 
-// ── CHARTS ──
 let intensityChart=null, clarityChart=null;
 
 function renderCharts() {
-  const recent = state.checkins.slice(-6);
-  const labels = recent.map(c => new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}));
-  const chartDefaults = {
-    responsive:true, maintainAspectRatio:false,
-    plugins:{ legend:{display:false} },
-    scales:{ x:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:10}}}, y:{min:1,max:5,grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:10},stepSize:1}} }
-  };
-  if (intensityChart) { intensityChart.destroy(); intensityChart=null; }
-  intensityChart = new Chart(document.getElementById('intensity-chart').getContext('2d'), {
-    type:'line',
-    data:{ labels, datasets:[{ data:recent.map(c=>c.intensity), borderColor:'#F87171', backgroundColor:'rgba(248,113,113,0.12)', tension:0.4, fill:true, pointBackgroundColor:'#F87171', pointRadius:5 }] },
-    options:chartDefaults
-  });
-  if (clarityChart) { clarityChart.destroy(); clarityChart=null; }
-  clarityChart = new Chart(document.getElementById('clarity-chart').getContext('2d'), {
-    type:'line',
-    data:{ labels, datasets:[{ data:recent.map(c=>c.clarity_score), borderColor:'#4ABFBF', backgroundColor:'rgba(74,191,191,0.12)', tension:0.4, fill:true, pointBackgroundColor:'#4ABFBF', pointRadius:5 }] },
-    options:chartDefaults
-  });
-  const hist = document.getElementById('history-list');
-  if (state.checkins.length===0) { hist.innerHTML='<p style="color:var(--muted);font-size:14px;text-align:center;padding:12px 0">No check-ins yet.</p>'; return; }
-  hist.innerHTML = [...state.checkins].reverse().slice(0,8).map(c => {
-    const d=new Date(c.checked_at); const sig=c.signal||'Monitor'; const cls=sig.toLowerCase();
+  const recent=state.checkins.slice(-6);
+  const labels=recent.map(c=>new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}));
+  const opts={ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:10}}}, y:{min:1,max:5,grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:10},stepSize:1}} } };
+  if (intensityChart){intensityChart.destroy();intensityChart=null;}
+  intensityChart=new Chart(document.getElementById('intensity-chart').getContext('2d'),{ type:'line', data:{ labels, datasets:[{ data:recent.map(c=>c.intensity), borderColor:'#F87171', backgroundColor:'rgba(248,113,113,0.12)', tension:0.4, fill:true, pointBackgroundColor:'#F87171', pointRadius:5 }] }, options:opts });
+  if (clarityChart){clarityChart.destroy();clarityChart=null;}
+  clarityChart=new Chart(document.getElementById('clarity-chart').getContext('2d'),{ type:'line', data:{ labels, datasets:[{ data:recent.map(c=>c.clarity_score), borderColor:'#4ABFBF', backgroundColor:'rgba(74,191,191,0.12)', tension:0.4, fill:true, pointBackgroundColor:'#4ABFBF', pointRadius:5 }] }, options:opts });
+  const hist=document.getElementById('history-list');
+  if (state.checkins.length===0){hist.innerHTML='<p style="color:var(--muted);font-size:14px;text-align:center;padding:12px 0">No check-ins yet.</p>';return;}
+  hist.innerHTML=[...state.checkins].reverse().slice(0,8).map(c=>{
+    const d=new Date(c.checked_at),sig=c.signal||'Monitor',cls=sig.toLowerCase();
     return `<div class="history-item"><div><div class="history-date">${d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</div><div class="history-symptoms">${(c.symptoms||[]).slice(0,3).join(' · ')||'No symptoms logged'}</div></div><span class="signal-pill ${cls}">${sig}</span></div>`;
   }).join('');
 }
 
-// ── SHARE ──
 function updateShareReport() {
-  document.getElementById('report-date').textContent = 'Generated: ' + new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  const ci = state.checkins; if (ci.length===0) return;
-  const avg = arr => (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
-  document.getElementById('r-signal').textContent    = state.lastSignal;
-  document.getElementById('r-total').textContent     = ci.length;
-  document.getElementById('r-intensity').textContent = avg(ci.map(c=>c.intensity)) + ' / 5';
-  document.getElementById('r-clarity').textContent   = avg(ci.map(c=>c.clarity_score)) + ' / 5';
-  document.getElementById('r-stress').textContent    = avg(ci.map(c=>c.stress_level)) + ' / 5';
+  document.getElementById('report-date').textContent='Generated: '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const ci=state.checkins; if(ci.length===0) return;
+  const avg=arr=>(arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
+  document.getElementById('r-signal').textContent=state.lastSignal;
+  document.getElementById('r-total').textContent=ci.length;
+  document.getElementById('r-intensity').textContent=avg(ci.map(c=>c.intensity))+' / 5';
+  document.getElementById('r-clarity').textContent=avg(ci.map(c=>c.clarity_score))+' / 5';
+  document.getElementById('r-stress').textContent=avg(ci.map(c=>c.stress_level))+' / 5';
   const sympMap={};
-  ci.forEach(c=>(c.symptoms||[]).forEach(s=>{ sympMap[s]=(sympMap[s]||0)+1; }));
-  document.getElementById('r-symptoms').textContent = Object.entries(sympMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([s])=>s).join(', ')||'None';
+  ci.forEach(c=>(c.symptoms||[]).forEach(s=>{sympMap[s]=(sympMap[s]||0)+1;}));
+  document.getElementById('r-symptoms').textContent=Object.entries(sympMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([s])=>s).join(', ')||'None';
   const cycleCount={};
-  ci.forEach(c=>{ if(c.cycle_status) cycleCount[c.cycle_status]=(cycleCount[c.cycle_status]||0)+1; });
-  document.getElementById('r-cycle').textContent = Object.entries(cycleCount).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—';
+  ci.forEach(c=>{if(c.cycle_status) cycleCount[c.cycle_status]=(cycleCount[c.cycle_status]||0)+1;});
+  document.getElementById('r-cycle').textContent=Object.entries(cycleCount).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—';
 }
 
 function buildReportText() {
-  const rows = [...document.getElementById('report-card').querySelectorAll('.report-row')].map(r => `${r.querySelector('.report-key')?.textContent}: ${r.querySelector('.report-val')?.textContent}`);
+  const rows=[...document.getElementById('report-card').querySelectorAll('.report-row')].map(r=>`${r.querySelector('.report-key')?.textContent}: ${r.querySelector('.report-val')?.textContent}`);
   return `HerSignal Clinical Summary\n${document.getElementById('report-date').textContent}\n\n${rows.join('\n')}\n\nThis summary is based on self-reported check-ins and is not a medical diagnosis.`;
 }
 
-document.getElementById('btn-copy-report').addEventListener('click', () => { navigator.clipboard.writeText(buildReportText()).then(()=>showToast('Report copied! 📋')); });
-document.getElementById('btn-email-report').addEventListener('click', () => { window.location.href=`mailto:?subject=${encodeURIComponent('HerSignal Clinical Summary — '+state.userInitials)}&body=${encodeURIComponent(buildReportText())}`; });
-document.getElementById('btn-print-report').addEventListener('click', () => window.print());
+document.getElementById('btn-copy-report').addEventListener('click',()=>{ navigator.clipboard.writeText(buildReportText()).then(()=>showToast('Report copied! 📋')); });
+document.getElementById('btn-email-report').addEventListener('click',()=>{ window.location.href=`mailto:?subject=${encodeURIComponent('HerSignal Clinical Summary — '+state.userInitials)}&body=${encodeURIComponent(buildReportText())}`; });
+document.getElementById('btn-print-report').addEventListener('click',()=>window.print());
 
-// ── TOAST ──
-function showToast(msg, duration=2800) {
-  const t = document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), duration);
+function showToast(msg,duration=2800){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),duration);
 }
 </script>
 </body>
