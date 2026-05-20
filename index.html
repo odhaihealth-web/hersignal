@@ -105,9 +105,11 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 .mc-card-desc{font-size:13px;color:var(--muted);line-height:1.55;}
 .mc-back{padding:0 20px 20px;flex-shrink:0;}
 
-/* ── CHAT SCREEN ── */
+/* ── CHAT SCREEN (shared for Chat Check-In and Just Chat) ── */
 #screen-chat,#screen-just-chat{display:flex;flex-direction:column;}
 .chat-header{padding:52px 16px 12px;display:flex;align-items:center;gap:12px;flex-shrink:0;background:rgba(26,10,46,0.98);border-bottom:1px solid var(--card-border);}
+.chat-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);flex-shrink:0;}
+.chat-avatar-fallback{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
 .chat-header-info{flex:1;}
 .chat-header-name{font-size:16px;font-weight:700;}
 .chat-header-sub{font-size:12px;color:var(--muted);}
@@ -116,6 +118,8 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 .chat-messages::-webkit-scrollbar{display:none;}
 .bubble-row{display:flex;align-items:flex-end;gap:8px;}
 .bubble-row.user{flex-direction:row-reverse;}
+.bubble-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.bubble-avatar-fallback{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));flex-shrink:0;}
 .bubble{max-width:78%;padding:11px 15px;border-radius:18px;font-size:15px;line-height:1.55;word-break:break-word;}
 .bubble.companion{background:rgba(107,79,160,0.28);border:1px solid rgba(107,79,160,0.35);border-bottom-left-radius:4px;color:#fff;}
 .bubble.user{background:linear-gradient(135deg,var(--primary),var(--secondary));border-bottom-right-radius:4px;color:#fff;}
@@ -198,34 +202,36 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 <body>
 <div id="app">
 
-<!-- ══════════════════════════════════════════════ ONBOARDING ══ -->
-<div id="screen-onboarding" class="screen">
-  <div class="onboard-scroll">
-    <img class="onboard-hero" src="hersignal-women.jpg" alt="HerSignal — four women navigating perimenopause together" onerror="this.style.display='none'">
-    <h1 class="onboard-title">HerSignal</h1>
-    <p class="onboard-sub">Your weekly companion for navigating perimenopause with clarity, confidence, and control.</p>
-    <div class="input-group">
-      <label class="input-label">YOUR INITIALS</label>
-      <input id="initials-input" class="input-field" type="text" placeholder="e.g. R.O." maxlength="5" autocomplete="off" autocorrect="off" spellcheck="false">
+<!-- ══════════════════════════════════════════════════════════════════════════ ONBOARDING ══ -->
+    <div id="screen-onboarding" class="screen">
+      <div class="onboard-scroll">
+        <img class="onboard-hero" src="https://odhaihealth-web.github.io/hersignal/hersignal-women.jpg" alt="HerSignal — four women navigating perimenopause together" onerror="this.style.display='none'">
+        <h1 class="onboard-title">HerSignal</h1>
+        <p class="onboard-sub">Your weekly companion for navigating perimenopause with clarity, confidence, and control.</p>
+        <div class="input-group">
+          <label class="input-label">YOUR INITIALS</label>
+          <input id="initials-input" class="input-field" type="text" placeholder="e.g. R.O." maxlength="5" autocomplete="off" autocorrect="off" spellcheck="false">
+        </div>
+        <button class="btn btn-primary" id="btn-get-started">Get Started 💜</button>
+        <p class="privacy-note">Your initials stay on your device only.<br>Your health data is stored anonymously — we never know who you are.</p>
+      </div>
     </div>
-    <button class="btn btn-primary" id="btn-get-started">Get Started 💜</button>
-    <p class="privacy-note">Your initials stay on your device only.<br>Your health data is stored anonymously — we never know who you are.</p>
-  </div>
-</div>
 
-<!-- ══════════════════════════════════════════════ COMPANION SELECT ══ -->
+<!-- ═══════════════════════════════════════════════════════════════ COMPANION SELECT ══ -->
 <div id="screen-companion-select" class="screen hidden">
   <div class="cs-header">
     <div class="cs-title">Choose Your Companion 💜</div>
     <p class="cs-sub">She'll guide your weekly check-ins.<br>You can always change her later.</p>
   </div>
-  <div class="cs-grid" id="cs-grid"></div>
+  <div class="cs-grid" id="cs-grid">
+    <!-- Cards injected by JS so photos use preload logic -->
+  </div>
   <div class="cs-btn-wrap">
     <button class="btn btn-primary" id="btn-companion-confirm" disabled style="opacity:0.5">Choose Her 💜</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════ HOME ══ -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════════ HOME ══ -->
 <div id="screen-home" class="screen hidden">
   <div class="app-header">
     <h1>HerSignal</h1>
@@ -260,7 +266,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
   </nav>
 </div>
 
-<!-- ══════════════════════════════════════════════ MODE CHOOSER ══ -->
+<!-- ═══════════════════════════════════════════════════════════════════════ MODE CHOOSER ══ -->
 <div id="screen-mode-chooser" class="screen hidden">
   <div class="mc-header">
     <div class="mc-title">How do you want to check in?</div>
@@ -294,7 +300,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════ CHAT ══ -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════════ CHAT ══ -->
 <div id="screen-chat" class="screen hidden">
   <div class="chat-header">
     <button class="chat-back-btn" id="chat-back-btn">‹</button>
@@ -318,7 +324,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════ QUICK FORM ══ -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ QUICK FORM ══ -->
 <div id="screen-quick-form" class="screen hidden">
   <div class="qf-header">
     <button class="chat-back-btn" id="qf-back-btn">‹</button>
@@ -329,7 +335,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
   <div class="qf-nav" id="qf-nav"></div>
 </div>
 
-<!-- ══════════════════════════════════════════════ JUST CHAT ══ -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ JUST CHAT ══ -->
 <div id="screen-just-chat" class="screen hidden">
   <div class="chat-header">
     <button class="chat-back-btn" id="jc-back-btn">‹</button>
@@ -346,7 +352,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════ DASHBOARD ══ -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ DASHBOARD ══ -->
 <div id="screen-dashboard" class="screen hidden">
   <div class="app-header">
     <h1>Trends</h1>
@@ -369,7 +375,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
   </nav>
 </div>
 
-<!-- ══════════════════════════════════════════════ SHARE ══ -->
+<!-- ═════════════════════════════════════════════════════════════ CLINICIAN SHARE ══ -->
 <div id="screen-share" class="screen hidden">
   <div class="app-header"><h1>Share Report</h1></div>
   <div class="scroll-content">
@@ -400,15 +406,21 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 </div>
 
 <script>
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   CONFIG
+══════════════════════════════════════════════════════════════════════════════════════════════ */
 const SUPABASE_URL = 'https://kwriboxxujqrypxopthl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3cmlib3h4dWpxcnlweG9wdGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5ODk2OTYsImV4cCI6MjA5NDU2NTY5Nn0.qoxQ9tPEoEnBPAT3M0ru3uxJDvTMcBnlP6lL9MYSDHw';
 const OPENAI_KEY   = 'PASTE_YOUR_NEW_KEY_HERE';
 
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   COMPANION DATA
+══════════════════════════════════════════════════════════════════════════════════════════════ */
 const COMPANIONS = {
-  maya:   { name:'Maya',   trait:'Warm · Nurturing · Real',          emoji:'💜', photo:'https://odhaihealth-web.github.io/hersignal/maya.jpg' },
-  nia:    { name:'Nia',    trait:'Calm · Grounding · Wise',          emoji:'🌿', photo:'https://odhaihealth-web.github.io/hersignal/nia.jpg' },
+  maya:   { name:'Maya',   trait:'Warm · Nurturing · Real',          emoji:'💜', photo:'maya.jpg' },
+  nia:    { name:'Nia',    trait:'Calm · Grounding · Wise',          emoji:'🌿', photo:'nia.jpg' },
   renee:  { name:'Renee',  trait:'Honest · Spirited · Funny',        emoji:'🔥', photo:'https://odhaihealth-web.github.io/hersignal/renee.jpg' },
-  diane:  { name:'Diane',  trait:'Steady · Experienced · Maternal',  emoji:'🌸', photo:'https://odhaihealth-web.github.io/hersignal/diane.jpg' },
+  diane:  { name:'Diane',  trait:'Steady · Experienced · Maternal',  emoji:'🌸', photo:'diane.jpg' },
   lauren: { name:'Lauren', trait:'Gentle · Intuitive · Thoughtful',  emoji:'✨', photo:'https://odhaihealth-web.github.io/hersignal/lauren.jpg' }
 };
 
@@ -420,15 +432,21 @@ const COMPANION_PROMPTS = {
   lauren: 'You are Lauren, a gentle and intuitive companion for perimenopause. Thoughtful, soft-spoken, emotionally intelligent. Never diagnose.'
 };
 
-function loadPhotoInto(containerEl, photoUrl, fallbackEmoji) {
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   IMAGE PRELOADER
+══════════════════════════════════════════════════════════════════════════════════════════════ */
+function loadPhotoInto(containerEl, photoUrl, fallbackEmoji, cssClass) {
   const fb = document.createElement('div');
-  fb.style.cssText = 'width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:32px;';
+  fb.style.cssText = `width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:32px;`;
   fb.textContent = fallbackEmoji;
   containerEl.appendChild(fb);
+
   const img = new Image();
   img.onload = () => {
     const el = document.createElement('img');
-    el.src = photoUrl; el.alt = '';
+    el.src = photoUrl;
+    el.alt = '';
+    el.className = cssClass || '';
     el.style.cssText = 'width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;';
     containerEl.replaceChild(el, fb);
   };
@@ -442,6 +460,9 @@ function makeAvatarEl(comp, size=44) {
   return wrap;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════════════════════════════════════════════ */
 let state = {
   screen: 'onboarding',
   userUUID:     localStorage.getItem('hs_uuid')      || '',
@@ -454,6 +475,7 @@ let state = {
   jcHistory: []
 };
 
+/* ── Seed data ── */
 if (state.checkins.length === 0) {
   const now = Date.now(), day = 86400000;
   state.checkins = [
@@ -467,6 +489,9 @@ if (state.checkins.length === 0) {
   localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
 }
 
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   SCREEN NAVIGATION
+══════════════════════════════════════════════════════════════════════════════════════════════ */
 function showScreen(name, direction='forward') {
   const cur  = document.getElementById('screen-'+state.screen);
   const next = document.getElementById('screen-'+name);
@@ -488,6 +513,9 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   ONBOARDING
+══════════════════════════════════════════════════════════════════════════════════════════════ */
 document.getElementById('btn-get-started').addEventListener('click', () => {
   const val = document.getElementById('initials-input').value.trim().toUpperCase();
   if (!val) { showToast('Please enter your initials 💜'); return; }
@@ -505,6 +533,9 @@ if (state.isOnboarded && state.userInitials) {
   else { buildCompanionGrid(); showScreen('companion-select'); }
 }
 
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   COMPANION SELECT (JS-built cards with preloader)
+══════════════════════════════════════════════════════════════════════════════════════════════ */
 let selectedCompanionKey = '';
 
 function buildCompanionGrid() {
@@ -514,12 +545,18 @@ function buildCompanionGrid() {
     const card = document.createElement('div');
     card.className = 'cs-card';
     card.dataset.companion = key;
+
     const photoWrap = document.createElement('div');
     photoWrap.style.cssText = 'width:80px;height:80px;border-radius:50%;overflow:hidden;border:3px solid var(--card-border);flex-shrink:0;';
     loadPhotoInto(photoWrap, comp.photo, comp.emoji);
+
     const nameEl  = document.createElement('div'); nameEl.className='cs-name'; nameEl.textContent=comp.name;
     const traitEl = document.createElement('div'); traitEl.className='cs-trait'; traitEl.textContent=comp.trait;
-    card.appendChild(photoWrap); card.appendChild(nameEl); card.appendChild(traitEl);
+
+    card.appendChild(photoWrap);
+    card.appendChild(nameEl);
+    card.appendChild(traitEl);
+
     card.addEventListener('click', () => {
       document.querySelectorAll('.cs-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
@@ -527,8 +564,10 @@ function buildCompanionGrid() {
       const btn = document.getElementById('btn-companion-confirm');
       btn.disabled = false; btn.style.opacity = '1';
     });
+
     grid.appendChild(card);
   });
+
   const cards = grid.querySelectorAll('.cs-card');
   if (cards.length % 2 !== 0) cards[cards.length-1].style.gridColumn = '1/-1';
 }
@@ -540,6 +579,9 @@ document.getElementById('btn-companion-confirm').addEventListener('click', () =>
   showScreen('home'); updateHome();
 });
 
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   HOME
+══════════════════════════════════════════════════════════════════════════════════════════════ */
 function updateHome() {
   document.getElementById('home-initials-badge').textContent = state.userInitials || '';
   document.getElementById('home-welcome').textContent = `Welcome back, ${state.userInitials} 💜`;
@@ -563,31 +605,58 @@ function updateHome() {
   document.getElementById('home-signal-desc').textContent       = descs[sig]||descs.Monitor;
 }
 
-document.getElementById('btn-start-checkin').addEventListener('click', () => { showScreen('mode-chooser'); });
-document.getElementById('btn-change-companion').addEventListener('click', () => {
-  selectedCompanionKey = ''; buildCompanionGrid(); showScreen('companion-select');
+document.getElementById('btn-start-checkin').addEventListener('click', () => {
+  showScreen('mode-chooser');
 });
+
+document.getElementById('btn-change-companion').addEventListener('click', () => {
+  selectedCompanionKey = '';
+  buildCompanionGrid();
+  showScreen('companion-select');
+});
+
 document.getElementById('btn-go-share').addEventListener('click', () => {
   showScreen('share');
-  document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); if(n.dataset.nav==='share') n.classList.add('active'); });
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.remove('active');
+    if (n.dataset.nav==='share') n.classList.add('active');
+  });
 });
 
-document.getElementById('mc-btn-chat').addEventListener('click', () => { startChatCheckin(); showScreen('chat'); });
-document.getElementById('mc-btn-form').addEventListener('click', () => { startQuickForm(); showScreen('quick-form'); });
-document.getElementById('mc-btn-just-chat').addEventListener('click', () => { startJustChat(); showScreen('just-chat'); });
-document.getElementById('mc-back-btn').addEventListener('click', () => { showScreen('home','back'); updateHome(); });
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   MODE CHOOSER
+══════════════════════════════════════════════════════════════════════════════════════════════ */
+document.getElementById('mc-btn-chat').addEventListener('click', () => {
+  startChatCheckin(); showScreen('chat');
+});
+document.getElementById('mc-btn-form').addEventListener('click', () => {
+  startQuickForm(); showScreen('quick-form');
+});
+document.getElementById('mc-btn-just-chat').addEventListener('click', () => {
+  startJustChat(); showScreen('just-chat');
+});
+document.getElementById('mc-back-btn').addEventListener('click', () => {
+  showScreen('home','back'); updateHome();
+});
 
-function getCompanion() { return COMPANIONS[state.companionKey] || COMPANIONS.maya; }
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   SHARED CHAT HELPERS
+══════════════════════════════════════════════════════════════════════════════════════════════ */
+function getCompanion() {
+  return COMPANIONS[state.companionKey] || COMPANIONS.maya;
+}
 
 function addBubble(msgsEl, text, role, comp) {
   const row = document.createElement('div');
   row.className = 'bubble-row' + (role==='user' ? ' user' : '');
+
   if (role === 'companion') {
     const avatarWrap = document.createElement('div');
     avatarWrap.style.cssText = 'width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;';
     loadPhotoInto(avatarWrap, comp.photo, comp.emoji);
     row.appendChild(avatarWrap);
   }
+
   const bubble = document.createElement('div');
   bubble.className = 'bubble ' + (role==='user' ? 'user' : 'companion');
   if (text) bubble.textContent = text;
@@ -632,14 +701,20 @@ function autoResizeTextarea(el) {
   });
 }
 
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   CHAT CHECK-IN ENGINE
+══════════════════════════════════════════════════════════════════════════════════════════════ */
 function startChatCheckin() {
   const comp = getCompanion();
   state.chatPhase = 0;
   state.ciSymptoms = []; state.ciIntensity = 3; state.ciStress = 3;
   state.ciCycle = ''; state.ciClarity = 3; state.ciNotes = '';
+
   const wrap = document.getElementById('chat-header-avatar-wrap');
-  wrap.innerHTML = ''; wrap.appendChild(makeAvatarEl(comp, 44));
+  wrap.innerHTML = '';
+  wrap.appendChild(makeAvatarEl(comp, 44));
   document.getElementById('chat-header-name').textContent = comp.name;
+
   document.getElementById('chat-messages').innerHTML = '';
   document.getElementById('chat-chips-area').style.display = 'none';
   document.getElementById('chat-input-row').style.display  = 'none';
@@ -648,14 +723,21 @@ function startChatCheckin() {
   setTimeout(() => advanceChatPhase('greeting'), 400);
 }
 
+function scrollChat() {
+  const el = document.getElementById('chat-messages');
+  el.scrollTop = el.scrollHeight;
+}
+
 function showChips(chips, multi=false) {
   const area = document.getElementById('chat-chips-area');
   const wrap = document.getElementById('chat-chips');
   document.getElementById('chat-input-row').style.display = 'none';
-  wrap.innerHTML = ''; area.style.display = 'block';
+  wrap.innerHTML = '';
+  area.style.display = 'block';
   chips.forEach(label => {
     const c = document.createElement('div');
-    c.className = 'chat-chip'; c.textContent = label;
+    c.className = 'chat-chip';
+    c.textContent = label;
     if (multi) {
       c.addEventListener('click', () => {
         c.classList.toggle('selected');
@@ -696,7 +778,8 @@ function hideChips() {
 
 document.getElementById('chat-send-btn').addEventListener('click', () => {
   const val = document.getElementById('chat-text-input').value.trim();
-  hideChips(); handleUserReply(val||'(no notes)','notes-text');
+  hideChips();
+  handleUserReply(val||'(no notes)','notes-text');
 });
 document.getElementById('chat-text-input').addEventListener('keydown', e => {
   if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('chat-send-btn').click(); }
@@ -709,141 +792,177 @@ document.getElementById('chat-btn-trends').addEventListener('click', () => {
 });
 
 async function advanceChatPhase(phase) {
-  const comp = getCompanion();
-  const msgs = document.getElementById('chat-messages');
+  const comp   = getCompanion();
+  const msgs   = document.getElementById('chat-messages');
   const initials = state.userInitials;
   switch(phase) {
     case 'greeting':
-      await showTypingThenSpeak(msgs, comp, `Hey ${initials} 💜 Ready to check in? What symptoms have you been dealing with this week?`, 700);
-      showChips(['Hot Flashes','Night Sweats','Sleep Disruption','Brain Fog','Mood Changes','Anxiety','Fatigue','Joint Pain','Headaches','Heart Palpitations','None of these'], true);
-      state.chatPhase = 1; break;
-    case 'symptoms':
-      await showTypingThenSpeak(msgs, comp, `Got it. How intense have those symptoms felt overall — on a scale of 1 to 5?`);
-      showChips(['1 Very Mild','2','3 Moderate','4','5 Very Intense']);
-      state.chatPhase = 2; break;
+      await showTypingThenSpeak(msgs, comp,
+        `Hey ${initials} 💜 I'm ${comp.name}. How are you feeling this week — any symptoms on your mind?`, 800);
+      showChips(['Hot Flashes','Night Sweats','Brain Fog','Fatigue','Mood Changes','Sleep Issues','Anxiety','Joint Pain','Other'], true);
+      state.chatPhase = 1;
+      break;
     case 'intensity':
-      await showTypingThenSpeak(msgs, comp, `And stress? How's your stress level been this week?`);
-      showChips(['1 Very Low','2','3 Moderate','4','5 Very High']);
-      state.chatPhase = 3; break;
+      await showTypingThenSpeak(msgs, comp,
+        `Got it. On a scale of 1 to 5, how intense have those symptoms felt overall this week?`, 700);
+      showChips(['1 — Very mild','2 — Mild','3 — Moderate','4 — Strong','5 — Very strong']);
+      state.chatPhase = 2;
+      break;
     case 'stress':
-      await showTypingThenSpeak(msgs, comp, `How about your cycle — what's closest to where you are right now?`);
-      showChips(['Regular','Irregular','Skipped','Stopped']);
-      state.chatPhase = 4; break;
-    case 'cycle':
-      await showTypingThenSpeak(msgs, comp, `Last question — mental clarity this week: foggy or sharp?`);
-      showChips(['1 Very Foggy','2','3 Okay','4','5 Very Sharp']);
-      state.chatPhase = 5; break;
+      await showTypingThenSpeak(msgs, comp,
+        `And your stress levels — how would you rate them this week?`, 700);
+      showChips(['1 — Very low','2 — Low','3 — Moderate','4 — High','5 — Very high']);
+      state.chatPhase = 3;
+      break;
     case 'clarity':
-      await showTypingThenSpeak(msgs, comp, `Anything specific you want to note — a question for your doctor, something that felt different?`);
-      showChips(['Skip']); showNoteInput();
-      state.chatPhase = 6; break;
+      await showTypingThenSpeak(msgs, comp,
+        `How's your mental clarity been? Things like focus, memory, and feeling present.`, 700);
+      showChips(['1 — Very foggy','2 — Foggy','3 — Okay','4 — Clear','5 — Very clear']);
+      state.chatPhase = 4;
+      break;
+    case 'cycle':
+      await showTypingThenSpeak(msgs, comp,
+        `How about your cycle this month?`, 700);
+      showChips(['Regular','Irregular','Skipped','Not tracking']);
+      state.chatPhase = 5;
+      break;
     case 'notes':
+      await showTypingThenSpeak(msgs, comp,
+        `Anything else you want me to know? A word, a feeling, something specific — or just skip.`, 700);
+      showNoteInput();
+      state.chatPhase = 6;
+      break;
+    case 'done':
+      await saveCheckin();
+      const sig = state.lastSignal;
+      const msgs2 = ['You're doing great by checking in consistently. I see you. 💜',
+                     'Every check-in is an act of self-care. I'm proud of you.',
+                     'You showed up for yourself today. That matters.',
+                     'Keep listening to your body — you know it better than anyone.'];
+      const closing = msgs2[Math.floor(Math.random()*msgs2.length)];
+      await showTypingThenSpeak(msgs, comp,
+        `Thanks for checking in, ${initials}. Your signal this week: ${sig}. ${closing}`, 1000);
+      document.getElementById('chat-action-btns').style.display = 'flex';
       state.chatPhase = 7;
-      await submitCheckinFromChat(); break;
+      break;
   }
 }
 
-async function handleUserReply(displayText, type, rawData) {
-  const msgs = document.getElementById('chat-messages');
-  addBubble(msgs, displayText, 'user', getCompanion());
-  switch(state.chatPhase) {
-    case 1: state.ciSymptoms = (type==='symptoms') ? rawData.filter(s=>s!=='None of these') : []; await advanceChatPhase('symptoms'); break;
-    case 2: state.ciIntensity = parseInt(displayText.charAt(0))||3; await advanceChatPhase('intensity'); break;
-    case 3: state.ciStress = parseInt(displayText.charAt(0))||3; await advanceChatPhase('stress'); break;
-    case 4: state.ciCycle = displayText; await advanceChatPhase('cycle'); break;
-    case 5: state.ciClarity = parseInt(displayText.charAt(0))||3; await advanceChatPhase('clarity'); break;
-    case 6: state.ciNotes = (displayText==='Skip'||displayText==='(no notes)') ? '' : displayText; await advanceChatPhase('notes'); break;
-  }
-}
-
-async function submitCheckinFromChat() {
-  const msgs = document.getElementById('chat-messages');
+function handleUserReply(text, type, raw=[]) {
   const comp = getCompanion();
-  const sig  = calcSignal();
-  state.lastSignal = sig;
-  localStorage.setItem('hs_signal', sig);
-  const record = {
-    user_id: state.userUUID, session_id: state.userUUID+'-'+Date.now(),
-    checked_at: new Date().toISOString(),
-    symptoms: state.ciSymptoms, stress_level: state.ciStress,
-    cycle_status: state.ciCycle, clarity_score: state.ciClarity,
-    intensity: state.ciIntensity, signal: sig, notes: state.ciNotes
-  };
-  state.checkins.push(record);
-  localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
-  syncToSupabase(record);
-  await showTypingThenSpeak(msgs, comp, `One sec — pulling your signal... 💜`, 600);
-  await streamCompanionResponse(sig, msgs, comp);
-  document.getElementById('chat-action-btns').style.display = 'flex';
-}
-
-async function streamCompanionResponse(sig, msgsEl, comp) {
-  const recent = state.checkins.slice(-4);
-  const avgI   = (recent.reduce((a,c)=>a+(c.intensity||0),0)/recent.length).toFixed(1);
-  const prompt = `A woman just completed her perimenopause check-in. Symptoms: ${state.ciSymptoms.join(', ')||'none'}. Intensity: ${state.ciIntensity}/5. Stress: ${state.ciStress}/5. Clarity: ${state.ciClarity}/5. Cycle: ${state.ciCycle||'not specified'}. Signal: ${sig}. Recent avg intensity: ${avgI}/5. Write a warm, empathetic response (max 100 words). Validate her experience. If Monitor or Escalate, gently encourage provider conversation. Never diagnose. End warmly.`;
-  if (OPENAI_KEY === 'PASTE_YOUR_NEW_KEY_HERE') {
-    await new Promise(r=>setTimeout(r,1500));
-    const fb = {
-      Stable:   `You're doing well, ${state.userInitials} 💜 Your patterns look steady this week. Keep listening to your body — it's communicating with you.`,
-      Monitor:  `Thank you for checking in, ${state.userInitials} 💜 Your body is sending some signals worth paying attention to. Consider noting what you shared today for your next provider visit.`,
-      Escalate: `${state.userInitials}, your body has been working hard lately 💜 This pattern is worth a conversation with your provider soon. You don't have to figure this out alone.`
-    };
-    const bubble = addBubble(msgsEl, '', 'companion', comp);
-    const words  = (fb[sig]||fb.Monitor).split(' ');
-    for (let i=0;i<words.length;i++) {
-      bubble.textContent += (i===0?'':' ') + words[i];
-      msgsEl.scrollTop = msgsEl.scrollHeight;
-      await new Promise(r=>setTimeout(r,40));
-    }
-    return;
-  }
-  try {
-    const resp = await fetch('https://api.openai.com/v1/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${OPENAI_KEY}`},
-      body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'system',content:COMPANION_PROMPTS[state.companionKey]||COMPANION_PROMPTS.maya},{role:'user',content:prompt}],max_tokens:180,temperature:0.85,stream:true})
-    });
-    if (!resp.ok) throw new Error('API '+resp.status);
-    const reader=resp.body.getReader(), decoder=new TextDecoder();
-    const bubble = addBubble(msgsEl,'','companion',comp);
-    let done=false;
-    while(!done){
-      const {done:sd,value}=await reader.read(); if(sd) break;
-      const lines=decoder.decode(value,{stream:true}).split('\n').filter(l=>l.startsWith('data: '));
-      for(const line of lines){
-        const json=line.slice(6).trim(); if(json==='[DONE]'){done=true;break;}
-        try{const d=JSON.parse(json).choices?.[0]?.delta?.content; if(d){bubble.textContent+=d;msgsEl.scrollTop=msgsEl.scrollHeight;}}catch(_){}
+  const msgs = document.getElementById('chat-messages');
+  addBubble(msgs, text, 'user', comp);
+  switch(type) {
+    case 'symptoms':
+      state.ciSymptoms = raw.length ? raw : [text];
+      advanceChatPhase('intensity');
+      break;
+    case 'single':
+      if (state.chatPhase===2) {
+        state.ciIntensity = parseInt(text[0])||3;
+        advanceChatPhase('stress');
+      } else if (state.chatPhase===3) {
+        state.ciStress = parseInt(text[0])||3;
+        advanceChatPhase('clarity');
+      } else if (state.chatPhase===4) {
+        state.ciClarity = parseInt(text[0])||3;
+        advanceChatPhase('cycle');
+      } else if (state.chatPhase===5) {
+        state.ciCycle = text;
+        advanceChatPhase('notes');
       }
-    }
-  } catch(err) { addBubble(msgsEl,`You showed up today, ${state.userInitials} — and that matters 💜`,'companion',comp); }
+      break;
+    case 'notes-text':
+      state.ciNotes = text;
+      advanceChatPhase('done');
+      break;
+  }
 }
 
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   QUICK FORM ENGINE
+══════════════════════════════════════════════════════════════════════════════════════════════ */
+let qfStep = 0;
 const QF_STEPS = [
-  { id:'symptoms', title:'What symptoms this week?', sub:'Select all that apply.', type:'chips', multi:true,
-    options:['Hot Flashes','Night Sweats','Sleep Disruption','Brain Fog','Mood Changes','Anxiety','Fatigue','Joint Pain','Headaches','Heart Palpitations'] },
-  { id:'intensity', title:'Overall symptom intensity', sub:'1 = very mild, 5 = very intense.', type:'slider', min:1, max:5, step:1, labels:['Very Mild','','Moderate','','Very Intense'] },
-  { id:'stress',    title:'Stress level this week',    sub:'1 = very low, 5 = very high.',    type:'slider', min:1, max:5, step:1, labels:['Very Low','','Moderate','','Very High'] },
-  { id:'cycle',  title:'Cycle status', sub:"What's closest to where you are?", type:'chips', multi:false, options:['Regular','Irregular','Skipped','Stopped'] },
-  { id:'clarity',   title:'Mental clarity',            sub:'1 = very foggy, 5 = very sharp.', type:'slider', min:1, max:5, step:1, labels:['Very Foggy','','Okay','','Very Sharp'] }
+  { id:'intensity', title:'Symptom Intensity', sub:'How strong have your symptoms been this week?', type:'slider', min:1, max:5, labels:['Very mild','Very strong'] },
+  { id:'stress',    title:'Stress Level',      sub:'How would you rate your stress this week?',    type:'slider', min:1, max:5, labels:['Very low','Very high'] },
+  { id:'clarity',   title:'Mental Clarity',    sub:'Focus, memory, and feeling present.',          type:'slider', min:1, max:5, labels:['Very foggy','Very clear'] },
+  { id:'symptoms',  title:'Symptoms',          sub:'Select all that apply this week.',             type:'chips',
+    chips:['Hot Flashes','Night Sweats','Brain Fog','Fatigue','Mood Changes','Sleep Issues','Anxiety','Joint Pain','Other'] },
+  { id:'cycle',     title:'Cycle Status',      sub:'How\'s your cycle been this month?',           type:'chips-single',
+    chips:['Regular','Irregular','Skipped','Not tracking'] }
 ];
-let qfData = {}, qfStep = 0;
+let qfData = {};
 
-function startQuickForm() { qfData = { symptoms:[], intensity:3, stress:3, cycle:'', clarity:3 }; qfStep = 0; renderQFStep(); }
+function startQuickForm() {
+  qfStep = 0;
+  qfData = { intensity:3, stress:3, clarity:3, symptoms:[], cycle:'' };
+  renderQFStep();
+}
 
 function renderQFStep() {
-  const step = QF_STEPS[qfStep];
   const body = document.getElementById('qf-body');
   const nav  = document.getElementById('qf-nav');
   const dots = document.getElementById('qf-dots');
+
   dots.innerHTML = '';
   QF_STEPS.forEach((_,i) => {
     const d = document.createElement('div');
     d.className = 'qf-dot' + (i===qfStep?' active':i<qfStep?' done':'');
     dots.appendChild(d);
   });
-  body.innerHTML = `<div class="qf-step active"><div class="qf-step-title">${step.title}</div><div class="qf-step-sub">${step.sub}</div>${step.type==='slider' ? renderSlider(step) : renderChipGroup(step)}</div>`;
-  if (step.type==='slider') wireSlider(step);
-  if (step.type==='chips')  wireQFChips(step);
+
+  const step = QF_STEPS[qfStep];
+  let html = `<div class="qf-step active"><div class="qf-step-title">${step.title}</div><div class="qf-step-sub">${step.sub}</div>`;
+
+  if (step.type==='slider') {
+    const val = qfData[step.id]||3;
+    html += `<div class="qf-slider-val" id="qf-sv">${val}</div>
+      <div class="qf-slider-wrap">
+        <input class="qf-slider" type="range" min="${step.min}" max="${step.max}" value="${val}" id="qf-slider">
+        <div class="qf-slider-labels"><span>${step.labels[0]}</span><span>${step.labels[1]}</span></div>
+      </div>`;
+  } else if (step.type==='chips') {
+    const sel = qfData[step.id]||[];
+    html += `<div class="qf-chips">`;
+    step.chips.forEach(c => {
+      html += `<div class="qf-chip${sel.includes(c)?' selected':''}" data-val="${c}">${c}</div>`;
+    });
+    html += `</div>`;
+  } else if (step.type==='chips-single') {
+    const sel = qfData[step.id]||'';
+    html += `<div class="qf-chips">`;
+    step.chips.forEach(c => {
+      html += `<div class="qf-chip${sel===c?' selected':''}" data-val="${c}">${c}</div>`;
+    });
+    html += `</div>`;
+  }
+  html += `</div>`;
+  body.innerHTML = html;
+
+  if (step.type==='slider') {
+    const sl = document.getElementById('qf-slider');
+    const sv = document.getElementById('qf-sv');
+    sl.addEventListener('input', () => { sv.textContent = sl.value; qfData[step.id] = parseInt(sl.value); });
+  } else if (step.type==='chips') {
+    body.querySelectorAll('.qf-chip').forEach(c => {
+      c.addEventListener('click', () => {
+        c.classList.toggle('selected');
+        const v = c.dataset.val;
+        if (c.classList.contains('selected')) qfData[step.id].push(v);
+        else qfData[step.id] = qfData[step.id].filter(x=>x!==v);
+      });
+    });
+  } else {
+    body.querySelectorAll('.qf-chip').forEach(c => {
+      c.addEventListener('click', () => {
+        body.querySelectorAll('.qf-chip').forEach(x=>x.classList.remove('selected'));
+        c.classList.add('selected');
+        qfData[step.id] = c.dataset.val;
+      });
+    });
+  }
+
   nav.innerHTML = '';
   if (qfStep > 0) {
     const back = document.createElement('button');
@@ -854,222 +973,293 @@ function renderQFStep() {
   const next = document.createElement('button');
   next.className='btn btn-primary';
   next.textContent = qfStep===QF_STEPS.length-1 ? 'Submit ✓' : 'Next →';
-  next.addEventListener('click', () => { if (qfStep===QF_STEPS.length-1) { submitQuickForm(); } else { qfStep++; renderQFStep(); } });
+  next.addEventListener('click', async () => {
+    if (qfStep===QF_STEPS.length-1) {
+      state.ciIntensity = qfData.intensity;
+      state.ciStress    = qfData.stress;
+      state.ciClarity   = qfData.clarity;
+      state.ciSymptoms  = qfData.symptoms;
+      state.ciCycle     = qfData.cycle||'Not tracking';
+      state.ciNotes     = '';
+      await saveCheckin();
+      showToast(`Check-in saved! Signal: ${state.lastSignal} 💜`);
+      showScreen('home','back'); updateHome();
+    } else { qfStep++; renderQFStep(); }
+  });
   nav.appendChild(next);
 }
 
-function renderSlider(step) {
-  const val = qfData[step.id];
-  return `<div class="qf-slider-val" id="qf-slider-val">${val}</div><div class="qf-slider-wrap"><input type="range" class="qf-slider" id="qf-slider" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}"><div class="qf-slider-labels">${step.labels.map(l=>`<span>${l}</span>`).join('')}</div></div>`;
-}
-
-function wireSlider(step) {
-  const slider = document.getElementById('qf-slider');
-  const valEl  = document.getElementById('qf-slider-val');
-  slider.addEventListener('input', () => { qfData[step.id] = parseInt(slider.value); valEl.textContent = slider.value; });
-}
-
-function renderChipGroup(step) {
-  return `<div class="qf-chips">${step.options.map(o=>`<div class="qf-chip" data-val="${o}">${o}</div>`).join('')}</div>`;
-}
-
-function wireQFChips(step) {
-  document.querySelectorAll('.qf-chip').forEach(chip => {
-    if (step.id==='symptoms') { if (qfData.symptoms.includes(chip.dataset.val)) chip.classList.add('selected'); }
-    else { if (qfData[step.id]===chip.dataset.val) chip.classList.add('selected'); }
-    chip.addEventListener('click', () => {
-      if (step.multi) {
-        chip.classList.toggle('selected');
-        qfData.symptoms = [...document.querySelectorAll('.qf-chip.selected')].map(c=>c.dataset.val);
-      } else {
-        document.querySelectorAll('.qf-chip').forEach(c=>c.classList.remove('selected'));
-        chip.classList.add('selected');
-        qfData[step.id] = chip.dataset.val;
-      }
-    });
-  });
-}
-
-async function submitQuickForm() {
-  const sig = calcSignalFrom(qfData.intensity, qfData.stress);
-  state.lastSignal = sig; localStorage.setItem('hs_signal', sig);
-  const record = { user_id:state.userUUID, session_id:state.userUUID+'-'+Date.now(), checked_at:new Date().toISOString(), symptoms:qfData.symptoms, stress_level:qfData.stress, cycle_status:qfData.cycle, clarity_score:qfData.clarity, intensity:qfData.intensity, signal:sig, notes:'' };
-  state.checkins.push(record);
-  localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
-  syncToSupabase(record);
-  showToast('Check-in saved 💜');
-  setTimeout(() => { showScreen('home','back'); updateHome(); }, 800);
-}
-
 document.getElementById('qf-back-btn').addEventListener('click', () => {
-  if (qfStep > 0) { qfStep--; renderQFStep(); } else { showScreen('mode-chooser','back'); }
+  showScreen('home','back'); updateHome();
 });
 
-const JC_FALLBACKS = [
-  `That's such a real thing to sit with. Perimenopause can feel like your body is rewriting the rules without telling you. What's been the hardest part lately?`,
-  `You're not imagining any of this. Everything you're feeling is real — your nervous system, your hormones, all of it. How long have you been noticing these changes?`,
-  `One thing I love about you checking in like this is that you're paying attention. So many women push through without ever pausing. What's been keeping you going?`,
-  `Perimenopause is one of those transitions that medicine has historically under-explained and under-supported. You deserve real answers and real care. Is there something specific you're trying to understand?`,
-  `Your body is working incredibly hard right now — even when it doesn't feel that way. What do you wish someone had told you about this stage of life?`,
-  `Sleep disruption alone can make everything else so much harder. When your rest is off, everything compounds. What tends to help you most on the harder nights?`,
-  `I'm here — take your time. There's no rush and nothing you can say that will surprise me. What's on your mind today?`
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   JUST CHAT ENGINE
+══════════════════════════════════════════════════════════════════════════════════════════════ */
+const JC_OFFLINE = [
+  "I hear you. Sometimes just naming what you're feeling is the first step.",
+  "That sounds really hard. You're not alone in this — so many women navigate these exact feelings.",
+  "Your body is doing a lot right now. It makes sense that it's asking for your attention.",
+  "What you're describing is so common in perimenopause, even if it doesn't feel that way.",
+  "I'm here with you. Tell me more if you want to.",
+  "You're being so thoughtful about your health. That matters more than you know.",
+  "Sometimes the best thing we can do is just acknowledge what's happening. You're doing that."
 ];
-let jcFallbackIndex = 0;
+let jcOfflineIdx = 0;
+
+async function callOpenAI(messages) {
+  if (!OPENAI_KEY || OPENAI_KEY === 'PASTE_YOUR_NEW_KEY_HERE') return null;
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+OPENAI_KEY},
+      body: JSON.stringify({ model:'gpt-4o-mini', messages, max_tokens:220, temperature:0.8 })
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content?.trim() || null;
+  } catch { return null; }
+}
 
 function startJustChat() {
   const comp = getCompanion();
   state.jcHistory = [];
+
   const wrap = document.getElementById('jc-header-avatar-wrap');
-  wrap.innerHTML = ''; wrap.appendChild(makeAvatarEl(comp, 44));
+  wrap.innerHTML = '';
+  wrap.appendChild(makeAvatarEl(comp, 44));
   document.getElementById('jc-header-name').textContent = comp.name;
-  document.getElementById('jc-header-sub').textContent  = 'Just chatting 🌸';
+
   const msgs = document.getElementById('jc-messages');
   msgs.innerHTML = '';
   autoResizeTextarea(document.getElementById('jc-text-input'));
-  document.getElementById('jc-text-input').value = '';
-  setTimeout(() => {
-    showTypingThenSpeak(msgs, comp, `Hey ${state.userInitials} 🌸 What's on your mind today? We can talk about anything — symptoms, questions, feelings, whatever you need.`, 700);
-  }, 400);
+
+  setTimeout(async () => {
+    const greeting = `Hi ${state.userInitials} 💜 I'm ${comp.name}. What's on your mind today?`;
+    await showTypingThenSpeak(msgs, comp, greeting, 700);
+    state.jcHistory.push({ role:'assistant', content: greeting });
+  }, 300);
 }
 
-document.getElementById('jc-back-btn').addEventListener('click', () => { showScreen('mode-chooser','back'); });
-document.getElementById('jc-send-btn').addEventListener('click', sendJustChat);
+document.getElementById('jc-send-btn').addEventListener('click', () => sendJustChat());
 document.getElementById('jc-text-input').addEventListener('keydown', e => {
   if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendJustChat(); }
 });
+document.getElementById('jc-back-btn').addEventListener('click', () => {
+  showScreen('home','back'); updateHome();
+});
 
 async function sendJustChat() {
+  const comp = getCompanion();
   const input = document.getElementById('jc-text-input');
+  const msgs  = document.getElementById('jc-messages');
   const text  = input.value.trim();
   if (!text) return;
   input.value = ''; input.style.height = 'auto';
-  const comp = getCompanion();
-  const msgs = document.getElementById('jc-messages');
+
   addBubble(msgs, text, 'user', comp);
-  state.jcHistory.push({ role:'user', content:text });
-  if (state.jcHistory.length > 12) state.jcHistory = state.jcHistory.slice(-12);
-  if (OPENAI_KEY === 'PASTE_YOUR_NEW_KEY_HERE') {
-    await new Promise(r=>setTimeout(r,1200));
-    const bubble = addBubble(msgs,'','companion',comp);
-    const words  = JC_FALLBACKS[jcFallbackIndex % JC_FALLBACKS.length].split(' ');
-    jcFallbackIndex++;
-    for (let i=0;i<words.length;i++) {
-      bubble.textContent += (i===0?'':' ') + words[i];
-      msgs.scrollTop = msgs.scrollHeight;
-      await new Promise(r=>setTimeout(r,45));
+  state.jcHistory.push({ role:'user', content: text });
+  if (state.jcHistory.length > 24) state.jcHistory = state.jcHistory.slice(-24);
+
+  const { row: typingRow, bubble: typingBubble } = addTypingBubble(msgs, comp);
+
+  const sysMsg = { role:'system', content: COMPANION_PROMPTS[state.companionKey]||COMPANION_PROMPTS.maya + ' Keep responses warm, concise (2-3 sentences), and supportive.' };
+  const reply = await callOpenAI([sysMsg, ...state.jcHistory]);
+
+  typingRow.remove();
+
+  const response = reply || JC_OFFLINE[jcOfflineIdx++ % JC_OFFLINE.length];
+  addBubble(msgs, response, 'companion', comp);
+  state.jcHistory.push({ role:'assistant', content: response });
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   SAVE CHECK-IN & SIGNAL CALC
+══════════════════════════════════════════════════════════════════════════════════════════════ */
+function calcSignal(intensity, stress, clarity) {
+  const score = (intensity + stress + (6-clarity)) / 3;
+  if (score <= 2.2) return 'Stable';
+  if (score <= 3.5) return 'Monitor';
+  return 'Escalate';
+}
+
+async function saveCheckin() {
+  const signal = calcSignal(state.ciIntensity, state.ciStress, state.ciClarity);
+  state.lastSignal = signal;
+  localStorage.setItem('hs_signal', signal);
+
+  const record = {
+    checked_at:   new Date().toISOString(),
+    intensity:    state.ciIntensity,
+    clarity_score:state.ciClarity,
+    stress_level: state.ciStress,
+    signal,
+    symptoms:     state.ciSymptoms,
+    cycle_status: state.ciCycle,
+    notes:        state.ciNotes,
+    user_uuid:    state.userUUID
+  };
+
+  state.checkins.push(record);
+  localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
+
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/checkins`, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer':'return=minimal'
+      },
+      body: JSON.stringify({
+        user_uuid:     record.user_uuid,
+        checked_at:   record.checked_at,
+        intensity:    record.intensity,
+        clarity_score:record.clarity_score,
+        stress_level: record.stress_level,
+        signal:       record.signal,
+        symptoms:     record.symptoms,
+        cycle_status: record.cycle_status,
+        notes:        record.notes
+      })
+    });
+  } catch(e) { console.warn('Supabase sync failed (offline):', e); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   DASHBOARD CHARTS
+══════════════════════════════════════════════════════════════════════════════════════════════ */
+let intensityChart = null, clarityChart = null;
+
+function renderCharts() {
+  const recent = state.checkins.slice(-6);
+  const labels = recent.map(c => {
+    const d = new Date(c.checked_at);
+    return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  });
+
+  const chartDefaults = {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ display:false } },
+    scales:{
+      x:{ grid:{color:'rgba(255,255,255,0.06)'}, ticks:{color:'#C4B5E0',font:{size:10}} },
+      y:{ min:1, max:5, grid:{color:'rgba(255,255,255,0.06)'}, ticks:{color:'#C4B5E0',font:{size:10},stepSize:1} }
     }
-    state.jcHistory.push({ role:'assistant', content:bubble.textContent });
+  };
+
+  if (intensityChart) { intensityChart.destroy(); intensityChart=null; }
+  const ctx1 = document.getElementById('intensity-chart').getContext('2d');
+  intensityChart = new Chart(ctx1, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        data: recent.map(c=>c.intensity),
+        borderColor:'#F87171', backgroundColor:'rgba(248,113,113,0.12)',
+        tension:0.4, fill:true, pointBackgroundColor:'#F87171', pointRadius:5
+      }]
+    },
+    options: chartDefaults
+  });
+
+  if (clarityChart) { clarityChart.destroy(); clarityChart=null; }
+  const ctx2 = document.getElementById('clarity-chart').getContext('2d');
+  clarityChart = new Chart(ctx2, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        data: recent.map(c=>c.clarity_score),
+        borderColor:'#4ABFBF', backgroundColor:'rgba(74,191,191,0.12)',
+        tension:0.4, fill:true, pointBackgroundColor:'#4ABFBF', pointRadius:5
+      }]
+    },
+    options: chartDefaults
+  });
+
+  const hist = document.getElementById('history-list');
+  if (state.checkins.length === 0) {
+    hist.innerHTML = '<p style="color:var(--muted);font-size:14px;text-align:center;padding:12px 0">No check-ins yet.</p>';
     return;
   }
-  try {
-    const { bubble } = addTypingBubble(msgs, comp);
-    const messages = [
-      { role:'system', content: (COMPANION_PROMPTS[state.companionKey]||COMPANION_PROMPTS.maya) + ' The user is having an open-ended conversation about perimenopause. Be warm, conversational, supportive. Keep responses under 120 words. Ask a follow-up question.' },
-      ...state.jcHistory
-    ];
-    const resp = await fetch('https://api.openai.com/v1/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${OPENAI_KEY}`},
-      body:JSON.stringify({ model:'gpt-4o-mini', messages, max_tokens:200, temperature:0.9, stream:true })
-    });
-    if (!resp.ok) throw new Error('API '+resp.status);
-    const reader=resp.body.getReader(), decoder=new TextDecoder();
-    bubble.innerHTML = '';
-    let done=false, fullText='';
-    while(!done){
-      const {done:sd,value}=await reader.read(); if(sd) break;
-      const lines=decoder.decode(value,{stream:true}).split('\n').filter(l=>l.startsWith('data: '));
-      for(const line of lines){
-        const json=line.slice(6).trim(); if(json==='[DONE]'){done=true;break;}
-        try{const d=JSON.parse(json).choices?.[0]?.delta?.content; if(d){bubble.textContent+=d;fullText+=d;msgs.scrollTop=msgs.scrollHeight;}}catch(_){}
-      }
-    }
-    state.jcHistory.push({ role:'assistant', content:fullText });
-    if (state.jcHistory.length > 12) state.jcHistory = state.jcHistory.slice(-12);
-  } catch(err) { addBubble(msgs,`I'm here with you 💜 Tell me more.`,'companion',comp); }
-}
-
-function calcSignal() { return calcSignalFrom(state.ciIntensity, state.ciStress); }
-function calcSignalFrom(intensity, stress) {
-  if (intensity>=4 || stress>=4) return 'Escalate';
-  if (intensity>=3 || stress>=3) return 'Monitor';
-  return 'Stable';
-}
-
-let intensityChart=null, clarityChart=null;
-function renderCharts() {
-  const data   = state.checkins.slice(-6);
-  const labels = data.map(c=>new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}));
-  const iData  = data.map(c=>c.intensity||0);
-  const cData  = data.map(c=>c.clarity_score||0);
-  const opts = { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
-    scales:{ x:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:11}}},
-             y:{min:0,max:5,grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:11},stepSize:1}} } };
-  if (intensityChart) intensityChart.destroy();
-  intensityChart = new Chart(document.getElementById('intensity-chart'),{
-    type:'line', data:{labels, datasets:[{data:iData,borderColor:'#6B4FA0',backgroundColor:'rgba(107,79,160,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#6B4FA0',pointRadius:5,borderWidth:2.5}]}, options:opts
-  });
-  if (clarityChart) clarityChart.destroy();
-  clarityChart = new Chart(document.getElementById('clarity-chart'),{
-    type:'line', data:{labels, datasets:[{data:cData,borderColor:'#4ABFBF',backgroundColor:'rgba(74,191,191,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#4ABFBF',pointRadius:5,borderWidth:2.5}]}, options:opts
-  });
-  const histEl  = document.getElementById('history-list');
-  const recent  = [...state.checkins].reverse().slice(0,5);
-  histEl.innerHTML = recent.map(c => {
-    const d   = new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-    const sym = Array.isArray(c.symptoms) ? c.symptoms.slice(0,3).join(' · ') : '';
-    const sc  = (c.signal||'Monitor').toLowerCase();
-    return `<div class="history-item"><div><div style="font-size:14px;font-weight:600">${d}</div><div class="history-symptoms">${sym||'No symptoms logged'}</div></div><span class="signal-pill ${sc}">${c.signal||'Monitor'}</span></div>`;
+  hist.innerHTML = [...state.checkins].reverse().slice(0,8).map(c => {
+    const d   = new Date(c.checked_at);
+    const sig = c.signal||'Monitor';
+    const cls = sig.toLowerCase();
+    return `<div class="history-item">
+      <div>
+        <div class="history-date">${d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</div>
+        <div class="history-symptoms">${(c.symptoms||[]).slice(0,3).join(' · ')||'No symptoms logged'}</div>
+      </div>
+      <span class="signal-pill ${cls}">${sig}</span>
+    </div>`;
   }).join('');
 }
 
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   SHARE / CLINICIAN REPORT
+══════════════════════════════════════════════════════════════════════════════════════════════ */
 function updateShareReport() {
-  const data = state.checkins; if (!data.length) return;
-  const avg  = key => (data.reduce((a,c)=>a+(c[key]||0),0)/data.length).toFixed(1);
-  const symMap = {};
-  data.forEach(c=>(c.symptoms||[]).forEach(s=>symMap[s]=(symMap[s]||0)+1));
-  const topSyms = Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ');
-  const last = data[data.length-1];
-  document.getElementById('report-date').textContent    = `Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
-  document.getElementById('r-signal').textContent       = state.lastSignal;
-  document.getElementById('r-total').textContent        = data.length;
-  document.getElementById('r-intensity').textContent    = avg('intensity')+' / 5';
-  document.getElementById('r-clarity').textContent      = avg('clarity_score')+' / 5';
-  document.getElementById('r-stress').textContent       = avg('stress_level')+' / 5';
-  document.getElementById('r-symptoms').textContent     = topSyms||'—';
-  document.getElementById('r-cycle').textContent        = last?.cycle_status||'—';
+  const now = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('report-date').textContent = 'Generated: ' + now;
+
+  const ci = state.checkins;
+  if (ci.length === 0) return;
+
+  const avg = arr => (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
+  const avgInt  = avg(ci.map(c=>c.intensity));
+  const avgClar = avg(ci.map(c=>c.clarity_score));
+  const avgStr  = avg(ci.map(c=>c.stress_level));
+
+  const sympMap = {};
+  ci.forEach(c=>(c.symptoms||[]).forEach(s=>{ sympMap[s]=(sympMap[s]||0)+1; }));
+  const topSymp = Object.entries(sympMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([s])=>s).join(', ')||'None';
+
+  const cycleCount = {};
+  ci.forEach(c=>{ if(c.cycle_status) cycleCount[c.cycle_status]=(cycleCount[c.cycle_status]||0)+1; });
+  const topCycle = Object.entries(cycleCount).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—';
+
+  document.getElementById('r-signal').textContent    = state.lastSignal;
+  document.getElementById('r-total').textContent     = ci.length;
+  document.getElementById('r-intensity').textContent = avgInt + ' / 5';
+  document.getElementById('r-clarity').textContent   = avgClar + ' / 5';
+  document.getElementById('r-stress').textContent    = avgStr + ' / 5';
+  document.getElementById('r-symptoms').textContent  = topSymp;
+  document.getElementById('r-cycle').textContent     = topCycle;
 }
 
 function buildReportText() {
-  const data = state.checkins;
-  const avg  = key => (data.reduce((a,c)=>a+(c[key]||0),0)/data.length).toFixed(1);
-  const symMap = {};
-  data.forEach(c=>(c.symptoms||[]).forEach(s=>symMap[s]=(symMap[s]||0)+1));
-  const topSyms = Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ');
-  return `HerSignal Clinical Summary\nGenerated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}\n\nSignal Status: ${state.lastSignal}\nTotal Check-Ins: ${data.length}\nAverage Symptom Intensity: ${avg('intensity')} / 5\nAverage Mental Clarity: ${avg('clarity_score')} / 5\nAverage Stress Level: ${avg('stress_level')} / 5\nMost Frequent Symptoms: ${topSyms||'None'}\nCycle Status (most recent): ${data[data.length-1]?.cycle_status||'—'}\n\nThis summary is based on self-reported weekly check-ins via the HerSignal app and is not a medical diagnosis. Please discuss with your healthcare provider.`;
+  const el = document.getElementById('report-card');
+  const rows = [...el.querySelectorAll('.report-row')].map(r => {
+    const k = r.querySelector('.report-key')?.textContent||'';
+    const v = r.querySelector('.report-val')?.textContent||'';
+    return `${k}: ${v}`;
+  });
+  return `HerSignal Clinical Summary\n${document.getElementById('report-date').textContent}\n\n${rows.join('\n')}\n\nThis summary is based on self-reported check-ins and is not a medical diagnosis.`;
 }
 
-document.getElementById('btn-copy-report').addEventListener('click',  () => { navigator.clipboard.writeText(buildReportText()).then(()=>showToast('Report copied ✓')); });
-document.getElementById('btn-email-report').addEventListener('click', () => { window.location.href=`mailto:?subject=HerSignal Health Summary&body=${encodeURIComponent(buildReportText())}`; });
-document.getElementById('btn-print-report').addEventListener('click', () => window.print());
+document.getElementById('btn-copy-report').addEventListener('click', () => {
+  navigator.clipboard.writeText(buildReportText()).then(() => showToast('Report copied! 📋'));
+});
 
-async function syncToSupabase(record) {
-  try {
-    const ctrl = new AbortController(); setTimeout(()=>ctrl.abort(),5000);
-    await fetch(`${SUPABASE_URL}/rest/v1/checkins`,{
-      method:'POST', signal:ctrl.signal,
-      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},
-      body:JSON.stringify(record)
-    });
-  } catch(e) {}
-}
+document.getElementById('btn-email-report').addEventListener('click', () => {
+  const body = encodeURIComponent(buildReportText());
+  const sub  = encodeURIComponent('HerSignal Clinical Summary — ' + state.userInitials);
+  window.location.href = `mailto:?subject=${sub}&body=${body}`;
+});
 
-function showToast(msg) {
+document.getElementById('btn-print-report').addEventListener('click', () => { window.print(); });
+
+/* ══════════════════════════════════════════════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════════════════════════════════════════════ */
+function showToast(msg, duration=2800) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2800);
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
 }
 </script>
 </body>
 </html>
-
