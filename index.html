@@ -1,429 +1,183 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<!-- PWA Manifest -->
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="hersignal-logo.PNG">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="HerSignal">
-<meta name="theme-color" content="#1A0A2E">
-<title>HerSignal — Clarity. Confidence. Control.</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-:root {
-  --bg:#1A0A2E; --primary:#6B4FA0; --secondary:#4ABFBF;
-  --card:rgba(255,255,255,0.07); --card-border:rgba(255,255,255,0.12);
-  --text:#FFFFFF; --muted:#C4B5E0; --radius:20px;
-  --stable-bg:#1B4332; --stable-text:#4ADE80;
-  --monitor-bg:#3D2B00; --monitor-text:#FCD34D;
-  --escalate-bg:#3D0000; --escalate-text:#F87171;
-}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;}
-#app{width:100%;max-width:430px;height:100vh;margin:0 auto;display:flex;flex-direction:column;position:relative;overflow:hidden;}
-.screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);transition:transform 0.35s cubic-bezier(.4,0,.2,1),opacity 0.35s ease;}
-.screen.hidden{transform:translateX(100%);opacity:0;pointer-events:none;}
-.screen.hidden-left{transform:translateX(-100%);opacity:0;pointer-events:none;}
-.scroll-content{flex:1;overflow-y:auto;padding:0 20px 100px;-webkit-overflow-scrolling:touch;}
-.scroll-content::-webkit-scrollbar{display:none;}
-.nav-bar{position:absolute;bottom:0;left:0;right:0;height:75px;background:rgba(26,10,46,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--card-border);display:flex;align-items:center;justify-content:space-around;padding-bottom:10px;z-index:100;}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:8px 20px;border-radius:12px;transition:all 0.2s;}
-.nav-item .nav-icon{font-size:22px;}
-.nav-item .nav-label{font-size:10px;color:var(--muted);font-weight:500;}
-.nav-item.active .nav-label{color:var(--secondary);}
-.nav-item.active .nav-icon{filter:drop-shadow(0 0 6px var(--secondary));}
-.app-header{padding:56px 20px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.app-header h1{font-size:22px;font-weight:700;background:linear-gradient(135deg,var(--secondary),var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.header-badge{background:var(--card);border:1px solid var(--card-border);padding:6px 14px;border-radius:30px;font-size:13px;color:var(--secondary);font-weight:600;}
-.card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:20px;margin-bottom:16px;}
-.btn{width:100%;padding:16px;border:none;border-radius:30px;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;}
-.btn:active{transform:scale(0.97);}
-.btn-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;}
-.btn-secondary{background:var(--card);border:1px solid var(--card-border);color:var(--text);}
-.btn-ghost{background:transparent;color:var(--muted);font-size:14px;}
-.signal-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:30px;font-size:13px;font-weight:700;letter-spacing:0.5px;}
-.signal-pill.stable{background:var(--stable-bg);color:var(--stable-text);}
-.signal-pill.monitor{background:var(--monitor-bg);color:var(--monitor-text);}
-.signal-pill.escalate{background:var(--escalate-bg);color:var(--escalate-text);}
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="HerSignal"><meta name="theme-color" content="#1A0A2E"><title>HerSignal — Clarity. Confidence. Control.</title><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>  :root {    --bg: #1A0A2E;    --primary: #6B4FA0;    --secondary: #4ABFBF;    --card: rgba(255,255,255,0.07);    --card-border: rgba(255,255,255,0.12);    --text: #FFFFFF;    --muted: #C4B5E0;    --radius: 20px;    --stable-bg: #1B4332; --stable-text: #4ADE80;    --monitor-bg: #3D2B00; --monitor-text: #FCD34D;    --escalate-bg: #3D0000; --escalate-text: #F87171;  }  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }  html, body { height:100%; font-family: system-ui,-apple-system,'SF Pro Display',sans-serif; background:var(--bg); color:var(--text); overflow:hidden; }  #app { width:100%; max-width:430px; height:100vh; margin:0 auto; display:flex; flex-direction:column; position:relative; overflow:hidden; }  .screen { position:absolute; inset:0; display:flex; flex-direction:column; background:var(--bg); transition:transform 0.35s cubic-bezier(.4,0,.2,1), opacity 0.35s ease; }  .screen.hidden { transform:translateX(100%); opacity:0; pointer-events:none; }  .screen.hidden-left { transform:translateX(-100%); opacity:0; pointer-events:none; }  .scroll-content { flex:1; overflow-y:auto; padding:0 20px 100px; -webkit-overflow-scrolling:touch; }  .scroll-content::-webkit-scrollbar { display:none; }  .nav-bar { position:absolute; bottom:0; left:0; right:0; height:75px; background:rgba(26,10,46,0.95); backdrop-filter:blur(20px); border-top:1px solid var(--card-border); display:flex; align-items:center; justify-content:space-around; padding-bottom:10px; z-index:100; }  .nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; padding:8px 20px; border-radius:12px; transition:all 0.2s; }  .nav-item .nav-icon { font-size:22px; }  .nav-item .nav-label { font-size:10px; color:var(--muted); font-weight:500; }  .nav-item.active .nav-label { color:var(--secondary); }  .nav-item.active .nav-icon { filter:drop-shadow(0 0 6px var(--secondary)); }  .app-header { padding:56px 20px 16px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }  .app-header h1 { font-size:22px; font-weight:700; background:linear-gradient(135deg,var(--secondary),var(--primary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }  .header-badge { background:var(--card); border:1px solid var(--card-border); padding:6px 14px; border-radius:30px; font-size:13px; color:var(--secondary); font-weight:600; }  .card { background:var(--card); border:1px solid var(--card-border); border-radius:var(--radius); padding:20px; margin-bottom:16px; }  .btn { width:100%; padding:16px; border:none; border-radius:30px; font-size:16px; font-weight:700; cursor:pointer; transition:all 0.2s; letter-spacing:0.3px; }  .btn:active { transform:scale(0.97); }  .btn-primary { background:linear-gradient(135deg,var(--primary),var(--secondary)); color:#fff; }  .btn-secondary { background:var(--card); border:1px solid var(--card-border); color:var(--text); }  .btn-ghost { background:transparent; color:var(--muted); font-size:14px; }  .signal-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 16px; border-radius:30px; font-size:13px; font-weight:700; letter-spacing:0.5px; }  .signal-pill.stable { background:var(--stable-bg); color:var(--stable-text); }  .signal-pill.monitor { background:var(--monitor-bg); color:var(--monitor-text); }  .signal-pill.escalate { background:var(--escalate-bg); color:var(--escalate-text); }  #screen-onboarding { background:linear-gradient(160deg,#2D1B69 0%,#1A0A2E 50%,#0D1B2A 100%); justify-content:center; padding:40px 28px; }  .onboard-logo { width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--secondary)); display:flex; align-items:center; justify-content:center; font-size:42px; margin:0 auto 28px; box-shadow:0 0 40px rgba(107,79,160,0.5); }  .onboard-title { font-size:30px; font-weight:800; text-align:center; margin-bottom:8px; }  .onboard-sub { font-size:15px; color:var(--muted); text-align:center; line-height:1.6; margin-bottom:32px; }  .input-group { margin-bottom:20px; }  .input-label { font-size:13px; color:var(--muted); margin-bottom:8px; display:block; font-weight:600; letter-spacing:0.5px; }  .input-field { width:100%; background:rgba(255,255,255,0.06); border:1.5px solid var(--card-border); border-radius:14px; padding:14px 18px; color:#fff; font-size:16px; outline:none; transition:border-color 0.2s; }  .input-field:focus { border-color:var(--primary); }  .input-field::placeholder { color:rgba(196,181,224,0.5); }  .privacy-note { font-size:12px; color:var(--muted); text-align:center; margin-top:16px; line-height:1.6; opacity:0.8; }  #screen-companion-select { background:linear-gradient(160deg,#2D1B69 0%,#1A0A2E 60%,#0D1B2A 100%); padding:0; }  .cs-header { padding:56px 24px 20px; text-align:center; flex-shrink:0; }  .cs-title { font-size:26px; font-weight:800; margin-bottom:8px; }  .cs-sub { font-size:14px; color:var(--muted); line-height:1.6; }  .cs-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:0 20px 20px; flex:1; overflow-y:auto; }  .cs-grid::-webkit-scrollbar { display:none; }  .cs-card { background:var(--card); border:2px solid var(--card-border); border-radius:20px; padding:16px 12px; display:flex; flex-direction:column; align-items:center; gap:10px; cursor:pointer; transition:all 0.25s; }  .cs-card:active { transform:scale(0.96); }  .cs-card.selected { border-color:var(--secondary); background:rgba(74,191,191,0.12); box-shadow:0 0 20px rgba(74,191,191,0.25); }  .cs-card:last-child { grid-column:1/-1; max-width:160px; margin:0 auto; }  .cs-photo { width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid var(--card-border); display:block; }  .cs-card.selected .cs-photo { border-color:var(--secondary); }  .cs-name { font-size:15px; font-weight:700; }  .cs-trait { font-size:11px; color:var(--muted); text-align:center; line-height:1.5; }  .cs-btn-wrap { padding:16px 20px 40px; flex-shrink:0; }  .welcome-text { font-size:24px; font-weight:700; margin-bottom:4px; }  .welcome-sub { font-size:14px; color:var(--muted); margin-bottom:20px; }  .signal-card { border-radius:var(--radius); padding:24px; margin-bottom:20px; position:relative; overflow:hidden; }  .signal-card::before { content:''; position:absolute; top:-30px; right:-30px; width:120px; height:120px; border-radius:50%; opacity:0.15; background:var(--secondary); }  .signal-label { font-size:11px; letter-spacing:2px; color:var(--muted); font-weight:600; margin-bottom:8px; }  .signal-value { font-size:42px; font-weight:800; margin-bottom:6px; }  .signal-desc { font-size:14px; color:var(--muted); line-height:1.5; }  .quick-stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }  .stat-card { background:var(--card); border:1px solid var(--card-border); border-radius:16px; padding:16px; }  .stat-value { font-size:24px; font-weight:700; color:var(--secondary); }  .stat-label { font-size:11px; color:var(--muted); margin-top:2px; }  #screen-chat { display:flex; flex-direction:column; }  .chat-header { padding:52px 16px 12px; display:flex; align-items:center; gap:12px; flex-shrink:0; background:rgba(26,10,46,0.98); border-bottom:1px solid var(--card-border); }  .chat-avatar { width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid var(--primary); flex-shrink:0; }  .chat-avatar-fallback { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--secondary)); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }  .chat-header-info { flex:1; }  .chat-header-name { font-size:16px; font-weight:700; }  .chat-header-sub { font-size:12px; color:var(--muted); }  .chat-back-btn { background:none; border:none; color:var(--muted); font-size:22px; cursor:pointer; padding:4px 8px; }  .chat-messages { flex:1; overflow-y:auto; padding:16px 14px 8px; display:flex; flex-direction:column; gap:10px; }  .chat-messages::-webkit-scrollbar { display:none; }  .bubble-row { display:flex; align-items:flex-end; gap:8px; }  .bubble-row.user { flex-direction:row-reverse; }  .bubble-avatar { width:30px; height:30px; border-radius:50%; object-fit:cover; flex-shrink:0; }  .bubble-avatar-fallback { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--secondary)); flex-shrink:0; }  .bubble { max-width:78%; padding:11px 15px; border-radius:18px; font-size:15px; line-height:1.55; word-break:break-word; }  .bubble.companion { background:rgba(107,79,160,0.28); border:1px solid rgba(107,79,160,0.35); border-bottom-left-radius:4px; color:#fff; }  .bubble.user { background:linear-gradient(135deg,var(--primary),var(--secondary)); border-bottom-right-radius:4px; color:#fff; }  .typing-bubble { display:flex; gap:5px; align-items:center; padding:12px 16px; }  .typing-dot { width:8px; height:8px; border-radius:50%; background:var(--muted); animation:tdot 1.2s infinite; }  .typing-dot:nth-child(2) { animation-delay:0.2s; }  .typing-dot:nth-child(3) { animation-delay:0.4s; }  @keyframes tdot { 0%,60%,100%{transform:translateY(0);opacity:0.5} 30%{transform:translateY(-6px);opacity:1} }  .chat-chips-area { padding:8px 14px 6px; flex-shrink:0; }  .chat-chips { display:flex; flex-wrap:wrap; gap:8px; }  .chat-chip { padding:8px 14px; border-radius:30px; border:1.5px solid var(--card-border); background:rgba(255,255,255,0.05); font-size:13px; cursor:pointer; transition:all 0.18s; color:var(--text); white-space:nowrap; }  .chat-chip:active { transform:scale(0.95); }  .chat-chip.selected { background:var(--primary); border-color:var(--primary); color:#fff; }  .chat-chip.multi-confirm { background:linear-gradient(135deg,var(--primary),var(--secondary)); border-color:transparent; color:#fff; font-weight:700; }  .chat-input-row { display:flex; gap:8px; padding:8px 14px 12px; flex-shrink:0; align-items:flex-end; }  .chat-text-input { flex:1; background:rgba(255,255,255,0.07); border:1.5px solid var(--card-border); border-radius:22px; padding:11px 16px; color:#fff; font-size:15px; outline:none; font-family:inherit; resize:none; max-height:80px; line-height:1.4; }  .chat-text-input:focus { border-color:var(--primary); }  .chat-text-input::placeholder { color:rgba(196,181,224,0.5); }  .chat-send-btn { width:42px; height:42px; border-radius:50%; border:none; background:linear-gradient(135deg,var(--primary),var(--secondary)); color:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }  .chat-send-btn:active { transform:scale(0.93); }  .chat-action-btns { display:flex; gap:10px; padding:0 14px 16px; flex-shrink:0; }  .chat-action-btn { flex:1; padding:13px; border:none; border-radius:22px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s; }  .chat-action-btn:active { transform:scale(0.97); }  .chat-action-btn.primary { background:linear-gradient(135deg,var(--primary),var(--secondary)); color:#fff; }  .chat-action-btn.secondary { background:var(--card); border:1px solid var(--card-border); color:var(--text); }  .chart-container { position:relative; height:180px; margin-bottom:8px; }  .section-title { font-size:13px; letter-spacing:1.5px; color:var(--muted); font-weight:600; margin-bottom:12px; margin-top:4px; }  .history-item { display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--card-border); }  .history-item:last-child { border-bottom:none; }  .history-date { font-size:13px; color:var(--muted); }  .history-symptoms { font-size:12px; color:var(--muted); margin-top:2px; }  .report-card { background:rgba(255,255,255,0.96); border-radius:var(--radius); padding:22px; margin-bottom:20px; color:#1A0A2E; }  .report-title { font-size:18px; font-weight:800; color:#1A0A2E; margin-bottom:4px; }  .report-date { font-size:12px; color:#666; margin-bottom:16px; }  .report-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee; font-size:14px; }  .report-row:last-child { border-bottom:none; }  .report-key { color:#555; }  .report-val { font-weight:700; color:#1A0A2E; }  .share-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:16px; border:none; border-radius:16px; font-size:16px; font-weight:700; cursor:pointer; margin-bottom:12px; transition:all 0.2s; }  .share-btn:active { transform:scale(0.97); }  .share-btn.copy { background:var(--primary); color:#fff; }  .share-btn.email { background:var(--secondary); color:#fff; }  .share-btn.print { background:var(--card); border:1px solid var(--card-border); color:#fff; }  .disclaimer { font-size:11px; color:var(--muted); text-align:center; line-height:1.6; margin-top:8px; }  .toast { position:fixed; bottom:100px; left:50%; transform:translateX(-50%) translateY(20px); background:rgba(75,191,191,0.95); color:#fff; padding:12px 24px; border-radius:30px; font-size:14px; font-weight:600; opacity:0; transition:all 0.3s; pointer-events:none; z-index:999; white-space:nowrap; }  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }  .loading-dots { display:flex; justify-content:center; gap:8px; padding:20px 0; }  .loading-dots span { width:10px; height:10px; border-radius:50%; background:var(--primary); animation:bounce 1.2s infinite; }  .loading-dots span:nth-child(2) { animation-delay:0.2s; }  .loading-dots span:nth-child(3) { animation-delay:0.4s; }  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-12px)} }</style></head><body><div id="app">
+  <!-- ONBOARDING -->
+  <div id="screen-onboarding" class="screen">
+    <div class="onboard-logo">💜</div>
+    <h1 class="onboard-title">HerSignal</h1>
+    <p class="onboard-sub">Your weekly companion for navigating perimenopause with clarity, confidence, and control.</p>
+    <div class="input-group">
+      <label class="input-label">YOUR INITIALS</label>
+      <input id="initials-input" class="input-field" type="text" placeholder="e.g. R.O." maxlength="5" autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>
+    <button class="btn btn-primary" id="btn-get-started">Get Started 💜</button>
+    <p class="privacy-note">Your initials stay on your device only.<br>Your health data is stored anonymously — we never know who you are.</p>
+  </div>
 
-/* ── ONBOARDING ── */
-#screen-onboarding{background:linear-gradient(160deg,#2D1B69 0%,#1A0A2E 50%,#0D1B2A 100%);padding:0;overflow:hidden;}
-    .onboard-scroll{height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;justify-content:center;padding:40px 28px 60px;}
-.onboard-hero{width:100%;max-height:200px;object-fit:cover;object-position:center top;border-radius:20px;margin-bottom:24px;display:block;}
-.onboard-logo{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:42px;margin:0 auto 28px;box-shadow:0 0 40px rgba(107,79,160,0.5);}
-.onboard-title{font-size:30px;font-weight:800;text-align:center;margin-bottom:8px;}
-.onboard-sub{font-size:15px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:32px;}
-.input-group{margin-bottom:20px;}
-.input-label{font-size:13px;color:var(--muted);margin-bottom:8px;display:block;font-weight:600;letter-spacing:0.5px;}
-.input-field{width:100%;background:rgba(255,255,255,0.06);border:1.5px solid var(--card-border);border-radius:14px;padding:14px 18px;color:#fff;font-size:16px;outline:none;transition:border-color 0.2s;}
-.input-field:focus{border-color:var(--primary);}
-.input-field::placeholder{color:rgba(196,181,224,0.5);}
-.privacy-note{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.6;opacity:0.8;}
+  <!-- COMPANION SELECT -->
+  <div id="screen-companion-select" class="screen hidden">
+    <div class="cs-header">
+      <div class="cs-title">Choose Your Companion 💜</div>
+      <p class="cs-sub">She'll guide your weekly check-ins.<br>You can always change her later.</p>
+    </div>
+    <div class="cs-grid">
+      <div class="cs-card" data-companion="maya" data-name="Maya" data-trait="Warm · Nurturing · Real">
+        <img class="cs-photo" src="https://odhaihealth-web.github.io/hersignal/maya.jpg" alt="Maya" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#6B4FA0,#4ABFBF);display:none;align-items:center;justify-content:center;font-size:32px;border:3px solid var(--card-border)">💜</div>
+        <div class="cs-name">Maya</div>
+        <div class="cs-trait">Warm · Nurturing · Real</div>
+      </div>
+      <div class="cs-card" data-companion="nia" data-name="Nia" data-trait="Calm · Grounding · Wise">
+        <img class="cs-photo" src="https://odhaihealth-web.github.io/hersignal/nia.jpg" alt="Nia" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#6B4FA0,#4ABFBF);display:none;align-items:center;justify-content:center;font-size:32px;border:3px solid var(--card-border)">🌿</div>
+        <div class="cs-name">Nia</div>
+        <div class="cs-trait">Calm · Grounding · Wise</div>
+      </div>
+      <div class="cs-card" data-companion="renee" data-name="Renee" data-trait="Honest · Spirited · Funny">
+        <img class="cs-photo" src="https://odhaihealth-web.github.io/hersignal/renee.jpg" alt="Renee" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#6B4FA0,#4ABFBF);display:none;align-items:center;justify-content:center;font-size:32px;border:3px solid var(--card-border)">🔥</div>
+        <div class="cs-name">Renee</div>
+        <div class="cs-trait">Honest · Spirited · Funny</div>
+      </div>
+      <div class="cs-card" data-companion="diane" data-name="Diane" data-trait="Steady · Experienced · Maternal">
+        <img class="cs-photo" src="https://odhaihealth-web.github.io/hersignal/diane.jpg" alt="Diane" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#6B4FA0,#4ABFBF);display:none;align-items:center;justify-content:center;font-size:32px;border:3px solid var(--card-border)">🌸</div>
+        <div class="cs-name">Diane</div>
+        <div class="cs-trait">Steady · Experienced · Maternal</div>
+      </div>
+      <div class="cs-card" data-companion="lauren" data-name="Lauren" data-trait="Gentle · Intuitive · Thoughtful">
+        <img class="cs-photo" src="https://odhaihealth-web.github.io/hersignal/lauren.jpg" alt="Lauren" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#6B4FA0,#4ABFBF);display:none;align-items:center;justify-content:center;font-size:32px;border:3px solid var(--card-border)">✨</div>
+        <div class="cs-name">Lauren</div>
+        <div class="cs-trait">Gentle · Intuitive · Thoughtful</div>
+      </div>
+    </div>
+    <div class="cs-btn-wrap">
+      <button class="btn btn-primary" id="btn-companion-confirm" disabled style="opacity:0.5">Choose Her 💜</button>
+    </div>
+  </div>
 
-/* ── COMPANION SELECT ── */
-#screen-companion-select{background:linear-gradient(160deg,#2D1B69 0%,#1A0A2E 60%,#0D1B2A 100%);padding:0;}
-.cs-header{padding:56px 24px 20px;text-align:center;flex-shrink:0;}
-.cs-title{font-size:26px;font-weight:800;margin-bottom:8px;}
-.cs-sub{font-size:14px;color:var(--muted);line-height:1.6;}
-.cs-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 20px 20px;flex:1;overflow-y:auto;}
-.cs-grid::-webkit-scrollbar{display:none;}
-.cs-card{background:var(--card);border:2px solid var(--card-border);border-radius:20px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:all 0.25s;}
-.cs-card:active{transform:scale(0.96);}
-.cs-card.selected{border-color:var(--secondary);background:rgba(74,191,191,0.12);box-shadow:0 0 20px rgba(74,191,191,0.25);}
-.cs-card:last-child{grid-column:1/-1;max-width:160px;margin:0 auto;}
-.cs-photo{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--card-border);display:block;}
-.cs-card.selected .cs-photo{border-color:var(--secondary);}
-.cs-name{font-size:15px;font-weight:700;}
-.cs-trait{font-size:11px;color:var(--muted);text-align:center;line-height:1.5;}
-.cs-btn-wrap{padding:16px 20px 40px;flex-shrink:0;}
-
-/* ── HOME ── */
-.welcome-text{font-size:24px;font-weight:700;margin-bottom:4px;}
-.welcome-sub{font-size:14px;color:var(--muted);margin-bottom:20px;}
-.signal-card{border-radius:var(--radius);padding:24px;margin-bottom:20px;position:relative;overflow:hidden;}
-.signal-card::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;opacity:0.15;background:var(--secondary);}
-.signal-label{font-size:11px;letter-spacing:2px;color:var(--muted);font-weight:600;margin-bottom:8px;}
-.signal-value{font-size:42px;font-weight:800;margin-bottom:6px;}
-.signal-desc{font-size:14px;color:var(--muted);line-height:1.5;}
-.quick-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
-.stat-card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:16px;}
-.stat-value{font-size:24px;font-weight:700;color:var(--secondary);}
-.stat-label{font-size:11px;color:var(--muted);margin-top:2px;}
-
-/* ── MODE CHOOSER ── */
-#screen-mode-chooser{background:linear-gradient(160deg,#2D1B69 0%,#1A0A2E 60%,#0D1B2A 100%);padding:0;}
-.mc-header{padding:56px 24px 24px;text-align:center;flex-shrink:0;}
-.mc-title{font-size:24px;font-weight:800;margin-bottom:6px;}
-.mc-sub{font-size:14px;color:var(--muted);line-height:1.6;}
-.mc-cards{display:flex;flex-direction:column;gap:14px;padding:0 20px 40px;overflow-y:auto;flex:1;}
-.mc-cards::-webkit-scrollbar{display:none;}
-.mc-card{background:var(--card);border:1.5px solid var(--card-border);border-radius:20px;padding:22px 20px;display:flex;align-items:flex-start;gap:16px;cursor:pointer;transition:all 0.22s;}
-.mc-card:active{transform:scale(0.97);}
-.mc-card:hover{border-color:var(--primary);background:rgba(107,79,160,0.14);}
-.mc-icon{font-size:32px;flex-shrink:0;margin-top:2px;}
-.mc-card-title{font-size:17px;font-weight:700;margin-bottom:4px;}
-.mc-card-desc{font-size:13px;color:var(--muted);line-height:1.55;}
-.mc-back{padding:0 20px 20px;flex-shrink:0;}
-
-/* ── CHAT SCREEN (shared for Chat Check-In and Just Chat) ── */
-#screen-chat,#screen-just-chat{display:flex;flex-direction:column;}
-.chat-header{padding:52px 16px 12px;display:flex;align-items:center;gap:12px;flex-shrink:0;background:rgba(26,10,46,0.98);border-bottom:1px solid var(--card-border);}
-.chat-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);flex-shrink:0;}
-.chat-avatar-fallback{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-.chat-header-info{flex:1;}
-.chat-header-name{font-size:16px;font-weight:700;}
-.chat-header-sub{font-size:12px;color:var(--muted);}
-.chat-back-btn{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:4px 8px;}
-.chat-messages{flex:1;overflow-y:auto;padding:16px 14px 8px;display:flex;flex-direction:column;gap:10px;}
-.chat-messages::-webkit-scrollbar{display:none;}
-.bubble-row{display:flex;align-items:flex-end;gap:8px;}
-.bubble-row.user{flex-direction:row-reverse;}
-.bubble-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;}
-.bubble-avatar-fallback{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));flex-shrink:0;}
-.bubble{max-width:78%;padding:11px 15px;border-radius:18px;font-size:15px;line-height:1.55;word-break:break-word;}
-.bubble.companion{background:rgba(107,79,160,0.28);border:1px solid rgba(107,79,160,0.35);border-bottom-left-radius:4px;color:#fff;}
-.bubble.user{background:linear-gradient(135deg,var(--primary),var(--secondary));border-bottom-right-radius:4px;color:#fff;}
-.typing-bubble{display:flex;gap:5px;align-items:center;padding:12px 16px;}
-.typing-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);animation:tdot 1.2s infinite;}
-.typing-dot:nth-child(2){animation-delay:0.2s;}
-.typing-dot:nth-child(3){animation-delay:0.4s;}
-@keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:0.5}30%{transform:translateY(-6px);opacity:1}}
-.chat-chips-area{padding:8px 14px 6px;flex-shrink:0;}
-.chat-chips{display:flex;flex-wrap:wrap;gap:8px;}
-.chat-chip{padding:8px 14px;border-radius:30px;border:1.5px solid var(--card-border);background:rgba(255,255,255,0.05);font-size:13px;cursor:pointer;transition:all 0.18s;color:var(--text);white-space:nowrap;}
-.chat-chip:active{transform:scale(0.95);}
-.chat-chip.selected{background:var(--primary);border-color:var(--primary);color:#fff;}
-.chat-chip.multi-confirm{background:linear-gradient(135deg,var(--primary),var(--secondary));border-color:transparent;color:#fff;font-weight:700;}
-.chat-input-row{display:flex;gap:8px;padding:8px 14px 12px;flex-shrink:0;align-items:flex-end;}
-.chat-text-input{flex:1;background:rgba(255,255,255,0.07);border:1.5px solid var(--card-border);border-radius:22px;padding:11px 16px;color:#fff;font-size:15px;outline:none;font-family:inherit;resize:none;max-height:80px;line-height:1.4;}
-.chat-text-input:focus{border-color:var(--primary);}
-.chat-text-input::placeholder{color:rgba(196,181,224,0.5);}
-.chat-send-btn{width:42px;height:42px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.chat-send-btn:active{transform:scale(0.93);}
-.chat-action-btns{display:flex;gap:10px;padding:0 14px 16px;flex-shrink:0;}
-.chat-action-btn{flex:1;padding:13px;border:none;border-radius:22px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;}
-.chat-action-btn:active{transform:scale(0.97);}
-.chat-action-btn.primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;}
-.chat-action-btn.secondary{background:var(--card);border:1px solid var(--card-border);color:var(--text);}
-
-/* ── QUICK FORM ── */
-#screen-quick-form{display:flex;flex-direction:column;}
-.qf-header{padding:52px 20px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;background:rgba(26,10,46,0.98);border-bottom:1px solid var(--card-border);}
-.qf-title{font-size:18px;font-weight:700;flex:1;}
-.qf-progress-dots{display:flex;gap:6px;align-items:center;flex-shrink:0;}
-.qf-dot{width:8px;height:8px;border-radius:50%;background:var(--card-border);transition:all 0.25s;}
-.qf-dot.active{background:var(--secondary);transform:scale(1.25);}
-.qf-dot.done{background:var(--primary);}
-.qf-body{flex:1;overflow-y:auto;padding:24px 20px 16px;}
-.qf-body::-webkit-scrollbar{display:none;}
-.qf-step{display:none;}
-.qf-step.active{display:block;}
-.qf-step-title{font-size:20px;font-weight:700;margin-bottom:6px;}
-.qf-step-sub{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
-.qf-slider-wrap{margin-bottom:20px;}
-.qf-slider{width:100%;-webkit-appearance:none;appearance:none;height:6px;background:var(--card-border);border-radius:3px;outline:none;}
-.qf-slider::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));cursor:pointer;box-shadow:0 2px 8px rgba(107,79,160,0.5);}
-.qf-slider-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px;}
-.qf-slider-val{text-align:center;font-size:28px;font-weight:800;color:var(--secondary);margin-bottom:8px;}
-.qf-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
-.qf-chip{padding:10px 16px;border-radius:30px;border:1.5px solid var(--card-border);background:rgba(255,255,255,0.05);font-size:14px;cursor:pointer;transition:all 0.18s;color:var(--text);}
-.qf-chip:active{transform:scale(0.95);}
-.qf-chip.selected{background:var(--primary);border-color:var(--primary);color:#fff;}
-.qf-nav{display:flex;gap:12px;padding:12px 20px 24px;flex-shrink:0;}
-
-/* ── DASHBOARD ── */
-.chart-container{position:relative;height:180px;margin-bottom:8px;}
-.section-title{font-size:13px;letter-spacing:1.5px;color:var(--muted);font-weight:600;margin-bottom:12px;margin-top:4px;}
-.history-item{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--card-border);}
-.history-item:last-child{border-bottom:none;}
-.history-date{font-size:13px;color:var(--muted);}
-.history-symptoms{font-size:12px;color:var(--muted);margin-top:2px;}
-
-/* ── SHARE ── */
-.report-card{background:rgba(255,255,255,0.96);border-radius:var(--radius);padding:22px;margin-bottom:20px;color:#1A0A2E;}
-.report-title{font-size:18px;font-weight:800;color:#1A0A2E;margin-bottom:4px;}
-.report-date{font-size:12px;color:#666;margin-bottom:16px;}
-.report-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:14px;}
-.report-row:last-child{border-bottom:none;}
-.report-key{color:#555;}
-.report-val{font-weight:700;color:#1A0A2E;}
-.share-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;border:none;border-radius:16px;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:12px;transition:all 0.2s;}
-.share-btn:active{transform:scale(0.97);}
-.share-btn.copy{background:var(--primary);color:#fff;}
-.share-btn.email{background:var(--secondary);color:#fff;}
-.share-btn.print{background:var(--card);border:1px solid var(--card-border);color:#fff;}
-.disclaimer{font-size:11px;color:var(--muted);text-align:center;line-height:1.6;margin-top:8px;}
-
-/* ── TOAST ── */
-.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(75,191,191,0.95);color:#fff;padding:12px 24px;border-radius:30px;font-size:14px;font-weight:600;opacity:0;transition:all 0.3s;pointer-events:none;z-index:999;white-space:nowrap;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-</style>
-</head>
-<body>
-<div id="app">
-
-<!-- ══════════════════════════════════════════ ONBOARDING ══ -->
-    <div id="screen-onboarding" class="screen">
-      <div class="onboard-scroll">
-        <img class="onboard-hero" src="https://odhaihealth-web.github.io/hersignal/hersignal-women.jpg" alt="HerSignal — four women navigating perimenopause together" onerror="this.style.display='none'">
-        <h1 class="onboard-title">HerSignal</h1>
-        <p class="onboard-sub">Your weekly companion for navigating perimenopause with clarity, confidence, and control.</p>
-        <div class="input-group">
-          <label class="input-label">YOUR INITIALS</label>
-          <input id="initials-input" class="input-field" type="text" placeholder="e.g. R.O." maxlength="5" autocomplete="off" autocorrect="off" spellcheck="false">
+  <!-- HOME -->
+  <div id="screen-home" class="screen hidden">
+    <div class="app-header">
+      <h1>HerSignal</h1>
+      <div class="header-badge" id="home-initials-badge"></div>
+    </div>
+    <div class="scroll-content">
+      <p class="welcome-text" id="home-welcome">Welcome back 💜</p>
+      <p class="welcome-sub" id="home-subtitle">Here's where you stand today.</p>
+      <div class="signal-card" id="home-signal-card" style="background:var(--monitor-bg);">
+        <div class="signal-label">YOUR SIGNAL</div>
+        <div class="signal-value" id="home-signal-value" style="color:var(--monitor-text)">Monitor</div>
+        <p class="signal-desc" id="home-signal-desc">Some patterns worth watching. Stay consistent with your check-ins.</p>
+      </div>
+      <div class="quick-stats">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-checkins">0</div>
+          <div class="stat-label">Total Check-Ins</div>
         </div>
-        <button class="btn btn-primary" id="btn-get-started">Get Started 💜</button>
-        <p class="privacy-note">Your initials stay on your device only.<br>Your health data is stored anonymously — we never know who you are.</p>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-streak">—</div>
+          <div class="stat-label">Last Check-In</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-start-checkin" style="margin-bottom:12px;">Check In Now</button>
+      <button class="btn btn-secondary" id="btn-go-share">Share with My Clinician</button>
+    </div>
+    <nav class="nav-bar">
+      <div class="nav-item active" data-nav="home"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></div>
+      <div class="nav-item" data-nav="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Trends</span></div>
+      <div class="nav-item" data-nav="share"><span class="nav-icon">👩‍⚕️</span><span class="nav-label">Clinician</span></div>
+    </nav>
+  </div>
+
+  <!-- CHAT -->
+  <div id="screen-chat" class="screen hidden">
+    <div class="chat-header">
+      <button class="chat-back-btn" id="chat-back-btn">‹</button>
+      <img id="chat-header-avatar" class="chat-avatar" src="" alt="" style="display:none">
+      <div id="chat-header-avatar-fallback" class="chat-avatar-fallback" style="display:none">💜</div>
+      <div class="chat-header-info">
+        <div class="chat-header-name" id="chat-header-name">Your Companion</div>
+        <div class="chat-header-sub">Weekly Check-In</div>
       </div>
     </div>
-
-<!-- ════════════════════════════════════ COMPANION SELECT ══ -->
-<div id="screen-companion-select" class="screen hidden">
-  <div class="cs-header">
-    <div class="cs-title">Choose Your Companion 💜</div>
-    <p class="cs-sub">She'll guide your weekly check-ins.<br>You can always change her later.</p>
-  </div>
-  <div class="cs-grid" id="cs-grid">
-    <!-- Cards injected by JS so photos use preload logic -->
-  </div>
-  <div class="cs-btn-wrap">
-    <button class="btn btn-primary" id="btn-companion-confirm" disabled style="opacity:0.5">Choose Her 💜</button>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════ HOME ══ -->
-<div id="screen-home" class="screen hidden">
-  <div class="app-header">
-    <h1>HerSignal</h1>
-    <div class="header-badge" id="home-initials-badge"></div>
-  </div>
-  <div class="scroll-content">
-    <p class="welcome-text" id="home-welcome">Welcome back 💜</p>
-    <p class="welcome-sub" id="home-subtitle">Here's where you stand today.</p>
-    <div class="signal-card" id="home-signal-card" style="background:var(--monitor-bg);">
-      <div class="signal-label">YOUR SIGNAL</div>
-      <div class="signal-value" id="home-signal-value" style="color:var(--monitor-text)">Monitor</div>
-      <p class="signal-desc" id="home-signal-desc">Some patterns worth watching. Stay consistent with your check-ins.</p>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-chips-area" id="chat-chips-area" style="display:none">
+      <div class="chat-chips" id="chat-chips"></div>
     </div>
-    <div class="quick-stats">
-      <div class="stat-card">
-        <div class="stat-value" id="stat-checkins">0</div>
-        <div class="stat-label">Total Check-Ins</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-streak">—</div>
-        <div class="stat-label">Last Check-In</div>
+    <div class="chat-input-row" id="chat-input-row" style="display:none">
+      <textarea class="chat-text-input" id="chat-text-input" placeholder="Write anything…" rows="1"></textarea>
+      <button class="chat-send-btn" id="chat-send-btn">↑</button>
+    </div>
+    <div class="chat-action-btns" id="chat-action-btns" style="display:none">
+      <button class="chat-action-btn primary" id="chat-btn-trends">View Trends</button>
+      <button class="chat-action-btn secondary" id="chat-btn-done">Done</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="screen-dashboard" class="screen hidden">
+    <div class="app-header">
+      <h1>Trends</h1>
+      <div class="header-badge">Last 6 Weeks</div>
+    </div>
+    <div class="scroll-content">
+      <div class="section-title">SYMPTOM INTENSITY</div>
+      <div class="card"><div class="chart-container"><canvas id="intensity-chart"></canvas></div></div>
+      <div class="section-title">MENTAL CLARITY</div>
+      <div class="card"><div class="chart-container"><canvas id="clarity-chart"></canvas></div></div>
+      <div class="section-title">RECENT CHECK-INS</div>
+      <div class="card" id="history-list">
+        <p style="color:var(--muted);font-size:14px;text-align:center;padding:12px 0">No check-ins yet. Complete your first check-in to see your history.</p>
       </div>
     </div>
-    <button class="btn btn-primary" id="btn-start-checkin" style="margin-bottom:12px;">Check In Now</button>
-    <button class="btn btn-secondary" id="btn-change-companion" style="margin-bottom:12px;">Change Companion</button>
-    <button class="btn btn-secondary" id="btn-go-share">Share with My Clinician</button>
+    <nav class="nav-bar">
+      <div class="nav-item" data-nav="home"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></div>
+      <div class="nav-item active" data-nav="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Trends</span></div>
+      <div class="nav-item" data-nav="share"><span class="nav-icon">👩‍⚕️</span><span class="nav-label">Clinician</span></div>
+    </nav>
   </div>
-  <nav class="nav-bar">
-    <div class="nav-item active" data-nav="home"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></div>
-    <div class="nav-item" data-nav="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Trends</span></div>
-    <div class="nav-item" data-nav="share"><span class="nav-icon">👩‍⚕️</span><span class="nav-label">Clinician</span></div>
-  </nav>
-</div>
 
-<!-- ══════════════════════════════════════ MODE CHOOSER ══ -->
-<div id="screen-mode-chooser" class="screen hidden">
-  <div class="mc-header">
-    <div class="mc-title">How do you want to check in?</div>
-    <p class="mc-sub">Choose what feels right for today.</p>
-  </div>
-  <div class="mc-cards">
-    <div class="mc-card" id="mc-btn-chat">
-      <div class="mc-icon">💬</div>
-      <div>
-        <div class="mc-card-title">Chat Check-In</div>
-        <div class="mc-card-desc">Your companion walks you through this week's check-in step by step — a guided, warm conversation.</div>
+  <!-- CLINICIAN SHARE -->
+  <div id="screen-share" class="screen hidden">
+    <div class="app-header"><h1>Share Report</h1></div>
+    <div class="scroll-content">
+      <div class="report-card" id="report-card">
+        <div class="report-title">HerSignal Clinical Summary</div>
+        <div class="report-date" id="report-date">Generated: —</div>
+        <div class="report-row"><span class="report-key">Signal Status</span><span class="report-val" id="r-signal">—</span></div>
+        <div class="report-row"><span class="report-key">Total Check-Ins</span><span class="report-val" id="r-total">—</span></div>
+        <div class="report-row"><span class="report-key">Avg. Intensity</span><span class="report-val" id="r-intensity">—</span></div>
+        <div class="report-row"><span class="report-key">Avg. Clarity</span><span class="report-val" id="r-clarity">—</span></div>
+        <div class="report-row"><span class="report-key">Avg. Stress</span><span class="report-val" id="r-stress">—</span></div>
+        <div class="report-row"><span class="report-key">Top Symptoms</span><span class="report-val" id="r-symptoms" style="text-align:right;max-width:60%;">—</span></div>
+        <div class="report-row"><span class="report-key">Cycle Status</span><span class="report-val" id="r-cycle">—</span></div>
       </div>
+      <button class="share-btn copy" id="btn-copy-report">📋 Copy Report</button>
+      <button class="share-btn email" id="btn-email-report">✉️ Email to Provider</button>
+      <button class="share-btn print" id="btn-print-report">🖨️ Print Report</button>
+      <p class="disclaimer">This summary is based on self-reported check-ins and is not a medical diagnosis. Please discuss with your healthcare provider.</p>
     </div>
-    <div class="mc-card" id="mc-btn-form">
-      <div class="mc-icon">📋</div>
-      <div>
-        <div class="mc-card-title">Quick Form</div>
-        <div class="mc-card-desc">Sliders and chips only — no conversation. Fast and simple if you're short on time.</div>
-      </div>
-    </div>
-    <div class="mc-card" id="mc-btn-just-chat">
-      <div class="mc-icon">🌸</div>
-      <div>
-        <div class="mc-card-title">Just Chat</div>
-        <div class="mc-card-desc">Open-ended conversation with your companion about anything on your mind. No check-in required.</div>
-      </div>
-    </div>
+    <nav class="nav-bar">
+      <div class="nav-item" data-nav="home"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></div>
+      <div class="nav-item" data-nav="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Trends</span></div>
+      <div class="nav-item active" data-nav="share"><span class="nav-icon">👩‍⚕️</span><span class="nav-label">Clinician</span></div>
+    </nav>
   </div>
-  <div class="mc-back">
-    <button class="btn btn-ghost" id="mc-back-btn">← Back</button>
-  </div>
-</div>
 
-<!-- ════════════════════════════════════════════ CHAT ══ -->
-<div id="screen-chat" class="screen hidden">
-  <div class="chat-header">
-    <button class="chat-back-btn" id="chat-back-btn">‹</button>
-    <div id="chat-header-avatar-wrap"></div>
-    <div class="chat-header-info">
-      <div class="chat-header-name" id="chat-header-name">Your Companion</div>
-      <div class="chat-header-sub">Weekly Check-In</div>
-    </div>
-  </div>
-  <div class="chat-messages" id="chat-messages"></div>
-  <div class="chat-chips-area" id="chat-chips-area" style="display:none">
-    <div class="chat-chips" id="chat-chips"></div>
-  </div>
-  <div class="chat-input-row" id="chat-input-row" style="display:none">
-    <textarea class="chat-text-input" id="chat-text-input" placeholder="Write anything…" rows="1"></textarea>
-    <button class="chat-send-btn" id="chat-send-btn">↑</button>
-  </div>
-  <div class="chat-action-btns" id="chat-action-btns" style="display:none">
-    <button class="chat-action-btn primary" id="chat-btn-trends">View Trends</button>
-    <button class="chat-action-btn secondary" id="chat-btn-done">Done</button>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════ QUICK FORM ══ -->
-<div id="screen-quick-form" class="screen hidden">
-  <div class="qf-header">
-    <button class="chat-back-btn" id="qf-back-btn">‹</button>
-    <div class="qf-title">Quick Check-In</div>
-    <div class="qf-progress-dots" id="qf-dots"></div>
-  </div>
-  <div class="qf-body" id="qf-body"></div>
-  <div class="qf-nav" id="qf-nav"></div>
-</div>
-
-<!-- ══════════════════════════════════════ JUST CHAT ══ -->
-<div id="screen-just-chat" class="screen hidden">
-  <div class="chat-header">
-    <button class="chat-back-btn" id="jc-back-btn">‹</button>
-    <div id="jc-header-avatar-wrap"></div>
-    <div class="chat-header-info">
-      <div class="chat-header-name" id="jc-header-name">Your Companion</div>
-      <div class="chat-header-sub" id="jc-header-sub">Just chatting 🌸</div>
-    </div>
-  </div>
-  <div class="chat-messages" id="jc-messages"></div>
-  <div class="chat-input-row" style="display:flex;padding:8px 14px 24px;">
-    <textarea class="chat-text-input" id="jc-text-input" placeholder="Ask me anything…" rows="1"></textarea>
-    <button class="chat-send-btn" id="jc-send-btn">↑</button>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════ DASHBOARD ══ -->
-<div id="screen-dashboard" class="screen hidden">
-  <div class="app-header">
-    <h1>Trends</h1>
-    <div class="header-badge">Last 6 Weeks</div>
-  </div>
-  <div class="scroll-content">
-    <div class="section-title">SYMPTOM INTENSITY</div>
-    <div class="card"><div class="chart-container"><canvas id="intensity-chart"></canvas></div></div>
-    <div class="section-title">MENTAL CLARITY</div>
-    <div class="card"><div class="chart-container"><canvas id="clarity-chart"></canvas></div></div>
-    <div class="section-title">RECENT CHECK-INS</div>
-    <div class="card" id="history-list">
-      <p style="color:var(--muted);font-size:14px;text-align:center;padding:12px 0">No check-ins yet.</p>
-    </div>
-  </div>
-  <nav class="nav-bar">
-    <div class="nav-item" data-nav="home"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></div>
-    <div class="nav-item active" data-nav="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Trends</span></div>
-    <div class="nav-item" data-nav="share"><span class="nav-icon">👩‍⚕️</span><span class="nav-label">Clinician</span></div>
-  </nav>
-</div>
-
-<!-- ════════════════════════════════ CLINICIAN SHARE ══ -->
-<div id="screen-share" class="screen hidden">
-  <div class="app-header"><h1>Share Report</h1></div>
-  <div class="scroll-content">
-    <div class="report-card" id="report-card">
-      <div class="report-title">HerSignal Clinical Summary</div>
-      <div class="report-date" id="report-date">Generated: —</div>
-      <div class="report-row"><span class="report-key">Signal Status</span><span class="report-val" id="r-signal">—</span></div>
-      <div class="report-row"><span class="report-key">Total Check-Ins</span><span class="report-val" id="r-total">—</span></div>
-      <div class="report-row"><span class="report-key">Avg. Intensity</span><span class="report-val" id="r-intensity">—</span></div>
-      <div class="report-row"><span class="report-key">Avg. Clarity</span><span class="report-val" id="r-clarity">—</span></div>
-      <div class="report-row"><span class="report-key">Avg. Stress</span><span class="report-val" id="r-stress">—</span></div>
-      <div class="report-row"><span class="report-key">Top Symptoms</span><span class="report-val" id="r-symptoms" style="text-align:right;max-width:60%;">—</span></div>
-      <div class="report-row"><span class="report-key">Cycle Status</span><span class="report-val" id="r-cycle">—</span></div>
-    </div>
-    <button class="share-btn copy" id="btn-copy-report">📋 Copy Report</button>
-    <button class="share-btn email" id="btn-email-report">✉️ Email to Provider</button>
-    <button class="share-btn print" id="btn-print-report">🖨️ Print Report</button>
-    <p class="disclaimer">This summary is based on self-reported check-ins and is not a medical diagnosis. Please discuss with your healthcare provider.</p>
-  </div>
-  <nav class="nav-bar">
-    <div class="nav-item" data-nav="home"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></div>
-    <div class="nav-item" data-nav="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Trends</span></div>
-    <div class="nav-item active" data-nav="share"><span class="nav-icon">👩‍⚕️</span><span class="nav-label">Clinician</span></div>
-  </nav>
-</div>
-
-<div class="toast" id="toast"></div>
+  <div class="toast" id="toast"></div>
 </div>
 
 <script>
-/* ══════════════════════════════════════════════════════════
-   CONFIG
-══════════════════════════════════════════════════════════ */
 const SUPABASE_URL = 'https://kwriboxxujqrypxopthl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3cmlib3h4dWpxcnlweG9wdGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5ODk2OTYsImV4cCI6MjA5NDU2NTY5Nn0.qoxQ9tPEoEnBPAT3M0ru3uxJDvTMcBnlP6lL9MYSDHw';
 
-/* ══════════════════════════════════════════════════════════
-   COMPANION DATA
-══════════════════════════════════════════════════════════ */
+/* --- COMPANION DATA --- */
 const COMPANIONS = {
-  maya:   { name:'Maya',   trait:'Warm · Nurturing · Real',         emoji:'💜', photo:'https://odhaihealth-web.github.io/hersignal/maya.jpg' },
-  nia:    { name:'Nia',    trait:'Calm · Grounding · Wise',         emoji:'🌿', photo:'https://odhaihealth-web.github.io/hersignal/nia.jpg' },
-  renee:  { name:'Renee',  trait:'Honest · Spirited · Funny',       emoji:'🔥', photo:'https://odhaihealth-web.github.io/hersignal/renee.jpg' },
-  diane:  { name:'Diane',  trait:'Steady · Experienced · Maternal', emoji:'🌸', photo:'https://odhaihealth-web.github.io/hersignal/diane.jpg' },
-  lauren: { name:'Lauren', trait:'Gentle · Intuitive · Thoughtful', emoji:'✨', photo:'https://odhaihealth-web.github.io/hersignal/lauren.jpg' }
+  maya:   { name:'Maya',   trait:'Warm · Nurturing · Real',         photo:'https://odhaihealth-web.github.io/hersignal/maya.jpg' },
+  nia:    { name:'Nia',    trait:'Calm · Grounding · Wise',         photo:'https://odhaihealth-web.github.io/hersignal/nia.jpg' },
+  renee:  { name:'Renee',  trait:'Honest · Spirited · Funny',       photo:'https://odhaihealth-web.github.io/hersignal/renee.jpg' },
+  diane:  { name:'Diane',  trait:'Steady · Experienced · Maternal', photo:'https://odhaihealth-web.github.io/hersignal/diane.jpg' },
+  lauren: { name:'Lauren', trait:'Gentle · Intuitive · Thoughtful', photo:'https://odhaihealth-web.github.io/hersignal/lauren.jpg' }
 };
 
 const COMPANION_PROMPTS = {
@@ -434,37 +188,7 @@ const COMPANION_PROMPTS = {
   lauren: 'You are Lauren, a gentle and intuitive companion for perimenopause. Thoughtful, soft-spoken, emotionally intelligent. Never diagnose.'
 };
 
-/* ══════════════════════════════════════════════════════════
-   IMAGE PRELOADER
-══════════════════════════════════════════════════════════ */
-function loadPhotoInto(containerEl, photoUrl, fallbackEmoji, cssClass) {
-  const fb = document.createElement('div');
-  fb.style.cssText = `width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:32px;`;
-  fb.textContent = fallbackEmoji;
-  containerEl.appendChild(fb);
-
-  const img = new Image();
-  img.onload = () => {
-    const el = document.createElement('img');
-    el.src = photoUrl;
-    el.alt = '';
-    el.className = cssClass || '';
-    el.style.cssText = 'width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;';
-    containerEl.replaceChild(el, fb);
-  };
-  img.src = photoUrl;
-}
-
-function makeAvatarEl(comp, size=44) {
-  const wrap = document.createElement('div');
-  wrap.style.cssText = `width:${size}px;height:${size}px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid var(--primary);`;
-  loadPhotoInto(wrap, comp.photo, comp.emoji);
-  return wrap;
-}
-
-/* ══════════════════════════════════════════════════════════
-   STATE
-══════════════════════════════════════════════════════════ */
+/* --- STATE --- */
 let state = {
   screen: 'onboarding',
   userUUID:     localStorage.getItem('hs_uuid')      || '',
@@ -473,11 +197,11 @@ let state = {
   companionKey: localStorage.getItem('hs_companion') || '',
   lastSignal:   localStorage.getItem('hs_signal')    || 'Stable',
   checkins:     JSON.parse(localStorage.getItem('hsig_checkins_v3') || '[]'),
-  chatPhase:0, ciSymptoms:[], ciIntensity:3, ciStress:3, ciCycle:'', ciClarity:3, ciNotes:'',
-  jcHistory: []
+  chatPhase:0, ciSymptoms:[], ciIntensity:3, ciStress:3,
+  ciCycle:'', ciClarity:3, ciNotes:''
 };
 
-/* ── Seed data ── */
+/* Seed data */
 if (state.checkins.length === 0) {
   const now = Date.now(), day = 86400000;
   state.checkins = [
@@ -491,14 +215,12 @@ if (state.checkins.length === 0) {
   localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
 }
 
-/* ══════════════════════════════════════════════════════════
-   SCREEN NAVIGATION
-══════════════════════════════════════════════════════════ */
+/* --- SCREEN NAVIGATION --- */
 function showScreen(name, direction='forward') {
-  const cur  = document.getElementById('screen-'+state.screen);
-  const next = document.getElementById('screen-'+name);
+  const current = document.getElementById('screen-'+state.screen);
+  const next    = document.getElementById('screen-'+name);
   if (!next || name === state.screen) return;
-  cur.classList.add(direction==='back' ? 'hidden' : 'hidden-left');
+  current.classList.add(direction==='back' ? 'hidden' : 'hidden-left');
   next.classList.remove('hidden','hidden-left');
   state.screen = name;
   if (name==='dashboard') setTimeout(renderCharts, 80);
@@ -515,9 +237,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
-/* ══════════════════════════════════════════════════════════
-   ONBOARDING
-══════════════════════════════════════════════════════════ */
+/* --- ONBOARDING --- */
 document.getElementById('btn-get-started').addEventListener('click', () => {
   const val = document.getElementById('initials-input').value.trim().toUpperCase();
   if (!val) { showToast('Please enter your initials 💜'); return; }
@@ -527,52 +247,25 @@ document.getElementById('btn-get-started').addEventListener('click', () => {
   localStorage.setItem('hs_uuid', uuid);
   localStorage.setItem('hs_onboarded', 'true');
   if (state.companionKey) { showScreen('home'); updateHome(); }
-  else { buildCompanionGrid(); showScreen('companion-select'); }
+  else { showScreen('companion-select'); }
 });
 
 if (state.isOnboarded && state.userInitials) {
   if (state.companionKey) { showScreen('home'); updateHome(); }
-  else { buildCompanionGrid(); showScreen('companion-select'); }
+  else { showScreen('companion-select'); }
 }
 
-/* ══════════════════════════════════════════════════════════
-   COMPANION SELECT
-══════════════════════════════════════════════════════════ */
+/* --- COMPANION SELECT --- */
 let selectedCompanionKey = '';
-
-function buildCompanionGrid() {
-  const grid = document.getElementById('cs-grid');
-  grid.innerHTML = '';
-  Object.entries(COMPANIONS).forEach(([key, comp]) => {
-    const card = document.createElement('div');
-    card.className = 'cs-card';
-    card.dataset.companion = key;
-
-    const photoWrap = document.createElement('div');
-    photoWrap.style.cssText = 'width:80px;height:80px;border-radius:50%;overflow:hidden;border:3px solid var(--card-border);flex-shrink:0;';
-    loadPhotoInto(photoWrap, comp.photo, comp.emoji);
-
-    const nameEl  = document.createElement('div'); nameEl.className='cs-name'; nameEl.textContent=comp.name;
-    const traitEl = document.createElement('div'); traitEl.className='cs-trait'; traitEl.textContent=comp.trait;
-
-    card.appendChild(photoWrap);
-    card.appendChild(nameEl);
-    card.appendChild(traitEl);
-
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.cs-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      selectedCompanionKey = key;
-      const btn = document.getElementById('btn-companion-confirm');
-      btn.disabled = false; btn.style.opacity = '1';
-    });
-
-    grid.appendChild(card);
+document.querySelectorAll('.cs-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.cs-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedCompanionKey = card.dataset.companion;
+    const btn = document.getElementById('btn-companion-confirm');
+    btn.disabled = false; btn.style.opacity = '1';
   });
-
-  const cards = grid.querySelectorAll('.cs-card');
-  if (cards.length % 2 !== 0) cards[cards.length-1].style.gridColumn = '1/-1';
-}
+});
 
 document.getElementById('btn-companion-confirm').addEventListener('click', () => {
   if (!selectedCompanionKey) return;
@@ -581,9 +274,7 @@ document.getElementById('btn-companion-confirm').addEventListener('click', () =>
   showScreen('home'); updateHome();
 });
 
-/* ══════════════════════════════════════════════════════════
-   HOME
-══════════════════════════════════════════════════════════ */
+/* --- HOME --- */
 function updateHome() {
   document.getElementById('home-initials-badge').textContent = state.userInitials || '';
   document.getElementById('home-welcome').textContent = `Welcome back, ${state.userInitials} 💜`;
@@ -607,12 +298,7 @@ function updateHome() {
   document.getElementById('home-signal-desc').textContent       = descs[sig]||descs.Monitor;
 }
 
-document.getElementById('btn-start-checkin').addEventListener('click', () => { showScreen('mode-chooser'); });
-document.getElementById('btn-change-companion').addEventListener('click', () => {
-  selectedCompanionKey = '';
-  buildCompanionGrid();
-  showScreen('companion-select');
-});
+document.getElementById('btn-start-checkin').addEventListener('click', () => { startChat(); showScreen('chat'); });
 document.getElementById('btn-go-share').addEventListener('click', () => {
   showScreen('share');
   document.querySelectorAll('.nav-item').forEach(n => {
@@ -622,251 +308,160 @@ document.getElementById('btn-go-share').addEventListener('click', () => {
 });
 
 /* ══════════════════════════════════════════════════════════
-   MODE CHOOSER
-══════════════════════════════════════════════════════════ */
-document.getElementById('mc-btn-chat').addEventListener('click', () => { startChatCheckin(); showScreen('chat'); });
-document.getElementById('mc-btn-form').addEventListener('click', () => { startQuickForm(); showScreen('quick-form'); });
-document.getElementById('mc-btn-just-chat').addEventListener('click', () => { startJustChat(); showScreen('just-chat'); });
-document.getElementById('mc-back-btn').addEventListener('click', () => { showScreen('home','back'); updateHome(); });
-
-/* ══════════════════════════════════════════════════════════
-   SHARED CHAT HELPERS
-══════════════════════════════════════════════════════════ */
-function getCompanion() {
-  return COMPANIONS[state.companionKey] || COMPANIONS.maya;
-}
-
-function addBubble(msgsEl, text, role, comp) {
-  const row = document.createElement('div');
-  row.className = 'bubble-row' + (role==='user' ? ' user' : '');
-
-  if (role === 'companion') {
-    const avatarWrap = document.createElement('div');
-    avatarWrap.style.cssText = 'width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;';
-    loadPhotoInto(avatarWrap, comp.photo, comp.emoji);
-    row.appendChild(avatarWrap);
-  }
-
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble ' + (role==='user' ? 'user' : 'companion');
-  if (text) bubble.textContent = text;
-  row.appendChild(bubble);
-  msgsEl.appendChild(row);
-  msgsEl.scrollTop = msgsEl.scrollHeight;
-  return bubble;
-}
-
-function addTypingBubble(msgsEl, comp) {
-  const row = document.createElement('div');
-  row.className = 'bubble-row';
-  const avatarWrap = document.createElement('div');
-  avatarWrap.style.cssText = 'width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;';
-  loadPhotoInto(avatarWrap, comp.photo, comp.emoji);
-  row.appendChild(avatarWrap);
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble companion';
-  bubble.innerHTML = '<div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
-  row.appendChild(bubble);
-  msgsEl.appendChild(row);
-  msgsEl.scrollTop = msgsEl.scrollHeight;
-  return { row, bubble };
-}
-
-function showTypingThenSpeak(msgsEl, comp, text, delay=900) {
-  return new Promise(resolve => {
-    const { bubble } = addTypingBubble(msgsEl, comp);
-    setTimeout(() => {
-      bubble.innerHTML = '';
-      bubble.textContent = text;
-      msgsEl.scrollTop = msgsEl.scrollHeight;
-      resolve(bubble);
-    }, delay);
-  });
-}
-
-function autoResizeTextarea(el) {
-  el.addEventListener('input', () => {
-    el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 80) + 'px';
-  });
-}
-
-/* ══════════════════════════════════════════════════════════
    CHAT CHECK-IN ENGINE
 ══════════════════════════════════════════════════════════ */
-function startChatCheckin() {
-  const comp = getCompanion();
+function getCompanion() { return COMPANIONS[state.companionKey] || COMPANIONS.maya; }
+
+function startChat() {
   state.chatPhase = 0;
   state.ciSymptoms = []; state.ciIntensity = 3; state.ciStress = 3;
   state.ciCycle = ''; state.ciClarity = 3; state.ciNotes = '';
-
-  const wrap = document.getElementById('chat-header-avatar-wrap');
-  wrap.innerHTML = '';
-  wrap.appendChild(makeAvatarEl(comp, 44));
+  const comp = getCompanion();
+  const avatarImg = document.getElementById('chat-header-avatar');
+  const avatarFb  = document.getElementById('chat-header-avatar-fallback');
+  avatarImg.src = comp.photo; avatarImg.alt = comp.name; avatarImg.style.display = 'block';
+  avatarFb.style.display = 'none';
+  avatarImg.onerror = () => { avatarImg.style.display='none'; avatarFb.style.display='flex'; };
   document.getElementById('chat-header-name').textContent = comp.name;
-
   document.getElementById('chat-messages').innerHTML = '';
   document.getElementById('chat-chips-area').style.display = 'none';
   document.getElementById('chat-input-row').style.display  = 'none';
   document.getElementById('chat-action-btns').style.display = 'none';
-  autoResizeTextarea(document.getElementById('chat-text-input'));
   setTimeout(() => advanceChatPhase('greeting'), 400);
 }
 
-function scrollChat() {
-  const el = document.getElementById('chat-messages');
-  el.scrollTop = el.scrollHeight;
+function scrollChat() { const el=document.getElementById('chat-messages'); el.scrollTop=el.scrollHeight; }
+
+function addCompanionBubble(text, typing=false) {
+  const comp = getCompanion();
+  const row = document.createElement('div'); row.className='bubble-row';
+  const avatarImg = document.createElement('img');
+  avatarImg.className='bubble-avatar'; avatarImg.src=comp.photo; avatarImg.alt=comp.name;
+  avatarImg.onerror=()=>{ avatarImg.style.display='none'; const fb=document.createElement('div'); fb.className='bubble-avatar-fallback'; row.insertBefore(fb,row.firstChild); };
+  const bubble = document.createElement('div'); bubble.className='bubble companion';
+  if (typing) { bubble.innerHTML='<div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>'; }
+  else { bubble.textContent=text; }
+  row.appendChild(avatarImg); row.appendChild(bubble);
+  document.getElementById('chat-messages').appendChild(row);
+  scrollChat(); return bubble;
+}
+
+function addUserBubble(text) {
+  const row=document.createElement('div'); row.className='bubble-row user';
+  const bubble=document.createElement('div'); bubble.className='bubble user'; bubble.textContent=text;
+  row.appendChild(bubble); document.getElementById('chat-messages').appendChild(row); scrollChat();
+}
+
+function showTypingThenSpeak(text, delay=900) {
+  return new Promise(resolve => {
+    const b = addCompanionBubble('', true);
+    setTimeout(() => { b.innerHTML=''; b.textContent=text; scrollChat(); resolve(b); }, delay);
+  });
 }
 
 function showChips(chips, multi=false) {
-  const area = document.getElementById('chat-chips-area');
-  const wrap = document.getElementById('chat-chips');
-  document.getElementById('chat-input-row').style.display = 'none';
-  wrap.innerHTML = '';
-  area.style.display = 'block';
+  const area=document.getElementById('chat-chips-area'), wrap=document.getElementById('chat-chips');
+  document.getElementById('chat-input-row').style.display='none';
+  wrap.innerHTML=''; area.style.display='block';
   chips.forEach(label => {
-    const c = document.createElement('div');
-    c.className = 'chat-chip';
-    c.textContent = label;
+    const c=document.createElement('div'); c.className='chat-chip'; c.textContent=label;
     if (multi) {
       c.addEventListener('click', () => {
         c.classList.toggle('selected');
-        let conf = wrap.querySelector('.multi-confirm');
-        const sel = [...wrap.querySelectorAll('.chat-chip.selected:not(.multi-confirm)')];
-        if (sel.length > 0) {
-          if (!conf) {
-            conf = document.createElement('div');
-            conf.className = 'chat-chip multi-confirm';
-            conf.addEventListener('click', () => {
-              const chosen = [...wrap.querySelectorAll('.chat-chip.selected:not(.multi-confirm)')].map(e=>e.textContent);
-              hideChips(); handleUserReply(chosen.join(', '),'symptoms',chosen);
-            });
-            wrap.appendChild(conf);
-          }
-          conf.textContent = `Done (${sel.length} selected) ✓`;
+        let conf=wrap.querySelector('.multi-confirm');
+        const sel=[...wrap.querySelectorAll('.chat-chip.selected:not(.multi-confirm)')];
+        if (sel.length>0) {
+          if (!conf) { conf=document.createElement('div'); conf.className='chat-chip multi-confirm'; conf.addEventListener('click',()=>{ const chosen=[...wrap.querySelectorAll('.chat-chip.selected:not(.multi-confirm)')].map(e=>e.textContent); hideChips(); handleUserReply(chosen.join(', '),'symptoms',chosen); }); wrap.appendChild(conf); }
+          conf.textContent=`Done (${sel.length} selected) ✓`;
         } else if (conf) { conf.remove(); }
       });
-    } else {
-      c.addEventListener('click', () => { hideChips(); handleUserReply(label,'single'); });
-    }
+    } else { c.addEventListener('click',()=>{ hideChips(); handleUserReply(label,'single'); }); }
     wrap.appendChild(c);
   });
 }
 
 function showNoteInput() {
-  document.getElementById('chat-chips-area').style.display = 'none';
-  const row = document.getElementById('chat-input-row');
-  row.style.display = 'flex';
-  document.getElementById('chat-text-input').value = '';
-  document.getElementById('chat-text-input').focus();
+  document.getElementById('chat-chips-area').style.display='none';
+  const row=document.getElementById('chat-input-row'); row.style.display='flex';
+  document.getElementById('chat-text-input').value=''; document.getElementById('chat-text-input').focus();
 }
 
 function hideChips() {
-  document.getElementById('chat-chips-area').style.display = 'none';
-  document.getElementById('chat-input-row').style.display  = 'none';
+  document.getElementById('chat-chips-area').style.display='none';
+  document.getElementById('chat-input-row').style.display='none';
 }
 
 document.getElementById('chat-send-btn').addEventListener('click', () => {
-  const val = document.getElementById('chat-text-input').value.trim();
-  hideChips();
-  handleUserReply(val||'(no notes)','notes-text');
+  const val=document.getElementById('chat-text-input').value.trim();
+  hideChips(); handleUserReply(val||'(no notes)','notes-text');
 });
-document.getElementById('chat-text-input').addEventListener('keydown', e => {
-  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('chat-send-btn').click(); }
-});
+document.getElementById('chat-text-input').addEventListener('keydown', e => { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('chat-send-btn').click();} });
 document.getElementById('chat-back-btn').addEventListener('click', () => { showScreen('home','back'); updateHome(); });
 document.getElementById('chat-btn-done').addEventListener('click', () => { showScreen('home','back'); updateHome(); });
 document.getElementById('chat-btn-trends').addEventListener('click', () => {
   showScreen('dashboard');
-  document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); if(n.dataset.nav==='dashboard') n.classList.add('active'); });
+  document.querySelectorAll('.nav-item').forEach(n=>{n.classList.remove('active');if(n.dataset.nav==='dashboard')n.classList.add('active');});
 });
 
 async function advanceChatPhase(phase) {
-  const comp   = getCompanion();
-  const msgs   = document.getElementById('chat-messages');
-  const initials = state.userInitials;
+  const initials=state.userInitials;
   switch(phase) {
     case 'greeting':
-      await showTypingThenSpeak(msgs, comp, `Hey ${initials} 💜 Ready to check in? What symptoms have you been dealing with this week?`, 700);
-      showChips(['Hot Flashes','Night Sweats','Sleep Disruption','Brain Fog','Mood Changes','Anxiety','Fatigue','Joint Pain','Headaches','Heart Palpitations','None of these'], true);
-      state.chatPhase = 1; break;
+      await showTypingThenSpeak(`Hey ${initials} 💜 Ready to check in? What symptoms have you been dealing with this week?`,700);
+      showChips(['Hot Flashes','Night Sweats','Sleep Disruption','Brain Fog','Mood Changes','Anxiety','Fatigue','Joint Pain','Headaches','Heart Palpitations','None of these'],true);
+      state.chatPhase=1; break;
     case 'symptoms':
-      await showTypingThenSpeak(msgs, comp, `Got it. How intense have those symptoms felt overall — on a scale of 1 to 5?`);
-      showChips(['1 Very Mild','2','3 Moderate','4','5 Very Intense']);
-      state.chatPhase = 2; break;
+      await showTypingThenSpeak(`Got it. How intense have those symptoms felt overall — on a scale of 1 to 5?`);
+      showChips(['1 Very Mild','2','3 Moderate','4','5 Very Intense']); state.chatPhase=2; break;
     case 'intensity':
-      await showTypingThenSpeak(msgs, comp, `And stress? How's your stress level been this week?`);
-      showChips(['1 Very Low','2','3 Moderate','4','5 Very High']);
-      state.chatPhase = 3; break;
+      await showTypingThenSpeak(`And stress? How's your stress level been this week?`);
+      showChips(['1 Very Low','2','3 Moderate','4','5 Very High']); state.chatPhase=3; break;
     case 'stress':
-      await showTypingThenSpeak(msgs, comp, `How about your cycle — what's closest to where you are right now?`);
-      showChips(['Regular','Irregular','Skipped','Stopped']);
-      state.chatPhase = 4; break;
+      await showTypingThenSpeak(`How about your cycle — what's closest to where you are right now?`);
+      showChips(['Regular','Irregular','Skipped','Stopped']); state.chatPhase=4; break;
     case 'cycle':
-      await showTypingThenSpeak(msgs, comp, `Last question — mental clarity this week: foggy or sharp?`);
-      showChips(['1 Very Foggy','2','3 Okay','4','5 Very Sharp']);
-      state.chatPhase = 5; break;
+      await showTypingThenSpeak(`Last one — how's your mental clarity been? Foggy or sharp?`);
+      showChips(['1 Very Foggy','2','3 Okay','4','5 Very Sharp']); state.chatPhase=5; break;
     case 'clarity':
-      await showTypingThenSpeak(msgs, comp, `Anything specific you want to note — a question for your doctor, something that felt different?`);
-      showChips(['Skip']);
-      showNoteInput();
-      state.chatPhase = 6; break;
+      await showTypingThenSpeak(`Anything specific you want to note — a question for your doctor, something that felt different?`);
+      showChips(['Skip']); showNoteInput(); state.chatPhase=6; break;
     case 'notes':
-      state.chatPhase = 7;
-      await submitCheckinFromChat(); break;
+      state.chatPhase=7; await submitCheckinFromChat(); break;
   }
 }
 
 async function handleUserReply(displayText, type, rawData) {
-  const msgs = document.getElementById('chat-messages');
-  addBubble(msgs, displayText, 'user', getCompanion());
+  addUserBubble(displayText);
   switch(state.chatPhase) {
-    case 1:
-      state.ciSymptoms = (type==='symptoms') ? rawData.filter(s=>s!=='None of these') : [];
-      await advanceChatPhase('symptoms'); break;
-    case 2:
-      state.ciIntensity = parseInt(displayText.charAt(0))||3;
-      await advanceChatPhase('intensity'); break;
-    case 3:
-      state.ciStress = parseInt(displayText.charAt(0))||3;
-      await advanceChatPhase('stress'); break;
-    case 4:
-      state.ciCycle = displayText;
-      await advanceChatPhase('cycle'); break;
-    case 5:
-      state.ciClarity = parseInt(displayText.charAt(0))||3;
-      await advanceChatPhase('clarity'); break;
-    case 6:
-      state.ciNotes = (displayText==='Skip'||displayText==='(no notes)') ? '' : displayText;
-      await advanceChatPhase('notes'); break;
+    case 1: state.ciSymptoms=(type==='symptoms')?rawData.filter(s=>s!=='None of these'):[]; await advanceChatPhase('symptoms'); break;
+    case 2: state.ciIntensity=parseInt(displayText.charAt(0))||3; await advanceChatPhase('intensity'); break;
+    case 3: state.ciStress=parseInt(displayText.charAt(0))||3; await advanceChatPhase('stress'); break;
+    case 4: state.ciCycle=displayText; await advanceChatPhase('cycle'); break;
+    case 5: state.ciClarity=parseInt(displayText.charAt(0))||3; await advanceChatPhase('clarity'); break;
+    case 6: state.ciNotes=(displayText==='Skip'||displayText==='(no notes)')?'':displayText; await advanceChatPhase('notes'); break;
   }
 }
 
 async function submitCheckinFromChat() {
-  const msgs = document.getElementById('chat-messages');
-  const comp = getCompanion();
-  const sig  = calcSignal();
-  state.lastSignal = sig;
-  localStorage.setItem('hs_signal', sig);
-  const record = {
-    user_id: state.userUUID, session_id: state.userUUID+'-'+Date.now(),
-    checked_at: new Date().toISOString(),
-    symptoms: state.ciSymptoms, stress_level: state.ciStress,
-    cycle_status: state.ciCycle, clarity_score: state.ciClarity,
-    intensity: state.ciIntensity, signal: sig, notes: state.ciNotes
+  const sig=calcSignal(); state.lastSignal=sig; localStorage.setItem('hs_signal',sig);
+  const record={
+    user_id:state.userUUID, session_id:state.userUUID+'-'+Date.now(),
+    checked_at:new Date().toISOString(), symptoms:state.ciSymptoms,
+    stress_level:state.ciStress, cycle_status:state.ciCycle,
+    clarity_score:state.ciClarity, intensity:state.ciIntensity, signal:sig, notes:state.ciNotes
   };
   state.checkins.push(record);
   localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
   syncToSupabase(record);
-  await showTypingThenSpeak(msgs, comp, `One sec — pulling your signal... 💜`, 600);
-  await streamCompanionResponse(sig, msgs, comp);
-  document.getElementById('chat-action-btns').style.display = 'flex';
+  await showTypingThenSpeak(`One sec — pulling your signal... 💜`, 600);
+  await streamCompanionResponse(sig);
+  document.getElementById('chat-action-btns').style.display='flex';
 }
 
-async function streamCompanionResponse(sig, msgsEl, comp) {
-  const recent = state.checkins.slice(-4);
-  const avgI   = (recent.reduce((a,c)=>a+(c.intensity||0),0)/recent.length).toFixed(1);
-  const prompt = `A woman just completed her perimenopause check-in. Symptoms: ${state.ciSymptoms.join(', ')||'none'}. Intensity: ${state.ciIntensity}/5. Stress: ${state.ciStress}/5. Clarity: ${state.ciClarity}/5. Cycle: ${state.ciCycle||'not specified'}. Signal: ${sig}. Recent avg intensity: ${avgI}/5. Write a warm, empathetic response (max 100 words). Validate her experience. If Monitor or Escalate, gently encourage provider conversation. Never diagnose. End warmly.`;
+async function streamCompanionResponse(sig) {
+  const recent=state.checkins.slice(-4);
+  const avgI=(recent.reduce((a,c)=>a+(c.intensity||0),0)/recent.length).toFixed(1);
+  const prompt=`A woman just completed her weekly perimenopause check-in. De-identified pattern only:\nSymptoms: ${state.ciSymptoms.join(', ')||'none'}.\nIntensity: ${state.ciIntensity}/5. Stress: ${state.ciStress}/5. Clarity: ${state.ciClarity}/5. Cycle: ${state.ciCycle||'not specified'}. Signal: ${sig}.\nRecent avg intensity (last 4): ${avgI}/5.\nWrite a warm, empathetic companion response (max 100 words). Validate her experience, reflect her patterns with compassion. Gently encourage provider conversation if Monitor or Escalate. Never diagnose. Speak like a caring, knowledgeable friend. End warmly.`;
 
   try {
     const resp = await fetch(`${SUPABASE_URL}/functions/v1/hyper-handler`, {
@@ -889,338 +484,82 @@ async function streamCompanionResponse(sig, msgsEl, comp) {
     if (!resp.ok) throw new Error('Proxy ' + resp.status);
     const data = await resp.json();
     const fullText = data.choices?.[0]?.message?.content?.trim() || '';
-    const bubble = addBubble(msgsEl, '', 'companion', comp);
+    const bubble = addCompanionBubble('');
     const words = fullText.split(' ');
-    for (let i = 0; i < words.length; i++) {
-      bubble.textContent += (i === 0 ? '' : ' ') + words[i];
-      msgsEl.scrollTop = msgsEl.scrollHeight;
+    for (let i=0; i<words.length; i++) {
+      bubble.textContent += (i===0?'':' ') + words[i];
+      scrollChat();
       await new Promise(r => setTimeout(r, 35));
     }
   } catch(err) {
-    addBubble(msgsEl, `You showed up today, ${state.userInitials} — and that matters 💜`, 'companion', comp);
+    addCompanionBubble(`You showed up today, ${state.userInitials} — and that matters 💜`);
   }
 }
 
-/* ══════════════════════════════════════════════════════════
-   QUICK FORM
-══════════════════════════════════════════════════════════ */
-const QF_STEPS = [
-  {
-    id:'symptoms', title:'What symptoms this week?', sub:'Select all that apply.',
-    type:'chips', multi:true,
-    options:['Hot Flashes','Night Sweats','Sleep Disruption','Brain Fog','Mood Changes','Anxiety','Fatigue','Joint Pain','Headaches','Heart Palpitations']
-  },
-  {
-    id:'intensity', title:'Overall symptom intensity', sub:'1 = very mild, 5 = very intense.',
-    type:'slider', min:1, max:5, step:1,
-    labels:['Very Mild','','Moderate','','Very Intense']
-  },
-  {
-    id:'stress', title:'Stress level this week', sub:'1 = very low, 5 = very high.',
-    type:'slider', min:1, max:5, step:1,
-    labels:['Very Low','','Moderate','','Very High']
-  },
-  {
-    id:'cycle', title:'Cycle status', sub:"What's closest to where you are?",
-    type:'chips', multi:false,
-    options:['Regular','Irregular','Skipped','Stopped']
-  },
-  {
-    id:'clarity', title:'Mental clarity', sub:'1 = very foggy, 5 = very sharp.',
-    type:'slider', min:1, max:5, step:1,
-    labels:['Very Foggy','','Okay','','Very Sharp']
-  }
-];
-
-let qfData = {};
-let qfStep = 0;
-
-function startQuickForm() {
-  qfData = { symptoms:[], intensity:3, stress:3, cycle:'', clarity:3 };
-  qfStep = 0;
-  renderQFStep();
-}
-
-function renderQFStep() {
-  const step  = QF_STEPS[qfStep];
-  const body  = document.getElementById('qf-body');
-  const nav   = document.getElementById('qf-nav');
-  const dots  = document.getElementById('qf-dots');
-
-  dots.innerHTML = '';
-  QF_STEPS.forEach((_,i) => {
-    const d = document.createElement('div');
-    d.className = 'qf-dot' + (i===qfStep?' active':i<qfStep?' done':'');
-    dots.appendChild(d);
-  });
-
-  body.innerHTML = `
-    <div class="qf-step active">
-      <div class="qf-step-title">${step.title}</div>
-      <div class="qf-step-sub">${step.sub}</div>
-      ${step.type==='slider' ? renderSlider(step) : renderChipGroup(step)}
-    </div>`;
-
-  if (step.type==='slider') wireSlider(step);
-  if (step.type==='chips')  wireQFChips(step);
-
-  nav.innerHTML = '';
-  if (qfStep > 0) {
-    const back = document.createElement('button');
-    back.className='btn btn-secondary'; back.textContent='← Back';
-    back.addEventListener('click', () => { qfStep--; renderQFStep(); });
-    nav.appendChild(back);
-  }
-  const next = document.createElement('button');
-  next.className='btn btn-primary';
-  next.textContent = qfStep===QF_STEPS.length-1 ? 'Submit ✓' : 'Next →';
-  next.addEventListener('click', () => {
-    if (qfStep===QF_STEPS.length-1) { submitQuickForm(); }
-    else { qfStep++; renderQFStep(); }
-  });
-  nav.appendChild(next);
-}
-
-function renderSlider(step) {
-  const val = qfData[step.id];
-  return `
-    <div class="qf-slider-val" id="qf-slider-val">${val}</div>
-    <div class="qf-slider-wrap">
-      <input type="range" class="qf-slider" id="qf-slider" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}">
-      <div class="qf-slider-labels">${step.labels.map(l=>`<span>${l}</span>`).join('')}</div>
-    </div>`;
-}
-
-function wireSlider(step) {
-  const slider = document.getElementById('qf-slider');
-  const valEl  = document.getElementById('qf-slider-val');
-  slider.addEventListener('input', () => {
-    qfData[step.id] = parseInt(slider.value);
-    valEl.textContent = slider.value;
-  });
-}
-
-function renderChipGroup(step) {
-  return `<div class="qf-chips">${step.options.map(o=>`<div class="qf-chip" data-val="${o}">${o}</div>`).join('')}</div>`;
-}
-
-function wireQFChips(step) {
-  document.querySelectorAll('.qf-chip').forEach(chip => {
-    if (step.id==='symptoms') {
-      if (qfData.symptoms.includes(chip.dataset.val)) chip.classList.add('selected');
-    } else {
-      if (qfData[step.id]===chip.dataset.val) chip.classList.add('selected');
-    }
-    chip.addEventListener('click', () => {
-      if (step.multi) {
-        chip.classList.toggle('selected');
-        const sel = [...document.querySelectorAll('.qf-chip.selected')].map(c=>c.dataset.val);
-        qfData.symptoms = sel;
-      } else {
-        document.querySelectorAll('.qf-chip').forEach(c=>c.classList.remove('selected'));
-        chip.classList.add('selected');
-        qfData[step.id] = chip.dataset.val;
-      }
-    });
-  });
-}
-
-async function submitQuickForm() {
-  const sig = calcSignalFrom(qfData.intensity, qfData.stress);
-  state.lastSignal = sig;
-  localStorage.setItem('hs_signal', sig);
-  const record = {
-    user_id: state.userUUID, session_id: state.userUUID+'-'+Date.now(),
-    checked_at: new Date().toISOString(),
-    symptoms: qfData.symptoms, stress_level: qfData.stress,
-    cycle_status: qfData.cycle, clarity_score: qfData.clarity,
-    intensity: qfData.intensity, signal: sig, notes: ''
-  };
-  state.checkins.push(record);
-  localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
-  syncToSupabase(record);
-  showToast('Check-in saved 💜');
-  setTimeout(() => { showScreen('home','back'); updateHome(); }, 800);
-}
-
-document.getElementById('qf-back-btn').addEventListener('click', () => {
-  if (qfStep > 0) { qfStep--; renderQFStep(); }
-  else { showScreen('mode-chooser','back'); }
-});
-
-/* ══════════════════════════════════════════════════════════
-   JUST CHAT ENGINE
-══════════════════════════════════════════════════════════ */
-const JC_FALLBACKS = [
-  `That's such a real thing to sit with. Perimenopause can feel like your body is rewriting the rules without telling you. What's been the hardest part lately?`,
-  `You're not imagining any of this. Everything you're feeling is real — your nervous system, your hormones, all of it. How long have you been noticing these changes?`,
-  `One thing I love about you checking in like this is that you're paying attention. So many women push through without ever pausing. What's been keeping you going?`,
-  `Perimenopause is one of those transitions that medicine has historically under-explained and under-supported. You deserve real answers and real care. Is there something specific you're trying to understand?`,
-  `Your body is working incredibly hard right now — even when it doesn't feel that way. What do you wish someone had told you about this stage of life?`,
-  `Sleep disruption alone can make everything else so much harder. When your rest is off, everything compounds. What tends to help you most on the harder nights?`,
-  `I'm here — take your time. There's no rush and nothing you can say that will surprise me. What's on your mind today?`
-];
-let jcFallbackIndex = 0;
-
-function startJustChat() {
-  const comp = getCompanion();
-  state.jcHistory = [];
-
-  const wrap = document.getElementById('jc-header-avatar-wrap');
-  wrap.innerHTML = '';
-  wrap.appendChild(makeAvatarEl(comp, 44));
-  document.getElementById('jc-header-name').textContent = comp.name;
-  document.getElementById('jc-header-sub').textContent  = 'Just chatting 🌸';
-
-  const msgs = document.getElementById('jc-messages');
-  msgs.innerHTML = '';
-
-  autoResizeTextarea(document.getElementById('jc-text-input'));
-  document.getElementById('jc-text-input').value = '';
-
-  setTimeout(() => {
-    showTypingThenSpeak(msgs, comp, `Hey ${state.userInitials} 🌸 What's on your mind today? We can talk about anything — symptoms, questions, feelings, whatever you need.`, 700);
-  }, 400);
-}
-
-document.getElementById('jc-back-btn').addEventListener('click', () => { showScreen('mode-chooser','back'); });
-document.getElementById('jc-send-btn').addEventListener('click', sendJustChat);
-document.getElementById('jc-text-input').addEventListener('keydown', e => {
-  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendJustChat(); }
-});
-
-async function sendJustChat() {
-  const input = document.getElementById('jc-text-input');
-  const text  = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  input.style.height = 'auto';
-
-  const comp = getCompanion();
-  const msgs = document.getElementById('jc-messages');
-  addBubble(msgs, text, 'user', comp);
-
-  state.jcHistory.push({ role:'user', content:text });
-  if (state.jcHistory.length > 12) state.jcHistory = state.jcHistory.slice(-12);
-
-  const { bubble } = addTypingBubble(msgs, comp);
-  try {
-    const messages = [
-      { role:'system', content: COMPANION_PROMPTS[state.companionKey]||COMPANION_PROMPTS.maya + ' The user is having an open-ended conversation about perimenopause and women\'s health. Be warm, conversational, and supportive. Keep responses concise (under 120 words). Ask a follow-up question to keep the dialogue going.' },
-      ...state.jcHistory
-    ];
-    const resp = await fetch(`${SUPABASE_URL}/functions/v1/hyper-handler`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY
-      },
-      body: JSON.stringify({ model: 'gpt-4o-mini', messages, max_tokens: 200, temperature: 0.9 })
-    });
-    if (!resp.ok) throw new Error('Proxy ' + resp.status);
-    const data = await resp.json();
-    const fullText = data.choices?.[0]?.message?.content?.trim() || '';
-    bubble.innerHTML = '';
-    const words = fullText.split(' ');
-    for (let i = 0; i < words.length; i++) {
-      bubble.textContent += (i === 0 ? '' : ' ') + words[i];
-      msgs.scrollTop = msgs.scrollHeight;
-      await new Promise(r => setTimeout(r, 35));
-    }
-    state.jcHistory.push({ role:'assistant', content: fullText });
-    if (state.jcHistory.length > 12) state.jcHistory = state.jcHistory.slice(-12);
-  } catch(err) {
-    bubble.textContent = `I'm here with you 💜 Tell me more.`;
-  }
-}
-
-/* ══════════════════════════════════════════════════════════
-   SIGNAL CALC
-══════════════════════════════════════════════════════════ */
+/* --- SIGNAL CALC --- */
 function calcSignal() {
-  return calcSignalFrom(state.ciIntensity, state.ciStress);
-}
-function calcSignalFrom(intensity, stress) {
-  if (intensity>=4 || stress>=4) return 'Escalate';
-  if (intensity>=3 || stress>=3) return 'Monitor';
+  if (state.ciIntensity>=4||state.ciStress>=4) return 'Escalate';
+  if (state.ciIntensity>=3||state.ciStress>=3) return 'Monitor';
   return 'Stable';
 }
 
-/* ══════════════════════════════════════════════════════════
-   CHARTS
-══════════════════════════════════════════════════════════ */
+/* --- CHARTS --- */
 let intensityChart=null, clarityChart=null;
 function renderCharts() {
-  const data   = state.checkins.slice(-6);
-  const labels = data.map(c=>new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}));
-  const iData  = data.map(c=>c.intensity||0);
-  const cData  = data.map(c=>c.clarity_score||0);
-  const opts = {
-    responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{display:false}},
-    scales:{
-      x:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:11}}},
-      y:{min:0,max:5,grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:11},stepSize:1}}
-    }
-  };
+  const data=state.checkins.slice(-6);
+  const labels=data.map(c=>new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}));
+  const iData=data.map(c=>c.intensity||0);
+  const cData=data.map(c=>c.clarity_score||0);
+  const opts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:11}}},y:{min:0,max:5,grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:11},stepSize:1}}}};
   if (intensityChart) intensityChart.destroy();
-  intensityChart = new Chart(document.getElementById('intensity-chart'),{
-    type:'line', data:{labels, datasets:[{data:iData,borderColor:'#6B4FA0',backgroundColor:'rgba(107,79,160,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#6B4FA0',pointRadius:5,borderWidth:2.5}]}, options:opts
-  });
+  intensityChart=new Chart(document.getElementById('intensity-chart'),{type:'line',data:{labels,datasets:[{data:iData,borderColor:'#6B4FA0',backgroundColor:'rgba(107,79,160,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#6B4FA0',pointRadius:5,borderWidth:2.5}]},options:opts});
   if (clarityChart) clarityChart.destroy();
-  clarityChart = new Chart(document.getElementById('clarity-chart'),{
-    type:'line', data:{labels, datasets:[{data:cData,borderColor:'#4ABFBF',backgroundColor:'rgba(74,191,191,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#4ABFBF',pointRadius:5,borderWidth:2.5}]}, options:opts
-  });
-  const histEl  = document.getElementById('history-list');
-  const recent  = [...state.checkins].reverse().slice(0,5);
-  histEl.innerHTML = recent.map(c => {
-    const d   = new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-    const sym = Array.isArray(c.symptoms) ? c.symptoms.slice(0,3).join(' · ') : '';
-    const sc  = (c.signal||'Monitor').toLowerCase();
+  clarityChart=new Chart(document.getElementById('clarity-chart'),{type:'line',data:{labels,datasets:[{data:cData,borderColor:'#4ABFBF',backgroundColor:'rgba(74,191,191,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#4ABFBF',pointRadius:5,borderWidth:2.5}]},options:opts});
+  const histEl=document.getElementById('history-list');
+  const recent=[...state.checkins].reverse().slice(0,5);
+  histEl.innerHTML=recent.map(c=>{
+    const d=new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const sym=Array.isArray(c.symptoms)?c.symptoms.slice(0,3).join(' · '):'';
+    const sc=(c.signal||'Monitor').toLowerCase();
     return `<div class="history-item"><div><div style="font-size:14px;font-weight:600">${d}</div><div class="history-symptoms">${sym||'No symptoms logged'}</div></div><span class="signal-pill ${sc}">${c.signal||'Monitor'}</span></div>`;
   }).join('');
 }
 
-/* ══════════════════════════════════════════════════════════
-   SHARE REPORT
-══════════════════════════════════════════════════════════ */
+/* --- SHARE REPORT --- */
 function updateShareReport() {
-  const data = state.checkins; if (!data.length) return;
-  const avg  = key => (data.reduce((a,c)=>a+(c[key]||0),0)/data.length).toFixed(1);
-  const symMap = {};
+  const data=state.checkins; if(!data.length) return;
+  const avg=key=>(data.reduce((a,c)=>a+(c[key]||0),0)/data.length).toFixed(1);
+  const symMap={};
   data.forEach(c=>(c.symptoms||[]).forEach(s=>symMap[s]=(symMap[s]||0)+1));
-  const topSyms = Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ');
-  const last = data[data.length-1];
-  document.getElementById('report-date').textContent    = `Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
-  document.getElementById('r-signal').textContent       = state.lastSignal;
-  document.getElementById('r-total').textContent        = data.length;
-  document.getElementById('r-intensity').textContent    = avg('intensity')+' / 5';
-  document.getElementById('r-clarity').textContent      = avg('clarity_score')+' / 5';
-  document.getElementById('r-stress').textContent       = avg('stress_level')+' / 5';
-  document.getElementById('r-symptoms').textContent     = topSyms||'—';
-  document.getElementById('r-cycle').textContent        = last?.cycle_status||'—';
+  const topSyms=Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ');
+  const last=data[data.length-1];
+  document.getElementById('report-date').textContent=`Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
+  document.getElementById('r-signal').textContent=state.lastSignal;
+  document.getElementById('r-total').textContent=data.length;
+  document.getElementById('r-intensity').textContent=avg('intensity')+' / 5';
+  document.getElementById('r-clarity').textContent=avg('clarity_score')+' / 5';
+  document.getElementById('r-stress').textContent=avg('stress_level')+' / 5';
+  document.getElementById('r-symptoms').textContent=topSyms||'—';
+  document.getElementById('r-cycle').textContent=last?.cycle_status||'—';
 }
 
 function buildReportText() {
-  const data = state.checkins;
-  const avg  = key => (data.reduce((a,c)=>a+(c[key]||0),0)/data.length).toFixed(1);
-  const symMap = {};
+  const data=state.checkins;
+  const avg=key=>(data.reduce((a,c)=>a+(c[key]||0),0)/data.length).toFixed(1);
+  const symMap={};
   data.forEach(c=>(c.symptoms||[]).forEach(s=>symMap[s]=(symMap[s]||0)+1));
-  const topSyms = Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ');
+  const topSyms=Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ');
   return `HerSignal Clinical Summary\nGenerated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}\n\nSignal Status: ${state.lastSignal}\nTotal Check-Ins: ${data.length}\nAverage Symptom Intensity: ${avg('intensity')} / 5\nAverage Mental Clarity: ${avg('clarity_score')} / 5\nAverage Stress Level: ${avg('stress_level')} / 5\nMost Frequent Symptoms: ${topSyms||'None'}\nCycle Status (most recent): ${data[data.length-1]?.cycle_status||'—'}\n\nThis summary is based on self-reported weekly check-ins via the HerSignal app and is not a medical diagnosis. Please discuss with your healthcare provider.`;
 }
 
-document.getElementById('btn-copy-report').addEventListener('click',  () => { navigator.clipboard.writeText(buildReportText()).then(()=>showToast('Report copied ✓')); });
+document.getElementById('btn-copy-report').addEventListener('click', () => { navigator.clipboard.writeText(buildReportText()).then(()=>showToast('Report copied ✓')); });
 document.getElementById('btn-email-report').addEventListener('click', () => { window.location.href=`mailto:?subject=HerSignal Health Summary&body=${encodeURIComponent(buildReportText())}`; });
 document.getElementById('btn-print-report').addEventListener('click', () => window.print());
 
-/* ══════════════════════════════════════════════════════════
-   SUPABASE SYNC
-══════════════════════════════════════════════════════════ */
+/* --- SUPABASE SYNC --- */
 async function syncToSupabase(record) {
   try {
-    const ctrl = new AbortController(); setTimeout(()=>ctrl.abort(),5000);
+    const ctrl=new AbortController(); setTimeout(()=>ctrl.abort(),5000);
     await fetch(`${SUPABASE_URL}/rest/v1/checkins`,{
       method:'POST', signal:ctrl.signal,
       headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},
@@ -1229,19 +568,11 @@ async function syncToSupabase(record) {
   } catch(e) {}
 }
 
-/* ══════════════════════════════════════════════════════════
-   TOAST
-══════════════════════════════════════════════════════════ */
+/* --- TOAST --- */
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2800);
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
 }
 </script>
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js');
-  }
-</script>
-</body>
-</html>
+</body></html>
