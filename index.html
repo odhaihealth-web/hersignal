@@ -365,7 +365,6 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 <script>
 const SUPABASE_URL = 'https://kwriboxxujqrypxopthl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3cmlib3h4dWpxcnlweG9wdGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5ODk2OTYsImV4cCI6MjA5NDU2NTY5Nn0.qoxQ9tPEoEnBPAT3M0ru3uxJDvTMcBnlP6lL9MYSDHw';
-const OPENAI_KEY = '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';
 
 const COMPANIONS = {
   maya:   { name:'Maya',   trait:'Warm · Nurturing · Real',         emoji:'💜', photo:'https://odhaihealth-web.github.io/hersignal/Maya.jpg' },
@@ -770,12 +769,22 @@ const JC_OFFLINE = [
 ];
 let jcOfflineIdx = 0;
 
+/* ── PROXY CALL — key lives in Supabase Edge Function ── */
 async function callOpenAI(messages) {
-  if (!OPENAI_KEY || OPENAI_KEY==='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') return null;
   try {
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+OPENAI_KEY},
-      body: JSON.stringify({ model:'gpt-4o-mini', messages, max_tokens:220, temperature:0.8 })
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/openai-proxy`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages,
+        max_tokens: 220,
+        temperature: 0.8
+      })
     });
     if (!res.ok) return null;
     const data = await res.json();
