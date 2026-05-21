@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="hersignal-logo.PNG">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="HerSignal">
@@ -45,12 +47,9 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 .signal-pill.stable{background:var(--stable-bg);color:var(--stable-text);}
 .signal-pill.monitor{background:var(--monitor-bg);color:var(--monitor-text);}
 .signal-pill.escalate{background:var(--escalate-bg);color:var(--escalate-text);}
-
-/* ── ONBOARDING ── */
 #screen-onboarding{background:linear-gradient(160deg,#2D1B69 0%,#1A0A2E 50%,#0D1B2A 100%);padding:0;overflow:hidden;}
 .onboard-scroll{height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;justify-content:center;padding:40px 28px 60px;}
 .onboard-hero{width:100%;max-height:200px;object-fit:cover;object-position:center top;border-radius:20px;margin-bottom:24px;display:block;}
-.onboard-logo{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:42px;margin:0 auto 28px;box-shadow:0 0 40px rgba(107,79,160,0.5);}
 .onboard-title{font-size:30px;font-weight:800;text-align:center;margin-bottom:8px;}
 .onboard-sub{font-size:15px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:32px;}
 .input-group{margin-bottom:20px;}
@@ -59,8 +58,6 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 .input-field:focus{border-color:var(--primary);}
 .input-field::placeholder{color:rgba(196,181,224,0.5);}
 .privacy-note{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.6;opacity:0.8;}
-
-/* ── COMPANION SELECT ── */
 #screen-companion-select{background:linear-gradient(160deg,#2D1B69 0%,#1A0A2E 60%,#0D1B2A 100%);padding:0;}
 .cs-header{padding:56px 24px 20px;text-align:center;flex-shrink:0;}
 .cs-title{font-size:26px;font-weight:800;margin-bottom:8px;}
@@ -70,14 +67,9 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 .cs-card{background:var(--card);border:2px solid var(--card-border);border-radius:20px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:all 0.25s;}
 .cs-card:active{transform:scale(0.96);}
 .cs-card.selected{border-color:var(--secondary);background:rgba(74,191,191,0.12);box-shadow:0 0 20px rgba(74,191,191,0.25);}
-.cs-card:last-child{grid-column:1/-1;max-width:160px;margin:0 auto;}
-.cs-photo{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--card-border);display:block;}
-.cs-card.selected .cs-photo{border-color:var(--secondary);}
 .cs-name{font-size:15px;font-weight:700;}
 .cs-trait{font-size:11px;color:var(--muted);text-align:center;line-height:1.5;}
 .cs-btn-wrap{padding:16px 20px 40px;flex-shrink:0;}
-
-/* ── HOME ── */
 .welcome-text{font-size:24px;font-weight:700;margin-bottom:4px;}
 .welcome-sub{font-size:14px;color:var(--muted);margin-bottom:20px;}
 .signal-card{border-radius:var(--radius);padding:24px;margin-bottom:20px;position:relative;overflow:hidden;}
@@ -89,8 +81,6 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 .stat-card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:16px;}
 .stat-value{font-size:24px;font-weight:700;color:var(--secondary);}
 .stat-label{font-size:11px;color:var(--muted);margin-top:2px;}
-
-/* ── MODE CHOOSER ── */
 #screen-mode-chooser{background:linear-gradient(160deg,#2D1B69 0%,#1A0A2E 60%,#0D1B2A 100%);padding:0;}
 .mc-header{padding:56px 24px 24px;text-align:center;flex-shrink:0;}
 .mc-title{font-size:24px;font-weight:800;margin-bottom:6px;}
@@ -104,12 +94,8 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 .mc-card-title{font-size:17px;font-weight:700;margin-bottom:4px;}
 .mc-card-desc{font-size:13px;color:var(--muted);line-height:1.55;}
 .mc-back{padding:0 20px 20px;flex-shrink:0;}
-
-/* ── CHAT SCREEN ── */
 #screen-chat,#screen-just-chat{display:flex;flex-direction:column;}
 .chat-header{padding:52px 16px 12px;display:flex;align-items:center;gap:12px;flex-shrink:0;background:rgba(26,10,46,0.98);border-bottom:1px solid var(--card-border);}
-.chat-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);flex-shrink:0;}
-.chat-avatar-fallback{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
 .chat-header-info{flex:1;}
 .chat-header-name{font-size:16px;font-weight:700;}
 .chat-header-sub{font-size:12px;color:var(--muted);}
@@ -118,8 +104,6 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 .chat-messages::-webkit-scrollbar{display:none;}
 .bubble-row{display:flex;align-items:flex-end;gap:8px;}
 .bubble-row.user{flex-direction:row-reverse;}
-.bubble-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;}
-.bubble-avatar-fallback{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));flex-shrink:0;}
 .bubble{max-width:78%;padding:11px 15px;border-radius:18px;font-size:15px;line-height:1.55;word-break:break-word;}
 .bubble.companion{background:rgba(107,79,160,0.28);border:1px solid rgba(107,79,160,0.35);border-bottom-left-radius:4px;color:#fff;}
 .bubble.user{background:linear-gradient(135deg,var(--primary),var(--secondary));border-bottom-right-radius:4px;color:#fff;}
@@ -145,8 +129,6 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 .chat-action-btn:active{transform:scale(0.97);}
 .chat-action-btn.primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;}
 .chat-action-btn.secondary{background:var(--card);border:1px solid var(--card-border);color:var(--text);}
-
-/* ── QUICK FORM ── */
 #screen-quick-form{display:flex;flex-direction:column;}
 .qf-header{padding:52px 20px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;background:rgba(26,10,46,0.98);border-bottom:1px solid var(--card-border);}
 .qf-title{font-size:18px;font-weight:700;flex:1;}
@@ -170,16 +152,11 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 .qf-chip:active{transform:scale(0.95);}
 .qf-chip.selected{background:var(--primary);border-color:var(--primary);color:#fff;}
 .qf-nav{display:flex;gap:12px;padding:12px 20px 24px;flex-shrink:0;}
-
-/* ── DASHBOARD ── */
 .chart-container{position:relative;height:180px;margin-bottom:8px;}
 .section-title{font-size:13px;letter-spacing:1.5px;color:var(--muted);font-weight:600;margin-bottom:12px;margin-top:4px;}
 .history-item{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--card-border);}
 .history-item:last-child{border-bottom:none;}
-.history-date{font-size:13px;color:var(--muted);}
 .history-symptoms{font-size:12px;color:var(--muted);margin-top:2px;}
-
-/* ── SHARE ── */
 .report-card{background:rgba(255,255,255,0.96);border-radius:var(--radius);padding:22px;margin-bottom:20px;color:#1A0A2E;}
 .report-title{font-size:18px;font-weight:800;color:#1A0A2E;margin-bottom:4px;}
 .report-date{font-size:12px;color:#666;margin-bottom:16px;}
@@ -193,8 +170,6 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 .share-btn.email{background:var(--secondary);color:#fff;}
 .share-btn.print{background:var(--card);border:1px solid var(--card-border);color:#fff;}
 .disclaimer{font-size:11px;color:var(--muted);text-align:center;line-height:1.6;margin-top:8px;}
-
-/* ── TOAST ── */
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(75,191,191,0.95);color:#fff;padding:12px 24px;border-radius:30px;font-size:14px;font-weight:600;opacity:0;transition:all 0.3s;pointer-events:none;z-index:999;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
@@ -202,22 +177,20 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 <body>
 <div id="app">
 
-<!-- ══════════════════════════════════════════════ ONBOARDING ══ -->
-    <div id="screen-onboarding" class="screen">
-      <div class="onboard-scroll">
-        <img class="onboard-hero" src="https://odhaihealth-web.github.io/hersignal/hersignal-women.jpg" alt="HerSignal — four women navigating perimenopause together" onerror="this.style.display='none'">
-        <h1 class="onboard-title">HerSignal</h1>
-        <p class="onboard-sub">Your weekly companion for navigating perimenopause with clarity, confidence, and control.</p>
-        <div class="input-group">
-          <label class="input-label">YOUR INITIALS</label>
-          <input id="initials-input" class="input-field" type="text" placeholder="e.g. R.O." maxlength="5" autocomplete="off" autocorrect="off" spellcheck="false">
-        </div>
-        <button class="btn btn-primary" id="btn-get-started">Get Started 💜</button>
-        <p class="privacy-note">Your initials stay on your device only.<br>Your health data is stored anonymously — we never know who you are.</p>
-      </div>
+<div id="screen-onboarding" class="screen">
+  <div class="onboard-scroll">
+    <img class="onboard-hero" src="https://odhaihealth-web.github.io/hersignal/hersignal-women.jpg" alt="HerSignal — four women navigating perimenopause together" onerror="this.style.display='none'">
+    <h1 class="onboard-title">HerSignal</h1>
+    <p class="onboard-sub">Your weekly companion for navigating perimenopause with clarity, confidence, and control.</p>
+    <div class="input-group">
+      <label class="input-label">YOUR INITIALS</label>
+      <input id="initials-input" class="input-field" type="text" placeholder="e.g. R.O." maxlength="5" autocomplete="off" autocorrect="off" spellcheck="false">
     </div>
+    <button class="btn btn-primary" id="btn-get-started">Get Started 💜</button>
+    <p class="privacy-note">Your initials stay on your device only.<br>Your health data is stored anonymously — we never know who you are.</p>
+  </div>
+</div>
 
-<!-- ══════════════════════════════════════════ COMPANION SELECT ══ -->
 <div id="screen-companion-select" class="screen hidden">
   <div class="cs-header">
     <div class="cs-title">Choose Your Companion 💜</div>
@@ -229,7 +202,6 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ HOME ══ -->
 <div id="screen-home" class="screen hidden">
   <div class="app-header">
     <h1>HerSignal</h1>
@@ -244,14 +216,8 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
       <p class="signal-desc" id="home-signal-desc">Some patterns worth watching. Stay consistent with your check-ins.</p>
     </div>
     <div class="quick-stats">
-      <div class="stat-card">
-        <div class="stat-value" id="stat-checkins">0</div>
-        <div class="stat-label">Total Check-Ins</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-streak">—</div>
-        <div class="stat-label">Last Check-In</div>
-      </div>
+      <div class="stat-card"><div class="stat-value" id="stat-checkins">0</div><div class="stat-label">Total Check-Ins</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-streak">—</div><div class="stat-label">Last Check-In</div></div>
     </div>
     <button class="btn btn-primary" id="btn-start-checkin" style="margin-bottom:12px;">Check In Now</button>
     <button class="btn btn-secondary" id="btn-change-companion" style="margin-bottom:12px;">Change Companion</button>
@@ -264,41 +230,19 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
   </nav>
 </div>
 
-<!-- ══════════════════════════════════════════ MODE CHOOSER ══ -->
 <div id="screen-mode-chooser" class="screen hidden">
   <div class="mc-header">
     <div class="mc-title">How do you want to check in?</div>
     <p class="mc-sub">Choose what feels right for today.</p>
   </div>
   <div class="mc-cards">
-    <div class="mc-card" id="mc-btn-chat">
-      <div class="mc-icon">💬</div>
-      <div>
-        <div class="mc-card-title">Chat Check-In</div>
-        <div class="mc-card-desc">Your companion walks you through this week's check-in step by step — a guided, warm conversation.</div>
-      </div>
-    </div>
-    <div class="mc-card" id="mc-btn-form">
-      <div class="mc-icon">📋</div>
-      <div>
-        <div class="mc-card-title">Quick Form</div>
-        <div class="mc-card-desc">Sliders and chips only — no conversation. Fast and simple if you're short on time.</div>
-      </div>
-    </div>
-    <div class="mc-card" id="mc-btn-just-chat">
-      <div class="mc-icon">🌸</div>
-      <div>
-        <div class="mc-card-title">Just Chat</div>
-        <div class="mc-card-desc">Open-ended conversation with your companion about anything on your mind. No check-in required.</div>
-      </div>
-    </div>
+    <div class="mc-card" id="mc-btn-chat"><div class="mc-icon">💬</div><div><div class="mc-card-title">Chat Check-In</div><div class="mc-card-desc">Your companion walks you through this week's check-in step by step — a guided, warm conversation.</div></div></div>
+    <div class="mc-card" id="mc-btn-form"><div class="mc-icon">📋</div><div><div class="mc-card-title">Quick Form</div><div class="mc-card-desc">Sliders and chips only — no conversation. Fast and simple if you're short on time.</div></div></div>
+    <div class="mc-card" id="mc-btn-just-chat"><div class="mc-icon">🌸</div><div><div class="mc-card-title">Just Chat</div><div class="mc-card-desc">Open-ended conversation with your companion about anything on your mind. No check-in required.</div></div></div>
   </div>
-  <div class="mc-back">
-    <button class="btn btn-ghost" id="mc-back-btn">← Back</button>
-  </div>
+  <div class="mc-back"><button class="btn btn-ghost" id="mc-back-btn">← Back</button></div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ CHAT ══ -->
 <div id="screen-chat" class="screen hidden">
   <div class="chat-header">
     <button class="chat-back-btn" id="chat-back-btn">‹</button>
@@ -309,9 +253,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
     </div>
   </div>
   <div class="chat-messages" id="chat-messages"></div>
-  <div class="chat-chips-area" id="chat-chips-area" style="display:none">
-    <div class="chat-chips" id="chat-chips"></div>
-  </div>
+  <div class="chat-chips-area" id="chat-chips-area" style="display:none"><div class="chat-chips" id="chat-chips"></div></div>
   <div class="chat-input-row" id="chat-input-row" style="display:none">
     <textarea class="chat-text-input" id="chat-text-input" placeholder="Write anything…" rows="1"></textarea>
     <button class="chat-send-btn" id="chat-send-btn">↑</button>
@@ -322,7 +264,6 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════ QUICK FORM ══ -->
 <div id="screen-quick-form" class="screen hidden">
   <div class="qf-header">
     <button class="chat-back-btn" id="qf-back-btn">‹</button>
@@ -333,7 +274,6 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
   <div class="qf-nav" id="qf-nav"></div>
 </div>
 
-<!-- ══════════════════════════════════════════ JUST CHAT ══ -->
 <div id="screen-just-chat" class="screen hidden">
   <div class="chat-header">
     <button class="chat-back-btn" id="jc-back-btn">‹</button>
@@ -350,21 +290,15 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════ DASHBOARD ══ -->
 <div id="screen-dashboard" class="screen hidden">
-  <div class="app-header">
-    <h1>Trends</h1>
-    <div class="header-badge">Last 6 Weeks</div>
-  </div>
+  <div class="app-header"><h1>Trends</h1><div class="header-badge">Last 6 Weeks</div></div>
   <div class="scroll-content">
     <div class="section-title">SYMPTOM INTENSITY</div>
     <div class="card"><div class="chart-container"><canvas id="intensity-chart"></canvas></div></div>
     <div class="section-title">MENTAL CLARITY</div>
     <div class="card"><div class="chart-container"><canvas id="clarity-chart"></canvas></div></div>
     <div class="section-title">RECENT CHECK-INS</div>
-    <div class="card" id="history-list">
-      <p style="color:var(--muted);font-size:14px;text-align:center;padding:12px 0">No check-ins yet.</p>
-    </div>
+    <div class="card" id="history-list"><p style="color:var(--muted);font-size:14px;text-align:center;padding:12px 0">No check-ins yet.</p></div>
   </div>
   <nav class="nav-bar">
     <div class="nav-item" data-nav="home"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></div>
@@ -373,7 +307,6 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
   </nav>
 </div>
 
-<!-- ══════════════════════════════════════ CLINICIAN SHARE ══ -->
 <div id="screen-share" class="screen hidden">
   <div class="app-header"><h1>Share Report</h1></div>
   <div class="scroll-content">
@@ -404,21 +337,15 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 </div>
 
 <script>
-/* ══════════════════════════════════════════════════════════════
-   CONFIG
-══════════════════════════════════════════════════════════════ */
 const SUPABASE_URL = 'https://kwriboxxujqrypxopthl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3cmlib3h4dWpxcnlweG9wdGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5ODk2OTYsImV4cCI6MjA5NDU2NTY5Nn0.qoxQ9tPEoEnBPAT3M0ru3uxJDvTMcBnlP6lL9MYSDHw';
 
-/* ══════════════════════════════════════════════════════════════
-   COMPANION DATA
-══════════════════════════════════════════════════════════════ */
 const COMPANIONS = {
-  maya:   { name:'Maya',   trait:'Warm · Nurturing · Real',          emoji:'💜', photo:'Maya.jpg' },
-  nia:    { name:'Nia',    trait:'Calm · Grounding · Wise',          emoji:'🌿', photo:'Nia.jpg' },
-  renee:  { name:'Renee',  trait:'Honest · Spirited · Funny',        emoji:'🔥', photo:'https://odhaihealth-web.github.io/hersignal/renee.jpg' },
-  diane:  { name:'Diane',  trait:'Steady · Experienced · Maternal',  emoji:'🌸', photo:'Diane.jpg' },
-  lauren: { name:'Lauren', trait:'Gentle · Intuitive · Thoughtful',  emoji:'✨', photo:'https://odhaihealth-web.github.io/hersignal/lauren.jpg' }
+  maya:   { name:'Maya',   trait:'Warm · Nurturing · Real',         emoji:'💜', photo:'maya.jpg' },
+  nia:    { name:'Nia',    trait:'Calm · Grounding · Wise',         emoji:'🌿', photo:'nia.jpg' },
+  renee:  { name:'Renee',  trait:'Honest · Spirited · Funny',       emoji:'🔥', photo:'https://odhaihealth-web.github.io/hersignal/renee.jpg' },
+  diane:  { name:'Diane',  trait:'Steady · Experienced · Maternal', emoji:'🌸', photo:'diane.jpg' },
+  lauren: { name:'Lauren', trait:'Gentle · Intuitive · Thoughtful', emoji:'✨', photo:'https://odhaihealth-web.github.io/hersignal/lauren.jpg' }
 };
 
 const COMPANION_PROMPTS = {
@@ -429,18 +356,15 @@ const COMPANION_PROMPTS = {
   lauren: 'You are Lauren, a gentle and intuitive companion for perimenopause. Thoughtful, soft-spoken, emotionally intelligent. Never diagnose.'
 };
 
-/* ══════════════════════════════════════════════════════════════
-   IMAGE PRELOADER
-══════════════════════════════════════════════════════════════ */
-function loadPhotoInto(containerEl, photoUrl, fallbackEmoji, cssClass) {
+function loadPhotoInto(containerEl, photoUrl, fallbackEmoji) {
   const fb = document.createElement('div');
-  fb.style.cssText = `width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:32px;`;
+  fb.style.cssText = 'width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:32px;';
   fb.textContent = fallbackEmoji;
   containerEl.appendChild(fb);
   const img = new Image();
   img.onload = () => {
     const el = document.createElement('img');
-    el.src = photoUrl; el.alt = ''; el.className = cssClass || '';
+    el.src = photoUrl; el.alt = '';
     el.style.cssText = 'width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;';
     containerEl.replaceChild(el, fb);
   };
@@ -454,9 +378,6 @@ function makeAvatarEl(comp, size=44) {
   return wrap;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   STATE
-══════════════════════════════════════════════════════════════ */
 let state = {
   screen: 'onboarding',
   userUUID:     localStorage.getItem('hs_uuid')      || '',
@@ -472,19 +393,16 @@ let state = {
 if (state.checkins.length === 0) {
   const now = Date.now(), day = 86400000;
   state.checkins = [
-    { checked_at:new Date(now-42*day).toISOString(), intensity:2, clarity_score:4, stress_level:2, signal:'Stable',   symptoms:['Fatigue'],                                        cycle_status:'Regular'   },
-    { checked_at:new Date(now-35*day).toISOString(), intensity:3, clarity_score:3, stress_level:3, signal:'Monitor',  symptoms:['Hot Flashes','Fatigue'],                           cycle_status:'Irregular' },
-    { checked_at:new Date(now-28*day).toISOString(), intensity:3, clarity_score:3, stress_level:4, signal:'Monitor',  symptoms:['Night Sweats','Brain Fog'],                        cycle_status:'Irregular' },
-    { checked_at:new Date(now-21*day).toISOString(), intensity:4, clarity_score:2, stress_level:4, signal:'Escalate', symptoms:['Hot Flashes','Night Sweats','Brain Fog','Anxiety'], cycle_status:'Skipped'   },
-    { checked_at:new Date(now-14*day).toISOString(), intensity:3, clarity_score:3, stress_level:3, signal:'Monitor',  symptoms:['Hot Flashes','Sleep Disruption'],                  cycle_status:'Skipped'   },
-    { checked_at:new Date(now-7*day).toISOString(),  intensity:3, clarity_score:3, stress_level:3, signal:'Monitor',  symptoms:['Fatigue','Mood Changes'],                          cycle_status:'Irregular' }
+    { checked_at:new Date(now-42*day).toISOString(), intensity:2, clarity_score:4, stress_level:2, signal:'Stable',   symptoms:['Fatigue'], cycle_status:'Regular' },
+    { checked_at:new Date(now-35*day).toISOString(), intensity:3, clarity_score:3, stress_level:3, signal:'Monitor',  symptoms:['Hot Flashes','Fatigue'], cycle_status:'Irregular' },
+    { checked_at:new Date(now-28*day).toISOString(), intensity:3, clarity_score:3, stress_level:4, signal:'Monitor',  symptoms:['Night Sweats','Brain Fog'], cycle_status:'Irregular' },
+    { checked_at:new Date(now-21*day).toISOString(), intensity:4, clarity_score:2, stress_level:4, signal:'Escalate', symptoms:['Hot Flashes','Night Sweats','Brain Fog','Anxiety'], cycle_status:'Skipped' },
+    { checked_at:new Date(now-14*day).toISOString(), intensity:3, clarity_score:3, stress_level:3, signal:'Monitor',  symptoms:['Hot Flashes','Sleep Disruption'], cycle_status:'Skipped' },
+    { checked_at:new Date(now-7*day).toISOString(),  intensity:3, clarity_score:3, stress_level:3, signal:'Monitor',  symptoms:['Fatigue','Mood Changes'], cycle_status:'Irregular' }
   ];
   localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
 }
 
-/* ══════════════════════════════════════════════════════════════
-   SCREEN NAVIGATION
-══════════════════════════════════════════════════════════════ */
 function showScreen(name, direction='forward') {
   const cur  = document.getElementById('screen-'+state.screen);
   const next = document.getElementById('screen-'+name);
@@ -506,9 +424,6 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
-/* ══════════════════════════════════════════════════════════════
-   ONBOARDING
-══════════════════════════════════════════════════════════════ */
 document.getElementById('btn-get-started').addEventListener('click', () => {
   const val = document.getElementById('initials-input').value.trim().toUpperCase();
   if (!val) { showToast('Please enter your initials 💜'); return; }
@@ -526,9 +441,6 @@ if (state.isOnboarded && state.userInitials) {
   else { buildCompanionGrid(); showScreen('companion-select'); }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   COMPANION SELECT
-══════════════════════════════════════════════════════════════ */
 let selectedCompanionKey = '';
 
 function buildCompanionGrid() {
@@ -536,8 +448,7 @@ function buildCompanionGrid() {
   grid.innerHTML = '';
   Object.entries(COMPANIONS).forEach(([key, comp]) => {
     const card = document.createElement('div');
-    card.className = 'cs-card';
-    card.dataset.companion = key;
+    card.className = 'cs-card'; card.dataset.companion = key;
     const photoWrap = document.createElement('div');
     photoWrap.style.cssText = 'width:80px;height:80px;border-radius:50%;overflow:hidden;border:3px solid var(--card-border);flex-shrink:0;';
     loadPhotoInto(photoWrap, comp.photo, comp.emoji);
@@ -546,8 +457,7 @@ function buildCompanionGrid() {
     card.appendChild(photoWrap); card.appendChild(nameEl); card.appendChild(traitEl);
     card.addEventListener('click', () => {
       document.querySelectorAll('.cs-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      selectedCompanionKey = key;
+      card.classList.add('selected'); selectedCompanionKey = key;
       const btn = document.getElementById('btn-companion-confirm');
       btn.disabled = false; btn.style.opacity = '1';
     });
@@ -564,9 +474,6 @@ document.getElementById('btn-companion-confirm').addEventListener('click', () =>
   showScreen('home'); updateHome();
 });
 
-/* ══════════════════════════════════════════════════════════════
-   HOME
-══════════════════════════════════════════════════════════════ */
 function updateHome() {
   document.getElementById('home-initials-badge').textContent = state.userInitials || '';
   document.getElementById('home-welcome').textContent = `Welcome back, ${state.userInitials} 💜`;
@@ -576,7 +483,7 @@ function updateHome() {
     const d = new Date(last.checked_at);
     document.getElementById('stat-streak').textContent = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
   }
-  const sig  = state.lastSignal;
+  const sig = state.lastSignal;
   const bgs  = {Stable:'var(--stable-bg)',Monitor:'var(--monitor-bg)',Escalate:'var(--escalate-bg)'};
   const txts = {Stable:'var(--stable-text)',Monitor:'var(--monitor-text)',Escalate:'var(--escalate-text)'};
   const descs = {
@@ -584,32 +491,24 @@ function updateHome() {
     Monitor: 'Some patterns worth watching. Stay consistent with your check-ins.',
     Escalate:"Your body is asking for attention. This pattern is worth discussing with your provider."
   };
-  document.getElementById('home-signal-card').style.background  = bgs[sig]||bgs.Monitor;
-  document.getElementById('home-signal-value').style.color      = txts[sig]||txts.Monitor;
-  document.getElementById('home-signal-value').textContent      = sig;
-  document.getElementById('home-signal-desc').textContent       = descs[sig]||descs.Monitor;
+  document.getElementById('home-signal-card').style.background = bgs[sig]||bgs.Monitor;
+  document.getElementById('home-signal-value').style.color     = txts[sig]||txts.Monitor;
+  document.getElementById('home-signal-value').textContent     = sig;
+  document.getElementById('home-signal-desc').textContent      = descs[sig]||descs.Monitor;
 }
 
-document.getElementById('btn-start-checkin').addEventListener('click', () => { showScreen('mode-chooser'); });
-document.getElementById('btn-change-companion').addEventListener('click', () => {
-  selectedCompanionKey = ''; buildCompanionGrid(); showScreen('companion-select');
-});
+document.getElementById('btn-start-checkin').addEventListener('click', () => showScreen('mode-chooser'));
+document.getElementById('btn-change-companion').addEventListener('click', () => { selectedCompanionKey=''; buildCompanionGrid(); showScreen('companion-select'); });
 document.getElementById('btn-go-share').addEventListener('click', () => {
   showScreen('share');
   document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); if(n.dataset.nav==='share') n.classList.add('active'); });
 });
 
-/* ══════════════════════════════════════════════════════════════
-   MODE CHOOSER
-══════════════════════════════════════════════════════════════ */
 document.getElementById('mc-btn-chat').addEventListener('click', () => { startChatCheckin(); showScreen('chat'); });
 document.getElementById('mc-btn-form').addEventListener('click', () => { startQuickForm(); showScreen('quick-form'); });
 document.getElementById('mc-btn-just-chat').addEventListener('click', () => { startJustChat(); showScreen('just-chat'); });
 document.getElementById('mc-back-btn').addEventListener('click', () => { showScreen('home','back'); updateHome(); });
 
-/* ══════════════════════════════════════════════════════════════
-   SHARED CHAT HELPERS
-══════════════════════════════════════════════════════════════ */
 function getCompanion() { return COMPANIONS[state.companionKey] || COMPANIONS.maya; }
 
 function addBubble(msgsEl, text, role, comp) {
@@ -649,37 +548,24 @@ function addTypingBubble(msgsEl, comp) {
 function showTypingThenSpeak(msgsEl, comp, text, delay=900) {
   return new Promise(resolve => {
     const { bubble } = addTypingBubble(msgsEl, comp);
-    setTimeout(() => {
-      bubble.innerHTML = '';
-      bubble.textContent = text;
-      msgsEl.scrollTop = msgsEl.scrollHeight;
-      resolve(bubble);
-    }, delay);
+    setTimeout(() => { bubble.innerHTML=''; bubble.textContent=text; msgsEl.scrollTop=msgsEl.scrollHeight; resolve(bubble); }, delay);
   });
 }
 
 function autoResizeTextarea(el) {
-  el.addEventListener('input', () => {
-    el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 80) + 'px';
-  });
+  el.addEventListener('input', () => { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,80)+'px'; });
 }
 
-/* ══════════════════════════════════════════════════════════════
-   CHAT CHECK-IN ENGINE
-══════════════════════════════════════════════════════════════ */
 function startChatCheckin() {
   const comp = getCompanion();
-  state.chatPhase = 0;
-  state.ciSymptoms = []; state.ciIntensity = 3; state.ciStress = 3;
-  state.ciCycle = ''; state.ciClarity = 3; state.ciNotes = '';
+  state.chatPhase=0; state.ciSymptoms=[]; state.ciIntensity=3; state.ciStress=3; state.ciCycle=''; state.ciClarity=3; state.ciNotes='';
   const wrap = document.getElementById('chat-header-avatar-wrap');
-  wrap.innerHTML = ''; wrap.appendChild(makeAvatarEl(comp, 44));
+  wrap.innerHTML=''; wrap.appendChild(makeAvatarEl(comp,44));
   document.getElementById('chat-header-name').textContent = comp.name;
-  document.getElementById('chat-messages').innerHTML = '';
-  document.getElementById('chat-chips-area').style.display = 'none';
-  document.getElementById('chat-input-row').style.display  = 'none';
-  document.getElementById('chat-action-btns').style.display = 'none';
+  document.getElementById('chat-messages').innerHTML='';
+  document.getElementById('chat-chips-area').style.display='none';
+  document.getElementById('chat-input-row').style.display='none';
+  document.getElementById('chat-action-btns').style.display='none';
   autoResizeTextarea(document.getElementById('chat-text-input'));
   setTimeout(() => advanceChatPhase('greeting'), 400);
 }
@@ -687,11 +573,10 @@ function startChatCheckin() {
 function showChips(chips, multi=false) {
   const area = document.getElementById('chat-chips-area');
   const wrap = document.getElementById('chat-chips');
-  document.getElementById('chat-input-row').style.display = 'none';
-  wrap.innerHTML = ''; area.style.display = 'block';
+  document.getElementById('chat-input-row').style.display='none';
+  wrap.innerHTML=''; area.style.display='block';
   chips.forEach(label => {
-    const c = document.createElement('div');
-    c.className = 'chat-chip'; c.textContent = label;
+    const c = document.createElement('div'); c.className='chat-chip'; c.textContent=label;
     if (multi) {
       c.addEventListener('click', () => {
         c.classList.toggle('selected');
@@ -699,8 +584,7 @@ function showChips(chips, multi=false) {
         const sel = [...wrap.querySelectorAll('.chat-chip.selected:not(.multi-confirm)')];
         if (sel.length > 0) {
           if (!conf) {
-            conf = document.createElement('div');
-            conf.className = 'chat-chip multi-confirm';
+            conf = document.createElement('div'); conf.className='chat-chip multi-confirm';
             conf.addEventListener('click', () => {
               const chosen = [...wrap.querySelectorAll('.chat-chip.selected:not(.multi-confirm)')].map(e=>e.textContent);
               hideChips(); handleUserReply(chosen.join(', '),'symptoms',chosen);
@@ -718,16 +602,16 @@ function showChips(chips, multi=false) {
 }
 
 function showNoteInput() {
-  document.getElementById('chat-chips-area').style.display = 'none';
+  document.getElementById('chat-chips-area').style.display='none';
   const row = document.getElementById('chat-input-row');
-  row.style.display = 'flex';
-  document.getElementById('chat-text-input').value = '';
+  row.style.display='flex';
+  document.getElementById('chat-text-input').value='';
   document.getElementById('chat-text-input').focus();
 }
 
 function hideChips() {
-  document.getElementById('chat-chips-area').style.display = 'none';
-  document.getElementById('chat-input-row').style.display  = 'none';
+  document.getElementById('chat-chips-area').style.display='none';
+  document.getElementById('chat-input-row').style.display='none';
 }
 
 document.getElementById('chat-send-btn').addEventListener('click', () => {
@@ -747,35 +631,33 @@ document.getElementById('chat-btn-trends').addEventListener('click', () => {
 async function advanceChatPhase(phase) {
   const comp = getCompanion();
   const msgs = document.getElementById('chat-messages');
-  const initials = state.userInitials;
   switch(phase) {
     case 'greeting':
-      await showTypingThenSpeak(msgs, comp, `Hey ${initials} 💜 Ready to check in? What symptoms have you been dealing with this week?`, 700);
+      await showTypingThenSpeak(msgs, comp, `Hey ${state.userInitials} 💜 Ready to check in? What symptoms have you been dealing with this week?`, 700);
       showChips(['Hot Flashes','Night Sweats','Sleep Disruption','Brain Fog','Mood Changes','Anxiety','Fatigue','Joint Pain','Headaches','Heart Palpitations','None of these'], true);
-      state.chatPhase = 1; break;
+      state.chatPhase=1; break;
     case 'symptoms':
       await showTypingThenSpeak(msgs, comp, `Got it. How intense have those symptoms felt overall — on a scale of 1 to 5?`);
       showChips(['1 Very Mild','2','3 Moderate','4','5 Very Intense']);
-      state.chatPhase = 2; break;
+      state.chatPhase=2; break;
     case 'intensity':
       await showTypingThenSpeak(msgs, comp, `And stress? How's your stress level been this week?`);
       showChips(['1 Very Low','2','3 Moderate','4','5 Very High']);
-      state.chatPhase = 3; break;
+      state.chatPhase=3; break;
     case 'stress':
       await showTypingThenSpeak(msgs, comp, `How about your cycle — what's closest to where you are right now?`);
       showChips(['Regular','Irregular','Skipped','Stopped']);
-      state.chatPhase = 4; break;
+      state.chatPhase=4; break;
     case 'cycle':
       await showTypingThenSpeak(msgs, comp, `Last question — mental clarity this week: foggy or sharp?`);
       showChips(['1 Very Foggy','2','3 Okay','4','5 Very Sharp']);
-      state.chatPhase = 5; break;
+      state.chatPhase=5; break;
     case 'clarity':
       await showTypingThenSpeak(msgs, comp, `Anything specific you want to note — a question for your doctor, something that felt different?`);
       showChips(['Skip']); showNoteInput();
-      state.chatPhase = 6; break;
+      state.chatPhase=6; break;
     case 'notes':
-      state.chatPhase = 7;
-      await submitCheckinFromChat(); break;
+      state.chatPhase=7; await submitCheckinFromChat(); break;
   }
 }
 
@@ -783,12 +665,12 @@ async function handleUserReply(displayText, type, rawData) {
   const msgs = document.getElementById('chat-messages');
   addBubble(msgs, displayText, 'user', getCompanion());
   switch(state.chatPhase) {
-    case 1: state.ciSymptoms = (type==='symptoms') ? rawData.filter(s=>s!=='None of these') : []; await advanceChatPhase('symptoms'); break;
-    case 2: state.ciIntensity = parseInt(displayText.charAt(0))||3; await advanceChatPhase('intensity'); break;
-    case 3: state.ciStress = parseInt(displayText.charAt(0))||3; await advanceChatPhase('stress'); break;
-    case 4: state.ciCycle = displayText; await advanceChatPhase('cycle'); break;
-    case 5: state.ciClarity = parseInt(displayText.charAt(0))||3; await advanceChatPhase('clarity'); break;
-    case 6: state.ciNotes = (displayText==='Skip'||displayText==='(no notes)') ? '' : displayText; await advanceChatPhase('notes'); break;
+    case 1: state.ciSymptoms=(type==='symptoms')?rawData.filter(s=>s!=='None of these'):[]; await advanceChatPhase('symptoms'); break;
+    case 2: state.ciIntensity=parseInt(displayText.charAt(0))||3; await advanceChatPhase('intensity'); break;
+    case 3: state.ciStress=parseInt(displayText.charAt(0))||3; await advanceChatPhase('stress'); break;
+    case 4: state.ciCycle=displayText; await advanceChatPhase('cycle'); break;
+    case 5: state.ciClarity=parseInt(displayText.charAt(0))||3; await advanceChatPhase('clarity'); break;
+    case 6: state.ciNotes=(displayText==='Skip'||displayText==='(no notes)')?'':displayText; await advanceChatPhase('notes'); break;
   }
 }
 
@@ -796,70 +678,53 @@ async function submitCheckinFromChat() {
   const msgs = document.getElementById('chat-messages');
   const comp = getCompanion();
   const sig  = calcSignal();
-  state.lastSignal = sig;
-  localStorage.setItem('hs_signal', sig);
+  state.lastSignal = sig; localStorage.setItem('hs_signal', sig);
   const record = {
-    user_id: state.userUUID, session_id: state.userUUID+'-'+Date.now(),
-    checked_at: new Date().toISOString(),
-    symptoms: state.ciSymptoms, stress_level: state.ciStress,
-    cycle_status: state.ciCycle, clarity_score: state.ciClarity,
-    intensity: state.ciIntensity, signal: sig, notes: state.ciNotes
+    user_id:state.userUUID, session_id:state.userUUID+'-'+Date.now(),
+    checked_at:new Date().toISOString(), symptoms:state.ciSymptoms,
+    stress_level:state.ciStress, cycle_status:state.ciCycle,
+    clarity_score:state.ciClarity, intensity:state.ciIntensity, signal:sig, notes:state.ciNotes
   };
   state.checkins.push(record);
   localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
   syncToSupabase(record);
   await showTypingThenSpeak(msgs, comp, `One sec — pulling your signal... 💜`, 600);
   await streamCompanionResponse(sig, msgs, comp);
-  document.getElementById('chat-action-btns').style.display = 'flex';
+  document.getElementById('chat-action-btns').style.display='flex';
 }
 
 async function streamCompanionResponse(sig, msgsEl, comp) {
   const recent = state.checkins.slice(-4);
   const avgI   = (recent.reduce((a,c)=>a+(c.intensity||0),0)/recent.length).toFixed(1);
   const prompt = `A woman just completed her perimenopause check-in. Symptoms: ${state.ciSymptoms.join(', ')||'none'}. Intensity: ${state.ciIntensity}/5. Stress: ${state.ciStress}/5. Clarity: ${state.ciClarity}/5. Cycle: ${state.ciCycle||'not specified'}. Signal: ${sig}. Recent avg intensity: ${avgI}/5. Write a warm, empathetic response (max 100 words). Validate her experience. If Monitor or Escalate, gently encourage provider conversation. Never diagnose. End warmly.`;
-
   try {
     const resp = await fetch(`${SUPABASE_URL}/functions/v1/hyper-handler`, {
-      method:'POST',
-      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY},
-      body:JSON.stringify({
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'apikey':SUPABASE_KEY, 'Authorization':'Bearer '+SUPABASE_KEY },
+      body: JSON.stringify({
         model:'gpt-4o-mini',
         messages:[
-          {role:'system',content:COMPANION_PROMPTS[state.companionKey]||COMPANION_PROMPTS.maya},
-          {role:'user',content:prompt}
+          { role:'system', content:COMPANION_PROMPTS[state.companionKey]||COMPANION_PROMPTS.maya },
+          { role:'user', content:prompt }
         ],
         max_tokens:180, temperature:0.85
       })
     });
     if (!resp.ok) throw new Error('API '+resp.status);
     const data = await resp.json();
-    const text = data.choices?.[0]?.message?.content?.trim() || '';
+    const fullText = data.choices?.[0]?.message?.content?.trim() || '';
     const bubble = addBubble(msgsEl,'','companion',comp);
-    const words = text.split(' ');
-    for(let i=0;i<words.length;i++){
-      bubble.textContent += (i===0?'':' ') + words[i];
-      msgsEl.scrollTop = msgsEl.scrollHeight;
+    const words = fullText.split(' ');
+    for (let i=0;i<words.length;i++) {
+      bubble.textContent += (i===0?'':' ')+words[i];
+      msgsEl.scrollTop=msgsEl.scrollHeight;
       await new Promise(r=>setTimeout(r,35));
     }
   } catch(err) {
-    const fb = {
-      Stable:   `You're doing well, ${state.userInitials} 💜 Your patterns look steady this week. Keep listening to your body — it's communicating with you.`,
-      Monitor:  `Thank you for checking in, ${state.userInitials} 💜 Your body is sending some signals worth paying attention to. Consider noting what you shared today for your next provider visit.`,
-      Escalate: `${state.userInitials}, your body has been working hard lately 💜 This pattern is worth a conversation with your provider soon. You don't have to figure this out alone.`
-    };
-    const bubble = addBubble(msgsEl,'','companion',comp);
-    const words = (fb[sig]||fb.Monitor).split(' ');
-    for(let i=0;i<words.length;i++){
-      bubble.textContent += (i===0?'':' ') + words[i];
-      msgsEl.scrollTop = msgsEl.scrollHeight;
-      await new Promise(r=>setTimeout(r,40));
-    }
+    addBubble(msgsEl,`You showed up today, ${state.userInitials} — and that matters 💜`,'companion',comp);
   }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   QUICK FORM
-══════════════════════════════════════════════════════════════ */
 const QF_STEPS = [
   { id:'symptoms', title:'What symptoms this week?', sub:'Select all that apply.', type:'chips', multi:true, options:['Hot Flashes','Night Sweats','Sleep Disruption','Brain Fog','Mood Changes','Anxiety','Fatigue','Joint Pain','Headaches','Heart Palpitations'] },
   { id:'intensity', title:'Overall symptom intensity', sub:'1 = very mild, 5 = very intense.', type:'slider', min:1, max:5, step:1, labels:['Very Mild','','Moderate','','Very Intense'] },
@@ -868,47 +733,30 @@ const QF_STEPS = [
   { id:'clarity', title:'Mental clarity', sub:'1 = very foggy, 5 = very sharp.', type:'slider', min:1, max:5, step:1, labels:['Very Foggy','','Okay','','Very Sharp'] }
 ];
 
-let qfData = {}, qfStep = 0;
+let qfData={}, qfStep=0;
 
-function startQuickForm() { qfData = { symptoms:[], intensity:3, stress:3, cycle:'', clarity:3 }; qfStep = 0; renderQFStep(); }
+function startQuickForm() { qfData={symptoms:[],intensity:3,stress:3,cycle:'',clarity:3}; qfStep=0; renderQFStep(); }
 
 function renderQFStep() {
-  const step = QF_STEPS[qfStep];
-  const body = document.getElementById('qf-body');
-  const nav  = document.getElementById('qf-nav');
-  const dots = document.getElementById('qf-dots');
-  dots.innerHTML = '';
-  QF_STEPS.forEach((_,i) => {
-    const d = document.createElement('div');
-    d.className = 'qf-dot' + (i===qfStep?' active':i<qfStep?' done':'');
-    dots.appendChild(d);
-  });
-  body.innerHTML = `<div class="qf-step active"><div class="qf-step-title">${step.title}</div><div class="qf-step-sub">${step.sub}</div>${step.type==='slider' ? renderSlider(step) : renderChipGroup(step)}</div>`;
-  if (step.type==='slider') wireSlider(step);
-  if (step.type==='chips')  wireQFChips(step);
-  nav.innerHTML = '';
-  if (qfStep > 0) {
-    const back = document.createElement('button');
-    back.className='btn btn-secondary'; back.textContent='← Back';
-    back.addEventListener('click', () => { qfStep--; renderQFStep(); });
-    nav.appendChild(back);
-  }
-  const next = document.createElement('button');
-  next.className='btn btn-primary';
-  next.textContent = qfStep===QF_STEPS.length-1 ? 'Submit ✓' : 'Next →';
-  next.addEventListener('click', () => { if (qfStep===QF_STEPS.length-1) { submitQuickForm(); } else { qfStep++; renderQFStep(); } });
-  nav.appendChild(next);
+  const step=QF_STEPS[qfStep], body=document.getElementById('qf-body'), nav=document.getElementById('qf-nav'), dots=document.getElementById('qf-dots');
+  dots.innerHTML='';
+  QF_STEPS.forEach((_,i)=>{ const d=document.createElement('div'); d.className='qf-dot'+(i===qfStep?' active':i<qfStep?' done':''); dots.appendChild(d); });
+  body.innerHTML=`<div class="qf-step active"><div class="qf-step-title">${step.title}</div><div class="qf-step-sub">${step.sub}</div>${step.type==='slider'?renderSlider(step):renderChipGroup(step)}</div>`;
+  if(step.type==='slider') wireSlider(step);
+  if(step.type==='chips')  wireQFChips(step);
+  nav.innerHTML='';
+  if(qfStep>0){ const back=document.createElement('button'); back.className='btn btn-secondary'; back.textContent='← Back'; back.addEventListener('click',()=>{qfStep--;renderQFStep();}); nav.appendChild(back); }
+  const next=document.createElement('button'); next.className='btn btn-primary'; next.textContent=qfStep===QF_STEPS.length-1?'Submit ✓':'Next →';
+  next.addEventListener('click',()=>{ if(qfStep===QF_STEPS.length-1) submitQuickForm(); else {qfStep++;renderQFStep();} }); nav.appendChild(next);
 }
 
 function renderSlider(step) {
-  const val = qfData[step.id];
-  return `<div class="qf-slider-val" id="qf-slider-val">${val}</div><div class="qf-slider-wrap"><input type="range" class="qf-slider" id="qf-slider" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}"><div class="qf-slider-labels">${step.labels.map(l=>`<span>${l}</span>`).join('')}</div></div>`;
+  return `<div class="qf-slider-val" id="qf-slider-val">${qfData[step.id]}</div><div class="qf-slider-wrap"><input type="range" class="qf-slider" id="qf-slider" min="${step.min}" max="${step.max}" step="${step.step}" value="${qfData[step.id]}"><div class="qf-slider-labels">${step.labels.map(l=>`<span>${l}</span>`).join('')}</div></div>`;
 }
 
 function wireSlider(step) {
-  const slider = document.getElementById('qf-slider');
-  const valEl  = document.getElementById('qf-slider-val');
-  slider.addEventListener('input', () => { qfData[step.id] = parseInt(slider.value); valEl.textContent = slider.value; });
+  const slider=document.getElementById('qf-slider'), valEl=document.getElementById('qf-slider-val');
+  slider.addEventListener('input',()=>{ qfData[step.id]=parseInt(slider.value); valEl.textContent=slider.value; });
 }
 
 function renderChipGroup(step) {
@@ -916,222 +764,151 @@ function renderChipGroup(step) {
 }
 
 function wireQFChips(step) {
-  document.querySelectorAll('.qf-chip').forEach(chip => {
-    if (step.id==='symptoms') { if (qfData.symptoms.includes(chip.dataset.val)) chip.classList.add('selected'); }
-    else { if (qfData[step.id]===chip.dataset.val) chip.classList.add('selected'); }
-    chip.addEventListener('click', () => {
-      if (step.multi) { chip.classList.toggle('selected'); qfData.symptoms = [...document.querySelectorAll('.qf-chip.selected')].map(c=>c.dataset.val); }
-      else { document.querySelectorAll('.qf-chip').forEach(c=>c.classList.remove('selected')); chip.classList.add('selected'); qfData[step.id] = chip.dataset.val; }
+  document.querySelectorAll('.qf-chip').forEach(chip=>{
+    if(step.id==='symptoms'){ if(qfData.symptoms.includes(chip.dataset.val)) chip.classList.add('selected'); }
+    else { if(qfData[step.id]===chip.dataset.val) chip.classList.add('selected'); }
+    chip.addEventListener('click',()=>{
+      if(step.multi){ chip.classList.toggle('selected'); qfData.symptoms=[...document.querySelectorAll('.qf-chip.selected')].map(c=>c.dataset.val); }
+      else { document.querySelectorAll('.qf-chip').forEach(c=>c.classList.remove('selected')); chip.classList.add('selected'); qfData[step.id]=chip.dataset.val; }
     });
   });
 }
 
 async function submitQuickForm() {
-  const sig = calcSignalFrom(qfData.intensity, qfData.stress);
-  state.lastSignal = sig; localStorage.setItem('hs_signal', sig);
-  const record = {
-    user_id: state.userUUID, session_id: state.userUUID+'-'+Date.now(),
-    checked_at: new Date().toISOString(),
-    symptoms: qfData.symptoms, stress_level: qfData.stress,
-    cycle_status: qfData.cycle, clarity_score: qfData.clarity,
-    intensity: qfData.intensity, signal: sig, notes: ''
-  };
-  state.checkins.push(record);
-  localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
-  syncToSupabase(record);
-  showToast('Check-in saved 💜');
-  setTimeout(() => { showScreen('home','back'); updateHome(); }, 800);
+  const sig=calcSignalFrom(qfData.intensity,qfData.stress);
+  state.lastSignal=sig; localStorage.setItem('hs_signal',sig);
+  const record={ user_id:state.userUUID, session_id:state.userUUID+'-'+Date.now(), checked_at:new Date().toISOString(), symptoms:qfData.symptoms, stress_level:qfData.stress, cycle_status:qfData.cycle, clarity_score:qfData.clarity, intensity:qfData.intensity, signal:sig, notes:'' };
+  state.checkins.push(record); localStorage.setItem('hsig_checkins_v3',JSON.stringify(state.checkins));
+  syncToSupabase(record); showToast('Check-in saved 💜');
+  setTimeout(()=>{ showScreen('home','back'); updateHome(); }, 800);
 }
 
-document.getElementById('qf-back-btn').addEventListener('click', () => {
-  if (qfStep > 0) { qfStep--; renderQFStep(); } else { showScreen('mode-chooser','back'); }
-});
-
-/* ══════════════════════════════════════════════════════════════
-   JUST CHAT ENGINE
-══════════════════════════════════════════════════════════════ */
-const JC_FALLBACKS = [
-  `That's such a real thing to sit with. Perimenopause can feel like your body is rewriting the rules without telling you. What's been the hardest part lately?`,
-  `You're not imagining any of this. Everything you're feeling is real — your nervous system, your hormones, all of it. How long have you been noticing these changes?`,
-  `One thing I love about you checking in like this is that you're paying attention. So many women push through without ever pausing. What's been keeping you going?`,
-  `Perimenopause is one of those transitions that medicine has historically under-explained and under-supported. You deserve real answers and real care. Is there something specific you're trying to understand?`,
-  `Your body is working incredibly hard right now — even when it doesn't feel that way. What do you wish someone had told you about this stage of life?`,
-  `Sleep disruption alone can make everything else so much harder. When your rest is off, everything compounds. What tends to help you most on the harder nights?`,
-  `I'm here — take your time. There's no rush and nothing you can say that will surprise me. What's on your mind today?`
-];
-let jcFallbackIndex = 0;
+document.getElementById('qf-back-btn').addEventListener('click', ()=>{ if(qfStep>0){qfStep--;renderQFStep();}else{showScreen('mode-chooser','back');} });
 
 function startJustChat() {
-  const comp = getCompanion();
-  state.jcHistory = [];
-  const wrap = document.getElementById('jc-header-avatar-wrap');
-  wrap.innerHTML = ''; wrap.appendChild(makeAvatarEl(comp, 44));
-  document.getElementById('jc-header-name').textContent = comp.name;
-  document.getElementById('jc-header-sub').textContent  = 'Just chatting 🌸';
-  const msgs = document.getElementById('jc-messages');
-  msgs.innerHTML = '';
+  const comp=getCompanion(); state.jcHistory=[];
+  const wrap=document.getElementById('jc-header-avatar-wrap'); wrap.innerHTML=''; wrap.appendChild(makeAvatarEl(comp,44));
+  document.getElementById('jc-header-name').textContent=comp.name;
+  document.getElementById('jc-header-sub').textContent='Just chatting 🌸';
+  const msgs=document.getElementById('jc-messages'); msgs.innerHTML='';
   autoResizeTextarea(document.getElementById('jc-text-input'));
-  document.getElementById('jc-text-input').value = '';
-  setTimeout(() => {
-    showTypingThenSpeak(msgs, comp, `Hey ${state.userInitials} 🌸 What's on your mind today? We can talk about anything — symptoms, questions, feelings, whatever you need.`, 700);
-  }, 400);
+  document.getElementById('jc-text-input').value='';
+  setTimeout(()=>{ showTypingThenSpeak(msgs,comp,`Hey ${state.userInitials} 🌸 What's on your mind today? We can talk about anything — symptoms, questions, feelings, whatever you need.`,700); },400);
 }
 
-document.getElementById('jc-back-btn').addEventListener('click', () => { showScreen('mode-chooser','back'); });
+document.getElementById('jc-back-btn').addEventListener('click', ()=>showScreen('mode-chooser','back'));
 document.getElementById('jc-send-btn').addEventListener('click', sendJustChat);
-document.getElementById('jc-text-input').addEventListener('keydown', e => {
-  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendJustChat(); }
-});
+document.getElementById('jc-text-input').addEventListener('keydown', e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendJustChat();} });
 
 async function sendJustChat() {
-  const input = document.getElementById('jc-text-input');
-  const text  = input.value.trim();
-  if (!text) return;
-  input.value = ''; input.style.height = 'auto';
-  const comp = getCompanion();
-  const msgs = document.getElementById('jc-messages');
-  addBubble(msgs, text, 'user', comp);
-  state.jcHistory.push({ role:'user', content:text });
-  if (state.jcHistory.length > 12) state.jcHistory = state.jcHistory.slice(-12);
-
+  const input=document.getElementById('jc-text-input'), text=input.value.trim();
+  if(!text) return;
+  input.value=''; input.style.height='auto';
+  const comp=getCompanion(), msgs=document.getElementById('jc-messages');
+  addBubble(msgs,text,'user',comp);
+  state.jcHistory.push({role:'user',content:text});
+  if(state.jcHistory.length>12) state.jcHistory=state.jcHistory.slice(-12);
   const { bubble } = addTypingBubble(msgs, comp);
-  const messages = [
-    { role:'system', content: COMPANION_PROMPTS[state.companionKey]||COMPANION_PROMPTS.maya + ' The user is having an open-ended conversation about perimenopause and women\'s health. Be warm, conversational, and supportive. Keep responses concise (under 120 words). Ask a follow-up question to keep the dialogue going.' },
-    ...state.jcHistory
-  ];
-
   try {
+    const messages=[
+      { role:'system', content:(COMPANION_PROMPTS[state.companionKey]||COMPANION_PROMPTS.maya)+' The user is having an open-ended conversation about perimenopause. Be warm, conversational, supportive. Keep responses under 120 words. Ask a follow-up question.' },
+      ...state.jcHistory
+    ];
     const resp = await fetch(`${SUPABASE_URL}/functions/v1/hyper-handler`, {
       method:'POST',
       headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY},
-      body:JSON.stringify({ model:'gpt-4o-mini', messages, max_tokens:200, temperature:0.9 })
+      body:JSON.stringify({model:'gpt-4o-mini',messages,max_tokens:200,temperature:0.9})
     });
-    if (!resp.ok) throw new Error('API '+resp.status);
-    const data = await resp.json();
-    const fullText = data.choices?.[0]?.message?.content?.trim() || '';
-    bubble.innerHTML = '';
-    const words = fullText.split(' ');
+    if(!resp.ok) throw new Error('API '+resp.status);
+    const data=await resp.json();
+    const fullText=data.choices?.[0]?.message?.content?.trim()||'';
+    bubble.innerHTML='';
+    const words=fullText.split(' ');
     for(let i=0;i<words.length;i++){
-      bubble.textContent += (i===0?'':' ') + words[i];
-      msgs.scrollTop = msgs.scrollHeight;
+      bubble.textContent+=(i===0?'':' ')+words[i];
+      msgs.scrollTop=msgs.scrollHeight;
       await new Promise(r=>setTimeout(r,35));
     }
-    state.jcHistory.push({ role:'assistant', content:fullText });
-    if (state.jcHistory.length > 12) state.jcHistory = state.jcHistory.slice(-12);
+    state.jcHistory.push({role:'assistant',content:fullText});
+    if(state.jcHistory.length>12) state.jcHistory=state.jcHistory.slice(-12);
   } catch(err) {
-    bubble.innerHTML = '';
-    const fallback = JC_FALLBACKS[jcFallbackIndex % JC_FALLBACKS.length];
-    jcFallbackIndex++;
-    const words = fallback.split(' ');
-    for(let i=0;i<words.length;i++){
-      bubble.textContent += (i===0?'':' ') + words[i];
-      msgs.scrollTop = msgs.scrollHeight;
-      await new Promise(r=>setTimeout(r,45));
-    }
-    state.jcHistory.push({ role:'assistant', content:bubble.textContent });
+    addBubble(msgs,`I'm here with you 💜 Tell me more.`,'companion',comp);
   }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   SIGNAL CALC
-══════════════════════════════════════════════════════════════ */
 function calcSignal() { return calcSignalFrom(state.ciIntensity, state.ciStress); }
 function calcSignalFrom(intensity, stress) {
-  if (intensity>=4 || stress>=4) return 'Escalate';
-  if (intensity>=3 || stress>=3) return 'Monitor';
+  if(intensity>=4||stress>=4) return 'Escalate';
+  if(intensity>=3||stress>=3) return 'Monitor';
   return 'Stable';
 }
 
-/* ══════════════════════════════════════════════════════════════
-   CHARTS
-══════════════════════════════════════════════════════════════ */
 let intensityChart=null, clarityChart=null;
 function renderCharts() {
-  const data   = state.checkins.slice(-6);
-  const labels = data.map(c=>new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}));
-  const iData  = data.map(c=>c.intensity||0);
-  const cData  = data.map(c=>c.clarity_score||0);
-  const opts = {
-    responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{display:false}},
-    scales:{
-      x:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:11}}},
-      y:{min:0,max:5,grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:11},stepSize:1}}
-    }
-  };
-  if (intensityChart) intensityChart.destroy();
-  intensityChart = new Chart(document.getElementById('intensity-chart'),{
-    type:'line', data:{labels, datasets:[{data:iData,borderColor:'#6B4FA0',backgroundColor:'rgba(107,79,160,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#6B4FA0',pointRadius:5,borderWidth:2.5}]}, options:opts
-  });
-  if (clarityChart) clarityChart.destroy();
-  clarityChart = new Chart(document.getElementById('clarity-chart'),{
-    type:'line', data:{labels, datasets:[{data:cData,borderColor:'#4ABFBF',backgroundColor:'rgba(74,191,191,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#4ABFBF',pointRadius:5,borderWidth:2.5}]}, options:opts
-  });
-  const histEl  = document.getElementById('history-list');
-  const recent  = [...state.checkins].reverse().slice(0,5);
-  histEl.innerHTML = recent.map(c => {
-    const d   = new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-    const sym = Array.isArray(c.symptoms) ? c.symptoms.slice(0,3).join(' · ') : '';
-    const sc  = (c.signal||'Monitor').toLowerCase();
+  const data=state.checkins.slice(-6);
+  const labels=data.map(c=>new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}));
+  const iData=data.map(c=>c.intensity||0), cData=data.map(c=>c.clarity_score||0);
+  const opts={ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:11}}},y:{min:0,max:5,grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#C4B5E0',font:{size:11},stepSize:1}}} };
+  if(intensityChart) intensityChart.destroy();
+  intensityChart=new Chart(document.getElementById('intensity-chart'),{type:'line',data:{labels,datasets:[{data:iData,borderColor:'#6B4FA0',backgroundColor:'rgba(107,79,160,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#6B4FA0',pointRadius:5,borderWidth:2.5}]},options:opts});
+  if(clarityChart) clarityChart.destroy();
+  clarityChart=new Chart(document.getElementById('clarity-chart'),{type:'line',data:{labels,datasets:[{data:cData,borderColor:'#4ABFBF',backgroundColor:'rgba(74,191,191,0.15)',tension:0.4,fill:true,pointBackgroundColor:'#4ABFBF',pointRadius:5,borderWidth:2.5}]},options:opts});
+  const histEl=document.getElementById('history-list');
+  const recent=[...state.checkins].reverse().slice(0,5);
+  histEl.innerHTML=recent.map(c=>{
+    const d=new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const sym=Array.isArray(c.symptoms)?c.symptoms.slice(0,3).join(' · '):'';
+    const sc=(c.signal||'Monitor').toLowerCase();
     return `<div class="history-item"><div><div style="font-size:14px;font-weight:600">${d}</div><div class="history-symptoms">${sym||'No symptoms logged'}</div></div><span class="signal-pill ${sc}">${c.signal||'Monitor'}</span></div>`;
   }).join('');
 }
 
-/* ══════════════════════════════════════════════════════════════
-   SHARE REPORT
-══════════════════════════════════════════════════════════════ */
 function updateShareReport() {
-  const data = state.checkins; if (!data.length) return;
-  const avg  = key => (data.reduce((a,c)=>a+(c[key]||0),0)/data.length).toFixed(1);
-  const symMap = {};
-  data.forEach(c=>(c.symptoms||[]).forEach(s=>symMap[s]=(symMap[s]||0)+1));
-  const topSyms = Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ');
-  const last = data[data.length-1];
-  document.getElementById('report-date').textContent    = `Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
-  document.getElementById('r-signal').textContent       = state.lastSignal;
-  document.getElementById('r-total').textContent        = data.length;
-  document.getElementById('r-intensity').textContent    = avg('intensity')+' / 5';
-  document.getElementById('r-clarity').textContent      = avg('clarity_score')+' / 5';
-  document.getElementById('r-stress').textContent       = avg('stress_level')+' / 5';
-  document.getElementById('r-symptoms').textContent     = topSyms||'—';
-  document.getElementById('r-cycle').textContent        = last?.cycle_status||'—';
+  const data=state.checkins; if(!data.length) return;
+  const avg=key=>(data.reduce((a,c)=>a+(c[key]||0),0)/data.length).toFixed(1);
+  const symMap={}; data.forEach(c=>(c.symptoms||[]).forEach(s=>symMap[s]=(symMap[s]||0)+1));
+  const topSyms=Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ');
+  const last=data[data.length-1];
+  document.getElementById('report-date').textContent=`Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
+  document.getElementById('r-signal').textContent=state.lastSignal;
+  document.getElementById('r-total').textContent=data.length;
+  document.getElementById('r-intensity').textContent=avg('intensity')+' / 5';
+  document.getElementById('r-clarity').textContent=avg('clarity_score')+' / 5';
+  document.getElementById('r-stress').textContent=avg('stress_level')+' / 5';
+  document.getElementById('r-symptoms').textContent=topSyms||'—';
+  document.getElementById('r-cycle').textContent=last?.cycle_status||'—';
 }
 
 function buildReportText() {
-  const data = state.checkins;
-  const avg  = key => (data.reduce((a,c)=>a+(c[key]||0),0)/data.length).toFixed(1);
-  const symMap = {};
-  data.forEach(c=>(c.symptoms||[]).forEach(s=>symMap[s]=(symMap[s]||0)+1));
-  const topSyms = Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ');
+  const data=state.checkins;
+  const avg=key=>(data.reduce((a,c)=>a+(c[key]||0),0)/data.length).toFixed(1);
+  const symMap={}; data.forEach(c=>(c.symptoms||[]).forEach(s=>symMap[s]=(symMap[s]||0)+1));
+  const topSyms=Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ');
   return `HerSignal Clinical Summary\nGenerated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}\n\nSignal Status: ${state.lastSignal}\nTotal Check-Ins: ${data.length}\nAverage Symptom Intensity: ${avg('intensity')} / 5\nAverage Mental Clarity: ${avg('clarity_score')} / 5\nAverage Stress Level: ${avg('stress_level')} / 5\nMost Frequent Symptoms: ${topSyms||'None'}\nCycle Status (most recent): ${data[data.length-1]?.cycle_status||'—'}\n\nThis summary is based on self-reported weekly check-ins via the HerSignal app and is not a medical diagnosis. Please discuss with your healthcare provider.`;
 }
 
-document.getElementById('btn-copy-report').addEventListener('click',  () => { navigator.clipboard.writeText(buildReportText()).then(()=>showToast('Report copied ✓')); });
-document.getElementById('btn-email-report').addEventListener('click', () => { window.location.href=`mailto:?subject=HerSignal Health Summary&body=${encodeURIComponent(buildReportText())}`; });
-document.getElementById('btn-print-report').addEventListener('click', () => window.print());
+document.getElementById('btn-copy-report').addEventListener('click', ()=>navigator.clipboard.writeText(buildReportText()).then(()=>showToast('Report copied ✓')));
+document.getElementById('btn-email-report').addEventListener('click', ()=>{ window.location.href=`mailto:?subject=HerSignal Health Summary&body=${encodeURIComponent(buildReportText())}`; });
+document.getElementById('btn-print-report').addEventListener('click', ()=>window.print());
 
-/* ══════════════════════════════════════════════════════════════
-   SUPABASE SYNC
-══════════════════════════════════════════════════════════════ */
 async function syncToSupabase(record) {
   try {
-    const ctrl = new AbortController(); setTimeout(()=>ctrl.abort(),5000);
-    await fetch(`${SUPABASE_URL}/rest/v1/checkins`,{
-      method:'POST', signal:ctrl.signal,
-      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},
-      body:JSON.stringify(record)
-    });
-  } catch(e) {}
+    const ctrl=new AbortController(); setTimeout(()=>ctrl.abort(),5000);
+    await fetch(`${SUPABASE_URL}/rest/v1/checkins`,{method:'POST',signal:ctrl.signal,headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},body:JSON.stringify(record)});
+  } catch(e){}
 }
 
-/* ══════════════════════════════════════════════════════════════
-   TOAST
-══════════════════════════════════════════════════════════════ */
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2800);
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
 }
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
 </script>
 </body>
 </html>
+
+
