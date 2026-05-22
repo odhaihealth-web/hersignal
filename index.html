@@ -236,9 +236,12 @@ html,body{height:100%;font-family:system-ui,-apple-system,'SF Pro Display',sans-
 <!-- HOME -->
 <div id="screen-home" class="screen hidden">
   <div class="app-header">
-    <h1>HerSignal</h1>
-    <div class="header-badge" id="home-initials-badge"></div>
-  </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <img src="https://odhaihealth-web.github.io/hersignal/hersignal-logo.PNG" alt="HerSignal" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">
+          <h1>HerSignal</h1>
+        </div>
+        <div class="header-badge" id="home-initials-badge"></div>
+      </div>
   <div class="scroll-content">
     <p class="welcome-text" id="home-welcome">Welcome back 💜</p>
     <p class="welcome-sub" id="home-subtitle">Here's where you stand today.</p>
