@@ -803,7 +803,7 @@ function addChatBubble(container, text, role) {
   if (role === 'companion') {
     const av = document.createElement('div');
     av.style.cssText = 'width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;';
-    av.textContent = getComp().emoji;
+    const cp = getComp(); av.innerHTML = `<img src="${cp.photo}" alt="${cp.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.outerHTML='${cp.emoji}'">`;
     row.appendChild(av);
   }
   const bubble = document.createElement('div');
