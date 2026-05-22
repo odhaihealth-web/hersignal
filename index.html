@@ -628,7 +628,7 @@ function showToast(msg) {
 ══════════════════════════════════════════ */
 document.getElementById('btn-get-started').addEventListener('click', () => {
   const val = document.getElementById('initials-input').value.trim().toUpperCase();
-  if (!val) { showToast('Please enter your initials 💜'); return; }
+  if (!val) { showToast('Please enter your initials'); return; }
   const uuid = 'hs-' + Math.random().toString(36).substr(2,9);
   state.userInitials = val; state.userUUID = uuid; state.isOnboarded = true;
   localStorage.setItem('hs_initials', val);
@@ -647,7 +647,20 @@ function buildCompanionGrid() {
   Object.entries(COMPANIONS).forEach(([key, c]) => {
     const card = document.createElement('div');
     card.className = 'cs-card';
-    card.innerHTML = `<img src="${c.photo}" alt="${c.name}" class="cs-photo" onerror="this.style.display='none'"><div class="cs-name">${c.name}</div><div class="cs-trait">${c.trait}</div>`;
+    const img = document.createElement('img');
+    img.src = c.photo;
+    img.alt = c.name;
+    img.className = 'cs-photo';
+    img.onerror = function() { this.style.display='none'; };
+    const name = document.createElement('div');
+    name.className = 'cs-name';
+    name.textContent = c.name;
+    const trait = document.createElement('div');
+    trait.className = 'cs-trait';
+    trait.textContent = c.trait;
+    card.appendChild(img);
+    card.appendChild(name);
+    card.appendChild(trait);
     card.addEventListener('click', () => {
       document.querySelectorAll('.cs-card').forEach(x => x.classList.remove('selected'));
       card.classList.add('selected');
@@ -671,9 +684,8 @@ document.getElementById('btn-companion-confirm').addEventListener('click', () =>
    HOME
 ══════════════════════════════════════════ */
 function renderHome() {
-  const c = COMPANIONS[state.companionKey] || COMPANIONS.maya;
   document.getElementById('home-initials-badge').textContent = state.userInitials;
-  document.getElementById('home-welcome').textContent = `Welcome back, ${state.userInitials} 💜`;
+  document.getElementById('home-welcome').textContent = 'Welcome back, ' + state.userInitials + ' ';
   document.getElementById('stat-checkins').textContent = state.checkins.length;
   const last = state.checkins[state.checkins.length - 1];
   document.getElementById('stat-streak').textContent = last
@@ -716,7 +728,13 @@ function initChatCheckin() {
   const comp = getComp();
   document.getElementById('chat-companion-name').textContent = comp.name;
   const chatAv = document.getElementById('chat-avatar-wrap');
-chatAv.innerHTML = `<img src="${comp.photo}" alt="${comp.name}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);" onerror="this.style.display='none'">`;
+  chatAv.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = comp.photo;
+  img.alt = comp.name;
+  img.style.cssText = 'width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);';
+  img.onerror = function() { this.style.display='none'; };
+  chatAv.appendChild(img);
   document.getElementById('chat-messages').innerHTML         = '';
   document.getElementById('chat-action-btns').style.display  = 'none';
   document.getElementById('chat-chips-area').style.display   = 'block';
@@ -747,14 +765,13 @@ function handleChatChip(label, idx, flow) {
   const chips = document.getElementById('chat-chips');
   addChatBubble(msgs, label, 'user');
 
-  // Multi-select symptom step (idx 1)
   if (idx === 1) {
     const chip = [...chips.querySelectorAll('.chat-chip')].find(c => c.textContent === label);
     if (chip) chip.classList.toggle('selected');
     if (!chips.querySelector('.chat-chip-confirm')) {
       const done = document.createElement('div');
       done.className = 'chat-chip multi-confirm chat-chip-confirm';
-      done.textContent = 'Done ✓';
+      done.textContent = 'Done';
       done.addEventListener('click', () => {
         const sel = [...chips.querySelectorAll('.chat-chip.selected')].map(c => c.textContent);
         state.chatAnswers.symptoms = sel;
@@ -767,7 +784,6 @@ function handleChatChip(label, idx, flow) {
     return;
   }
 
-  // Store answers
   if (idx === 0) state.chatAnswers.overallFeeling = label;
   if (idx === 2) state.chatAnswers.clarity = CLARITY_MAP[label] || 3;
   if (idx === 3) state.chatAnswers.stress   = STRESS_MAP[label]  || 3;
@@ -798,12 +814,18 @@ function handleChatChip(label, idx, flow) {
 }
 
 function addChatBubble(container, text, role) {
+  const comp = getComp();
   const row = document.createElement('div');
   row.className = 'bubble-row' + (role === 'user' ? ' user' : '');
   if (role === 'companion') {
     const av = document.createElement('div');
-    av.style.cssText = 'width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;';
-    const cp = getComp(); av.innerHTML = `<img src="${cp.photo}" alt="${cp.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"onerror="this.style.display='none'">`;
+    av.style.cssText = 'width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--secondary));';
+    const avImg = document.createElement('img');
+    avImg.src = comp.photo;
+    avImg.alt = comp.name;
+    avImg.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+    avImg.onerror = function() { this.style.display='none'; };
+    av.appendChild(avImg);
     row.appendChild(av);
   }
   const bubble = document.createElement('div');
@@ -831,8 +853,7 @@ function saveChatCheckin() {
   localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
   syncToSupabase(record);
   const msgs = document.getElementById('chat-messages');
-  const comp = getComp();
-  addChatBubble(msgs, `All saved! Your signal this week is: ${sig}. You're doing great by showing up for yourself 💜`, 'companion');
+  addChatBubble(msgs, 'All saved! Your signal this week is: ' + sig + '. You are doing great by showing up for yourself.', 'companion');
   document.getElementById('chat-chips-area').style.display  = 'none';
   document.getElementById('chat-action-btns').style.display = 'flex';
 }
@@ -847,11 +868,17 @@ document.getElementById('chat-btn-save').addEventListener('click', () => { showS
 function initJustChat() {
   const comp = getComp();
   document.getElementById('just-chat-companion-name').textContent = comp.name;
-  const justChatAv = document.getElementById('just-chat-avatar-wrap');
-justChatAv.innerHTML = `<img src="${comp.photo}" alt="${comp.name}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);" onerror="this.style.display='none'">`;
+  const justAv = document.getElementById('just-chat-avatar-wrap');
+  justAv.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = comp.photo;
+  img.alt = comp.name;
+  img.style.cssText = 'width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);';
+  img.onerror = function() { this.style.display='none'; };
+  justAv.appendChild(img);
   const msgs = document.getElementById('just-chat-messages');
   msgs.innerHTML = '';
-  setTimeout(() => addChatBubble(msgs, `Hey ${state.userInitials} ${comp.emoji} What's on your mind? We can talk about anything — symptoms, questions, how you're feeling. I'm here.`, 'companion'), 400);
+  setTimeout(() => addChatBubble(msgs, 'Hey ' + state.userInitials + ' What is on your mind? We can talk about anything — symptoms, questions, how you are feeling. I am here.', 'companion'), 400);
 }
 
 document.getElementById('just-chat-back-btn').addEventListener('click', () => showScreen('mode-chooser','back'));
@@ -870,24 +897,36 @@ async function sendJustChat() {
   const comp = getComp();
   const thinking = document.createElement('div');
   thinking.className = 'bubble-row';
-  thinking.innerHTML = `<div style="width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;"><img src="${comp.photo}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'"></div>;
-  msgs.appendChild(thinking); msgs.scrollTop = msgs.scrollHeight;
+  const thinkAv = document.createElement('div');
+  thinkAv.style.cssText = 'width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--secondary));';
+  const thinkImg = document.createElement('img');
+  thinkImg.src = comp.photo;
+  thinkImg.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+  thinkImg.onerror = function() { this.style.display='none'; };
+  thinkAv.appendChild(thinkImg);
+  const thinkBubble = document.createElement('div');
+  thinkBubble.className = 'bubble companion';
+  thinkBubble.innerHTML = '<div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+  thinking.appendChild(thinkAv);
+  thinking.appendChild(thinkBubble);
+  msgs.appendChild(thinking);
+  msgs.scrollTop = msgs.scrollHeight;
   try {
-    const resp = await fetch(`${SUPABASE_URL}/functions/v1/hyper-handler`, {
+    const resp = await fetch(SUPABASE_URL + '/functions/v1/hyper-handler', {
       method: 'POST',
       headers: { 'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY },
       body: JSON.stringify({ model:'gpt-4o-mini', messages:[
-        { role:'system', content:`You are ${comp.name}, a compassionate companion for women navigating perimenopause. Be warm, conversational, supportive. Keep responses under 100 words. Always end with a gentle follow-up question.` },
+        { role:'system', content:'You are ' + comp.name + ', a compassionate companion for women navigating perimenopause. Be warm, conversational, supportive. Keep responses under 100 words. Always end with a gentle follow-up question.' },
         { role:'user', content: text }
       ], max_tokens:160, temperature:0.9 })
     });
     const data = await resp.json();
-    const reply = data.choices?.[0]?.message?.content?.trim() || "I'm here with you 💜 Tell me more.";
+    const reply = data.choices?.[0]?.message?.content?.trim() || 'I am here with you. Tell me more.';
     thinking.remove();
     addChatBubble(msgs, reply, 'companion');
   } catch(e) {
     thinking.remove();
-    addChatBubble(msgs, `I'm here with you ${comp.emoji} Tell me more.`, 'companion');
+    addChatBubble(msgs, 'I am here with you. Tell me more.', 'companion');
   }
 }
 
@@ -912,7 +951,7 @@ function initQuickForm() {
 
 function renderQFStep() {
   for (let i = 0; i < QF_TOTAL; i++) {
-    const el = document.getElementById(`qf-step-${i}`);
+    const el = document.getElementById('qf-step-' + i);
     if (el) el.classList.toggle('active', i === state.qfStep);
   }
   const dots = document.getElementById('qf-dots');
@@ -925,7 +964,7 @@ function renderQFStep() {
   const prevBtn = document.getElementById('qf-btn-prev');
   const nextBtn = document.getElementById('qf-btn-next');
   prevBtn.style.display = state.qfStep === 0 ? 'none' : 'block';
-  nextBtn.textContent = state.qfStep === QF_TOTAL - 1 ? 'Submit ✓' : 'Next →';
+  nextBtn.textContent = state.qfStep === QF_TOTAL - 1 ? 'Submit' : 'Next';
 }
 
 document.getElementById('slider-intensity').addEventListener('input', e => {
@@ -981,7 +1020,7 @@ function submitQuickForm() {
   state.checkins.push(record);
   localStorage.setItem('hsig_checkins_v3', JSON.stringify(state.checkins));
   syncToSupabase(record);
-  showToast('Check-in saved 💜');
+  showToast('Check-in saved');
   setTimeout(() => { showScreen('home','back'); renderHome(); }, 800);
 }
 
@@ -1014,7 +1053,7 @@ function renderCharts() {
     const d   = new Date(c.checked_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
     const sym = (c.symptoms||[]).slice(0,3).join(' · ') || 'No symptoms logged';
     const sc  = (c.signal||'Monitor').toLowerCase();
-    return `<div class="history-item"><div><div style="font-size:14px;font-weight:600">${d}</div><div class="history-symptoms">${sym}</div></div><span class="signal-pill ${sc}">${c.signal||'Monitor'}</span></div>`;
+    return '<div class="history-item"><div><div style="font-size:14px;font-weight:600">' + d + '</div><div class="history-symptoms">' + sym + '</div></div><span class="signal-pill ' + sc + '">' + (c.signal||'Monitor') + '</span></div>';
   }).join('') : '<p style="color:var(--muted);font-size:14px;text-align:center;padding:12px 0">No check-ins yet.</p>';
 }
 
@@ -1028,7 +1067,7 @@ function renderReport() {
   const symMap = {};
   data.forEach(c => (c.symptoms||[]).forEach(s => symMap[s] = (symMap[s]||0)+1));
   const topSyms = Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ') || '—';
-  document.getElementById('report-date').textContent    = `Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
+  document.getElementById('report-date').textContent    = 'Generated: ' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   document.getElementById('rpt-signal').textContent     = state.lastSignal;
   document.getElementById('rpt-checkins').textContent   = data.length;
   document.getElementById('rpt-intensity').textContent  = avg('intensity') + ' / 5';
@@ -1044,11 +1083,11 @@ function buildReportText() {
   const symMap = {};
   data.forEach(c=>(c.symptoms||[]).forEach(s=>symMap[s]=(symMap[s]||0)+1));
   const topSyms = Object.entries(symMap).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]).join(', ')||'None';
-  return `HerSignal Clinical Summary\nGenerated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}\n\nSignal Status: ${state.lastSignal}\nTotal Check-Ins: ${data.length}\nAvg Symptom Intensity: ${avg('intensity')} / 5\nAvg Mental Clarity: ${avg('clarity_score')} / 5\nAvg Stress Level: ${avg('stress_level')} / 5\nTop Symptoms: ${topSyms}\nCycle Status: ${data[data.length-1]?.cycle_status||'—'}\n\nThis summary is based on self-reported weekly check-ins via the HerSignal app and is not a medical diagnosis. Please discuss with your healthcare provider.`;
+  return 'HerSignal Clinical Summary\nGenerated: ' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) + '\n\nSignal Status: ' + state.lastSignal + '\nTotal Check-Ins: ' + data.length + '\nAvg Symptom Intensity: ' + avg('intensity') + ' / 5\nAvg Mental Clarity: ' + avg('clarity_score') + ' / 5\nAvg Stress Level: ' + avg('stress_level') + ' / 5\nTop Symptoms: ' + topSyms + '\nCycle Status: ' + (data[data.length-1]?.cycle_status||'—') + '\n\nThis summary is based on self-reported weekly check-ins via the HerSignal app and is not a medical diagnosis. Please discuss with your healthcare provider.';
 }
 
-document.getElementById('btn-copy-report').addEventListener('click',  () => navigator.clipboard.writeText(buildReportText()).then(() => showToast('Report copied ✓')));
-document.getElementById('btn-email-report').addEventListener('click', () => { window.location.href = `mailto:?subject=HerSignal Health Summary&body=${encodeURIComponent(buildReportText())}`; });
+document.getElementById('btn-copy-report').addEventListener('click',  () => navigator.clipboard.writeText(buildReportText()).then(() => showToast('Report copied')));
+document.getElementById('btn-email-report').addEventListener('click', () => { window.location.href = 'mailto:?subject=HerSignal Health Summary&body=' + encodeURIComponent(buildReportText()); });
 document.getElementById('btn-print-report').addEventListener('click', () => window.print());
 
 /* ══════════════════════════════════════════
@@ -1057,9 +1096,9 @@ document.getElementById('btn-print-report').addEventListener('click', () => wind
 async function syncToSupabase(record) {
   try {
     const ctrl = new AbortController(); setTimeout(() => ctrl.abort(), 5000);
-    await fetch(`${SUPABASE_URL}/rest/v1/checkins`, {
+    await fetch(SUPABASE_URL + '/rest/v1/checkins', {
       method:'POST', signal:ctrl.signal,
-      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
       body: JSON.stringify(record)
     });
   } catch(e) {}
@@ -1091,7 +1130,7 @@ async function registerPush() {
 
 async function savePushSub(sub) {
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions`, {
+    await fetch(SUPABASE_URL + '/rest/v1/push_subscriptions', {
       method:'POST',
       headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'resolution=merge-duplicates'},
       body: JSON.stringify({ user_id: state.userUUID, companion: state.companionKey||'maya', subscription: sub.toJSON() })
@@ -1115,7 +1154,7 @@ document.getElementById('btn-install').addEventListener('click', async () => {
   deferredInstallPrompt.prompt();
   const { outcome } = await deferredInstallPrompt.userChoice;
   if (outcome === 'accepted') {
-    showToast('HerSignal added to your home screen 💜');
+    showToast('HerSignal added to your home screen');
     document.getElementById('btn-install').style.display = 'none';
   }
   deferredInstallPrompt = null;
@@ -1142,4 +1181,6 @@ window.addEventListener('load', () => {
 </script>
 </body>
 </html>
+
+
 
