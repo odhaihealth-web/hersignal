@@ -716,7 +716,7 @@ function initChatCheckin() {
   const comp = getComp();
   document.getElementById('chat-companion-name').textContent = comp.name;
   const chatAv = document.getElementById('chat-avatar-wrap');
-chatAv.innerHTML = `<img src="${comp.photo}" alt="${comp.name}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);" onerror="this.outerHTML='${comp.emoji}'">`;
+chatAv.innerHTML = `<img src="${comp.photo}" alt="${comp.name}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);" onerror="this.style.display='none'">`;
   document.getElementById('chat-messages').innerHTML         = '';
   document.getElementById('chat-action-btns').style.display  = 'none';
   document.getElementById('chat-chips-area').style.display   = 'block';
