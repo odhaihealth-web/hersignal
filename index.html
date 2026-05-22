@@ -848,7 +848,7 @@ function initJustChat() {
   const comp = getComp();
   document.getElementById('just-chat-companion-name').textContent = comp.name;
   const justChatAv = document.getElementById('just-chat-avatar-wrap');
-justChatAv.innerHTML = `<img src="${comp.photo}" alt="${comp.name}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);" onerror="this.outerHTML='${comp.emoji}'">`;
+justChatAv.innerHTML = `<img src="${comp.photo}" alt="${comp.name}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);" onerror="this.style.display='none'">`;
   const msgs = document.getElementById('just-chat-messages');
   msgs.innerHTML = '';
   setTimeout(() => addChatBubble(msgs, `Hey ${state.userInitials} ${comp.emoji} What's on your mind? We can talk about anything — symptoms, questions, how you're feeling. I'm here.`, 'companion'), 400);
