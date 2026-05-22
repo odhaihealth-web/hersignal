@@ -501,11 +501,11 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const VAPID_PUBLIC_KEY = 'BIXOwMhK5anBz14bqj6wnA5dTMFHMhp70ofnLxosdundmYPF1Xjg3bpR0QqwYvp0y9L8DXdafK5weTMVK4k5iRg';
 
 const COMPANIONS = {
-  maya:   { name:'Maya',   emoji:'🌸', trait:'Warm & nurturing' },
-  nia:    { name:'Nia',    emoji:'💪', trait:'Bold & motivating' },
-  renee:  { name:'Renee',  emoji:'😄', trait:'Playful & real' },
-  diane:  { name:'Diane',  emoji:'🛌', trait:'Calm & grounding' },
-  lauren: { name:'Lauren', emoji:'🌟', trait:'Gentle & wise' }
+   maya:   { name:'Maya',   emoji:'🌸', trait:'Warm & nurturing',  photo:'https://odhaihealth-web.github.io/hersignal/companion-maya.jpg' },
+  nia:    { name:'Nia',    emoji:'💪', trait:'Bold & motivating', photo:'https://odhaihealth-web.github.io/hersignal/companion-nia.jpg' },
+  renee:  { name:'Renee',  emoji:'😄', trait:'Playful & real',    photo:'https://odhaihealth-web.github.io/hersignal/companion-renee.jpg' },
+  diane:  { name:'Diane',  emoji:'🛌', trait:'Calm & grounding',  photo:'https://odhaihealth-web.github.io/hersignal/companion-diane.jpg' },
+  lauren: { name:'Lauren', emoji:'🌟', trait:'Gentle & wise',     photo:'https://odhaihealth-web.github.io/hersignal/companion-lauren.jpg' }
 };
 
 const CHAT_FLOWS = {
@@ -647,7 +647,7 @@ function buildCompanionGrid() {
   Object.entries(COMPANIONS).forEach(([key, c]) => {
     const card = document.createElement('div');
     card.className = 'cs-card';
-    card.innerHTML = `<div style="font-size:40px;">${c.emoji}</div><div class="cs-name">${c.name}</div><div class="cs-trait">${c.trait}</div>`;
+    card.innerHTML = `<img src="${c.photo}" alt="${c.name}" class="cs-photo" onerror="this.style.display='none'"><div class="cs-name">${c.name}</div><div class="cs-trait">${c.trait}</div>`;
     card.addEventListener('click', () => {
       document.querySelectorAll('.cs-card').forEach(x => x.classList.remove('selected'));
       card.classList.add('selected');
