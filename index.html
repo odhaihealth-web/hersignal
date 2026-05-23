@@ -794,12 +794,7 @@ function handleChatChip(label, idx, flow) {
       const row = document.getElementById('chat-input-row');
       row.style.display = 'flex';
       document.getElementById('chat-text-input').focus();
-      document.getElementById('chat-send-btn').onclick = () => {
-        const note = document.getElementById('chat-text-input').value.trim();
-        state.chatAnswers.notes = note;
-        row.style.display = 'none';
-        saveChatCheckin();
-      };
+     document.getElementById('chat-send-btn').dataset.active = 'notes';
       return;
     } else {
       state.chatAnswers.notes = '';
@@ -859,6 +854,21 @@ function saveChatCheckin() {
 }
 
 document.getElementById('chat-back-btn').addEventListener('click', () => showScreen('mode-chooser','back'));
+
+function submitChatNote() {
+  if (document.getElementById('chat-send-btn').dataset.active !== 'notes') return;
+  const note = document.getElementById('chat-text-input').value.trim();
+  state.chatAnswers.notes = note;
+  document.getElementById('chat-input-row').style.display = 'none';
+  document.getElementById('chat-send-btn').dataset.active = '';
+  saveChatCheckin();
+}
+
+document.getElementById('chat-send-btn').addEventListener('click', submitChatNote);
+document.getElementById('chat-text-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitChatNote(); }
+});
+
 document.getElementById('chat-btn-discard').addEventListener('click', () => { showScreen('home','back'); renderHome(); });
 document.getElementById('chat-btn-save').addEventListener('click', () => { showScreen('home','back'); renderHome(); });
 
