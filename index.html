@@ -881,6 +881,9 @@ function initJustChat() {
   setTimeout(() => addChatBubble(msgs, 'Hey ' + state.userInitials + ' What is on your mind? We can talk about anything — symptoms, questions, how you are feeling. I am here.', 'companion'), 400);
 }
 
+document.getElementById('chat-text-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('chat-send-btn').click(); }
+});
 document.getElementById('just-chat-back-btn').addEventListener('click', () => showScreen('mode-chooser','back'));
 document.getElementById('just-chat-send-btn').addEventListener('click', sendJustChat);
 document.getElementById('just-chat-input').addEventListener('keydown', e => {
