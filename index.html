@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1A0A2E">
+<title>HerSignal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd.min.js"></script>
+<style>
+  :root {
+    --bg: #1A0A2E;
+    --surface: #24143e;
+    --primary: #6B4FA0;
+    --secondary: #4ABFBF;
+    --accent: #00d4aa;
+    --lavender: #c4b5fd;
+    --text: #f0e6ff;
+    --muted: #9b8bb5;
+    --border: rgba(107,79,160,0.35);
+    --danger: #e74c3c;
+    --success: #2ecc71;
+    --warning: #f39c12;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; height: 100%; overflow: hidden; }
+  #app { height: 100vh; display: flex; flex-direction: column; position: relative; }
+  .screen { display: none; flex: 1; flex-direction: column; overflow-y: auto; padding: 20px; padding-bottom: 90px; }
+  .screen.active { display: flex; }
+
+  /* === ONBOARDING === */
+  #onboarding-screen {
+    background: linear-gradient(180deg, #1a0a2e 0%, #0f0a1e 100%);
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    padding: 0 24px 24px;
+    overflow-y: auto;
+  }
+  #onboarding-screen .onboard-hero {
+    width: 100%;
+    min-height: 300px;
+    max-height: 380px;
+    object-fit: contain;
+    object-position: top center;
+    display: block;
+    background: #1A0A2E;
+    margin: 0 auto;
+  }
+  #onboarding-screen .splash-title { color: #00d4aa; font-size: 28px; font-weight: 700; margin-top: 20px; margin-bottom: 8px; letter-spacing: -0.5px; }
+  #onboarding-screen .splash-tagline { color: #c4b5fd; font-size: 15px; margin-bottom: 24px; font-weight: 500; }
+  #onboarding-screen .splash-input { width: 100%; max-width: 320px; background: rgba(107,79,160,0.2); border: 1.5px solid rgba(107,79,160,0.4); border-radius: 12px; padding: 14px 16px; color: var(--text); font-size: 16px; text-align: center; margin-bottom: 16px; outline: none; }
+  #onboarding-screen .splash-input:focus { border-color: var(--secondary); }
+  #onboarding-screen .splash-input::placeholder { color: var(--muted); }
+  #onboarding-screen .splash-btn { width: 100%; max-width: 320px; background: linear-gradient(135deg, #6B4FA0 0%, #4ABFBF 100%); border: none; border-radius: 999px; padding: 16px 24px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 16px; transition: transform 0.15s ease; }
+  #onboarding-screen .splash-btn:active { transform: scale(0.97); }
+  #onboarding-screen .splash-privacy { color: var(--muted); font-size: 11px; max-width: 320px; line-height: 1.5; }
+
+  /* === COMPANION SELECT === */
+  #companion-select-screen .companion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+  .companion-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: center; cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease; }
+  .companion-card:active { transform: scale(0.97); }
+  .companion-card:hover { border-color: var(--secondary); }
+  .companion-card img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); margin-bottom: 10px; }
+  .companion-card .name { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .companion-card .trait { font-size: 12px; color: var(--muted); }
+
+  /* === HOME === */
+  .home-hero { background: linear-gradient(135deg, rgba(107,79,160,0.3), rgba(74,191,191,0.15)); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; text-align: center; }
+  .home-hero img { width: 100%; max-height: 280px; object-fit: contain; object-position: center center; background: #1a0a2e; border-radius: var(--radius-sm); margin-bottom: 12px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 14px; }
+  .card-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .card-sub { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .btn { background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; border-radius: 999px; padding: 12px 20px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; transition: transform 0.15s ease; }
+  .btn:active { transform: scale(0.97); }
+  .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text); border-radius: 999px; padding: 10px 18px; font-size: 14px; cursor: pointer; width: 100%; margin-top: 8px; }
+  .btn-sm { background: var(--primary); border: none; border-radius: 999px; padding: 8px 16px; color: #fff; font-size: 13px; cursor: pointer; }
+
+  /* === MODE CHOOSER === */
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .mode-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease; }
+  .mode-card:active { transform: scale(0.97); }
+  .mode-card .mode-icon { font-size: 32px; margin-bottom: 8px; }
+  .mode-card .mode-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .mode-card .mode-desc { font-size: 12px; color: var(--muted); }
+
+  /* === CHAT === */
+  .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-bottom: 10px; }
+  .msg { max-width: 80%; padding: 12px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
+  .msg.bot { align-self: flex-start; background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+  .msg.user { align-self: flex-end; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; border-bottom-right-radius: 4px; }
+  .chat-input-row { display: flex; gap: 8px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .chat-input-row input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 12px 16px; color: var(--text); font-size: 14px; outline: none; }
+  .chat-input-row button { background: var(--secondary); border: none; border-radius: 50%; width: 42px; height: 42px; color: var(--bg); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+  /* === QUICK FORM === */
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--muted); }
+  .form-group select, .form-group input[type="range"] { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; color: var(--text); font-size: 14px; }
+  .range-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* === DASHBOARD === */
+  .chart-container { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 14px; }
+  .stat-row { display: flex; gap: 10px; margin-bottom: 14px; }
+  .stat-box { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; text-align: center; }
+  .stat-box .stat-val { font-size: 22px; font-weight: 700; color: var(--accent); }
+  .stat-box .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* === CLINICIAN REPORT === */
+  .report-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 14px; }
+  .report-section h3 { margin: 0 0 10px; font-size: 15px; color: var(--secondary); }
+  .report-section p, .report-section li { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .report-section ul { margin: 0; padding-left: 18px; }
+
+  /* === NAV === */
+  .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(26,10,46,0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 8px 0 20px; z-index: 100; }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 12px; border-radius: 10px; transition: background 0.15s; }
+  .nav-item:hover { background: rgba(107,79,160,0.15); }
+  .nav-item.active .nav-icon { color: var(--secondary); }
+  .nav-item.active .nav-label { color: var(--secondary); }
+  .nav-icon { font-size: 22px; color: var(--muted); transition: color 0.15s; }
+  .nav-label { font-size: 10px; color: var(--muted); font-weight: 500; transition: color 0.15s; }
+
+  /* === UTILS === */
+  .screen-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .screen-sub { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .hidden { display: none !important; }
+  .tag { display: inline-block; background: rgba(107,79,160,0.25); border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; font-size: 12px; margin-right: 6px; margin-bottom: 6px; }
+  .loading { text-align: center; color: var(--muted); padding: 40px; font-size: 14px; }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+  .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ONBOARDING -->
+  <div id="onboarding-screen" class="screen active">
+    <img src="https://raw.githubusercontent.com/odhaihealth-web/hersignal/main/hersignal-women.jpg" class="onboard-hero" alt="HerSignal women">
+    <div class="splash-title">herSignal</div>
+    <div class="splash-tagline">Clarity. Confidence. Control.</div>
+    <input type="text" id="initials-input" class="splash-input" placeholder="Your initials (e.g., AB)" maxlength="3">
+    <button class="splash-btn" onclick="finishOnboarding()">Get Started 💜</button>
+    <div class="splash-privacy">Your privacy matters. Data is stored securely and never shared without your consent. By continuing, you agree to our privacy-first approach to women's health tracking.</div>
+  </div>
+
+  <!-- COMPANION SELECT -->
+  <div id="companion-select-screen" class="screen">
+    <div class="screen-title">Choose Your Companion</div>
+    <div class="screen-sub">Who do you want by your side today?</div>
+    <div class="companion-grid">
+      <div class="companion-card" onclick="selectCompanion('Maya')">
+        <img src="https://odhaihealth-web.github.io/hersignal/companion-maya.jpg" alt="Maya">
+        <div class="name">Maya 🌸</div><div class="trait">Warm & nurturing</div>
+      </div>
+      <div class="companion-card" onclick="selectCompanion('Nia')">
+        <img src="https://odhaihealth-web.github.io/hersignal/companion-nia.jpg" alt="Nia">
+        <div class="name">Nia 💪</div><div class="trait">Bold & motivating</div>
+      </div>
+      <div class="companion-card" onclick="selectCompanion('Renee')">
+        <img src="https://odhaihealth-web.github.io/hersignal/companion-renee.jpg" alt="Renee">
+        <div class="name">Renee 😄</div><div class="trait">Playful & real</div>
+      </div>
+      <div class="companion-card" onclick="selectCompanion('Diane')">
+        <img src="https://odhaihealth-web.github.io/hersignal/companion-diane.jpg" alt="Diane">
+        <div class="name">Diane 🧘</div><div class="trait">Calm & grounding</div>
+      </div>
+      <div class="companion-card" onclick="selectCompanion('Lauren')" style="grid-column: span 2; justify-self: center; max-width: 50%;">
+        <img src="https://odhaihealth-web.github.io/hersignal/companion-lauren.jpg" alt="Lauren">
+        <div class="name">Lauren 🌟</div><div class="trait">Gentle & wise</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="home-screen" class="screen">
+    <div class="screen-title" id="home-greeting">Good day</div>
+    <div class="screen-sub" id="home-sub">Your companion is ready when you are.</div>
+    <div class="home-hero">
+      <img src="https://raw.githubusercontent.com/odhaihealth-web/hersignal/main/hersignal-women.jpg" alt="HerSignal">
+      <div style="font-size:16px;font-weight:700;margin-bottom:6px;">How are you feeling today?</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">A quick check-in helps you spot patterns over time.</div>
+      <button class="btn" onclick="showScreen('mode-chooser-screen')">Start Check-in</button>
+    </div>
+    <!-- Circle Card -->
+    <div class="card" onclick="window.location.href='circle.html'" style="cursor:pointer;background:linear-gradient(135deg,rgba(107,79,160,0.3),rgba(74,191,191,0.15));border-color:rgba(74,191,191,0.3);">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span style="font-size:36px;">💜</span>
+        <div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:4px;">Join the Circle</div>
+          <div style="font-size:13px;color:var(--muted);">Connect with Maya, Nia, Renee, Lauren & Diane — and women like you.</div>
+        </div>
+        <span style="margin-left:auto;color:var(--secondary);font-size:20px;">›</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Recent Check-ins</div>
+      <div class="card-sub" id="recent-checkins-sub">No check-ins yet this week.</div>
+      <div id="recent-checkins-list"></div>
+      <button class="btn-outline" onclick="showScreen('dashboard-screen')">View Dashboard</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Clinician Report</div>
+      <div class="card-sub">Share a summary with your healthcare provider.</div>
+      <button class="btn" onclick="showScreen('clinician-screen')">Generate Report</button>
+    </div>
+  </div>
+
+  <!-- MODE CHOOSER -->
+  <div id="mode-chooser-screen" class="screen">
+    <div class="screen-title">How would you like to check in?</div>
+    <div class="screen-sub">Choose the way that feels right right now.</div>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startChatCheckin()">
+        <div class="mode-icon">💬</div>
+        <div class="mode-name">Chat Check-in</div>
+        <div class="mode-desc">Talk it through with <span id="mode-companion-name">your companion</span></div>
+      </div>
+      <div class="mode-card" onclick="showScreen('just-chat-screen')">
+        <div class="mode-icon">🗨️</div>
+        <div class="mode-name">Just Chat</div>
+        <div class="mode-desc">Open conversation, no structure</div>
+      </div>
+      <div class="mode-card" onclick="showScreen('quick-form-screen')">
+        <div class="mode-icon">⚡</div>
+        <div class="mode-name">Quick Form</div>
+        <div class="mode-desc">Fast numeric entry</div>
+      </div>
+      <div class="mode-card" onclick="showScreen('dashboard-screen')">
+        <div class="mode-icon">📊</div>
+        <div class="mode-name">Dashboard</div>
+        <div class="mode-desc">See your patterns & trends</div>
+      </div>
+    </div>
+    <button class="btn-outline" onclick="showScreen('home-screen')" style="margin-top:16px;">Cancel</button>
+  </div>
+
+  <!-- CHAT CHECK-IN -->
+  <div id="chat-checkin-screen" class="screen">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <button onclick="showScreen('mode-chooser-screen')" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;">‹</button>
+      <div>
+        <div class="screen-title" style="font-size:18px;margin:0;">Check-in</div>
+        <div class="screen-sub" style="margin:0;font-size:12px;" id="chat-checkin-sub">With Maya 🌸</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-checkin-messages"></div>
+    <div class="chat-input-row" id="chat-checkin-input-row">
+      <input type="text" id="chat-checkin-input" placeholder="Type your response..." onkeydown="if(event.key==='Enter')sendChatCheckinMessage()">
+      <button onclick="sendChatCheckinMessage()">➤</button>
+    </div>
+  </div>
+
+  <!-- JUST CHAT -->
+  <div id="just-chat-screen" class="screen">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <button onclick="showScreen('mode-chooser-screen')" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;">‹</button>
+      <div>
+        <div class="screen-title" style="font-size:18px;margin:0;">Just Chat</div>
+        <div class="screen-sub" style="margin:0;font-size:12px;" id="just-chat-sub">With Maya 🌸</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="just-chat-messages"></div>
+    <div class="chat-input-row">
+      <input type="text" id="just-chat-input" placeholder="Say anything..." onkeydown="if(event.key==='Enter')sendJustChatMessage()">
+      <button onclick="sendJustChatMessage()">➤</button>
+    </div>
+  </div>
+
+  <!-- QUICK FORM -->
+  <div id="quick-form-screen" class="screen">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <button onclick="showScreen('mode-chooser-screen')" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;">‹</button>
+      <div class="screen-title" style="font-size:18px;margin:0;">Quick Check-in</div>
+    </div>
+    <div class="form-group">
+      <label>How intense are your symptoms today? (0 = none, 10 = severe)</label>
+      <input type="range" id="qf-intensity" min="0" max="10" value="5" oninput="document.getElementById('qf-intensity-val').textContent=this.value">
+      <div class="range-labels"><span>0</span><span id="qf-intensity-val">5</span><span>10</span></div>
+    </div>
+    <div class="form-group">
+      <label>How clear is your thinking? (0 = foggy, 10 = crystal clear)</label>
+      <input type="range" id="qf-clarity" min="0" max="10" value="5" oninput="document.getElementById('qf-clarity-val').textContent=this.value">
+      <div class="range-labels"><span>0</span><span id="qf-clarity-val">5</span><span>10</span></div>
+    </div>
+    <div class="form-group">
+      <label>Stress level? (0 = calm, 10 = overwhelmed)</label>
+      <input type="range" id="qf-stress" min="0" max="10" value="5" oninput="document.getElementById('qf-stress-val').textContent=this.value">
+      <div class="range-labels"><span>0</span><span id="qf-stress-val">5</span><span>10</span></div>
+    </div>
+    <div class="form-group">
+      <label>Sleep quality last night? (0 = terrible, 10 = perfect)</label>
+      <input type="range" id="qf-sleep" min="0" max="10" value="5" oninput="document.getElementById('qf-sleep-val').textContent=this.value">
+      <div class="range-labels"><span>0</span><span id="qf-sleep-val">5</span><span>10</span></div>
+    </div>
+    <div class="form-group">
+      <label>Mood overall? (0 = low, 10 = great)</label>
+      <input type="range" id="qf-mood" min="0" max="10" value="5" oninput="document.getElementById('qf-mood-val').textContent=this.value">
+      <div class="range-labels"><span>0</span><span id="qf-mood-val">5</span><span>10</span></div>
+    </div>
+    <button class="btn" onclick="submitQuickForm()">Save Check-in</button>
+    <button class="btn-outline" onclick="showScreen('mode-chooser-screen')">Cancel</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard-screen" class="screen">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <button onclick="showScreen('home-screen')" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;">‹</button>
+      <div class="screen-title" style="font-size:18px;margin:0;">Your Dashboard</div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-val" id="dash-checkins">0</div><div class="stat-label">Check-ins</div></div>
+      <div class="stat-box"><div class="stat-val" id="dash-streak">0</div><div class="stat-label">Day Streak</div></div>
+      <div class="stat-box"><div class="stat-val" id="dash-avg">-</div><div class="stat-label">Avg Mood</div></div>
+    </div>
+    <div class="chart-container">
+      <div class="card-title" style="margin-bottom:10px;">Mood Over Time</div>
+      <canvas id="moodChart" height="180"></canvas>
+    </div>
+    <div class="chart-container">
+      <div class="card-title" style="margin-bottom:10px;">Symptom Intensity</div>
+      <canvas id="intensityChart" height="180"></canvas>
+    </div>
+    <div class="chart-container">
+      <div class="card-title" style="margin-bottom:10px;">Sleep & Stress</div>
+      <canvas id="sleepStressChart" height="180"></canvas>
+    </div>
+    <button class="btn-outline" onclick="showScreen('home-screen')">Back to Home</button>
+  </div>
+
+  <!-- CLINICIAN REPORT -->
+  <div id="clinician-screen" class="screen">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <button onclick="showScreen('home-screen')" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;">‹</button>
+      <div class="screen-title" style="font-size:18px;margin:0;">Clinician Report</div>
+    </div>
+    <div class="report-section">
+      <h3>Patient Summary</h3>
+      <p>Initials: <strong id="report-initials">--</strong></p>
+      <p>Report generated: <span id="report-date">--</span></p>
+      <p>Total check-ins: <strong id="report-total">0</strong></p>
+      <p>Companion used: <strong id="report-companion">--</strong></p>
+    </div>
+    <div class="report-section">
+      <h3>Symptom Trends</h3>
+      <ul id="report-symptoms"></ul>
+    </div>
+    <div class="report-section">
+      <h3>Sleep & Stress Patterns</h3>
+      <ul id="report-sleep-stress"></ul>
+    </div>
+    <div class="report-section">
+      <h3>Notable Entries</h3>
+      <ul id="report-notes"></ul>
+    </div>
+    <button class="btn" onclick="shareReport()">Share Report 📤</button>
+    <button class="btn-outline" onclick="showScreen('home-screen')">Back</button>
+  </div>
+
+  <!-- NAV BAR -->
+  <div class="nav-bar" id="main-nav">
+    <div class="nav-item active" data-nav="home" onclick="showScreen('home-screen');setActiveNav('home')"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></div>
+    <div class="nav-item" data-nav="trends" onclick="showScreen('dashboard-screen');setActiveNav('trends')"><span class="nav-icon">📊</span><span class="nav-label">Trends</span></div>
+    <div class="nav-item" data-nav="clinician" onclick="showScreen('clinician-screen');setActiveNav('clinician')"><span class="nav-icon">👩‍⚕️</span><span class="nav-label">Clinician</span></div>
+    <div class="nav-item" onclick="window.location.href='circle.html'" style="cursor:pointer;"><span class="nav-icon">💜</span><span class="nav-label">Circle</span></div>
+  </div>
+
+</div>
+
+<script>
+const SUPABASE_URL = 'https://kwriboxxujqrypxopthl.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3cmlib3h4dWpxcnlweG9wdGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5ODk2OTYsImV4cCI6MjA5NDU2NTY5Nn0.qoxQ9tPEoEnBPAT3M0ru3uxJDvTMcBnlP6lL9MYSDHw';
+let supabase = null;
+try { if (window.supabase && window.supabase.createClient) { supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } } catch(e) {}
+
+const COMPANIONS = {
+  Maya: { name: 'Maya', emoji: '🌸', trait: 'Warm & nurturing', img: 'https://odhaihealth-web.github.io/hersignal/companion-maya.jpg' },
+  Nia: { name: 'Nia', emoji: '💪', trait: 'Bold & motivating', img: 'https://odhaihealth-web.github.io/hersignal/companion-nia.jpg' },
+  Renee: { name: 'Renee', emoji: '😄', trait: 'Playful & real', img: 'https://odhaihealth-web.github.io/hersignal/companion-renee.jpg' },
+  Diane: { name: 'Diane', emoji: '🧘', trait: 'Calm & grounding', img: 'https://odhaihealth-web.github.io/hersignal/companion-diane.jpg' },
+  Lauren: { name: 'Lauren', emoji: '🌟', trait: 'Gentle & wise', img: 'https://odhaihealth-web.github.io/hersignal/companion-lauren.jpg' }
+};
+
+const CHAT_FLOWS = {
+  Maya: ["Hey love, it's Maya 🌸. I'm so glad you're here. How are you feeling overall today? (Great / Okay / Not so good)","Thank you for sharing that with me. On a scale of 0-10, how intense are any physical symptoms right now?","I hear you. How clear is your thinking today? (0 = foggy, 10 = crystal clear)","And your stress level? (0 = calm, 10 = overwhelmed)","How did you sleep last night? (0 = terrible, 10 = perfect)","Finally, your overall mood today? (0 = low, 10 = great)","Any notes you'd like to add? (Or type 'no')","Thank you for checking in, love. I've saved everything. You're doing great 💜"],
+  Nia: ["What's up! Nia here 💪. Ready to check in? How are you feeling overall today? (Great / Okay / Not so good)","Got it. Let's get real — on a scale of 0-10, how intense are your symptoms right now?","How's your mental clarity? (0 = foggy, 10 = crystal clear)","Stress check — where are you at? (0 = calm, 10 = overwhelmed)","Sleep quality last night? (0 = terrible, 10 = perfect)","Mood today — give me a number. (0 = low, 10 = great)","Anything else on your mind? (Or type 'no')","Solid work. Saved and locked in. Keep showing up for yourself 💜"],
+  Renee: ["Hiii! Renee here 😄. Let's do this thing! How are you feeling overall today? (Great / Okay / Not so good)","Okay okay, real talk — symptoms on a scale of 0-10?","Brain fog or brain GOAT? (0 = foggy, 10 = crystal clear)","Stress level — are we chillin or are we spiraling? (0 = calm, 10 = overwhelmed)","Sleep last night — was it a dream or a nightmare? (0 = terrible, 10 = perfect)","Mood check! (0 = low, 10 = great)","Spill anything else? (Or type 'no')","You're amazing, you know that? Saved! 💜"],
+  Diane: ["Hello, it's Diane 🧘. Take a breath with me. How are you feeling overall today? (Great / Okay / Not so good)","Gently now — on a scale of 0-10, how intense are your symptoms?","How clear is your mind? (0 = foggy, 10 = crystal clear)","Your stress level? (0 = calm, 10 = overwhelmed)","How did you sleep? (0 = terrible, 10 = perfect)","Your mood today? (0 = low, 10 = great)","Any thoughts to capture? (Or type 'no')","Peace and presence to you. Your check-in is saved 💜"],
+  Lauren: ["Hello dear, it's Lauren 🌟. I'm here with you. How are you feeling overall today? (Great / Okay / Not so good)","Thank you for trusting me. Symptoms on a scale of 0-10?","How clear is your thinking? (0 = foggy, 10 = crystal clear)","And your stress? (0 = calm, 10 = overwhelmed)","How was your sleep? (0 = terrible, 10 = perfect)","Your mood today? (0 = low, 10 = great)","Any reflections to save? (Or type 'no')","You are seen, you are valued. Check-in saved with care 💜"]
+};
+
+const INTENSITY_MAP = {0:'None',1:'Minimal',2:'Very mild',3:'Mild',4:'Light-Moderate',5:'Moderate',6:'Moderate-Strong',7:'Strong',8:'Very strong',9:'Intense',10:'Severe'};
+const CLARITY_MAP = {0:'Complete brain fog',1:'Very foggy',2:'Foggy',3:'Slightly foggy',4:'Mostly unclear',5:'Neutral',6:'Somewhat clear',7:'Fairly clear',8:'Clear',9:'Very clear',10:'Crystal clear'};
+const STRESS_MAP = {0:'Completely calm',1:'Very calm',2:'Calm',3:'Mildly stressed',4:'Some stress',5:'Moderate stress',6:'Noticeably stressed',7:'Stressed',8:'Very stressed',9:'Highly stressed',10:'Overwhelmed'};
+
+let currentCompanion = localStorage.getItem('hs_companion') || 'Maya';
+let chatState = { step: 0, data: {} };
+let justChatHistory = [];
+let moodChartInstance = null, intensityChartInstance = null, sleepStressChartInstance = null;
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
+  if (id === 'home-screen') renderHome();
+  if (id === 'dashboard-screen') renderDashboard();
+  if (id === 'clinician-screen') renderClinicianReport();
+  if (id === 'chat-checkin-screen') initChatCheckin();
+  if (id === 'just-chat-screen') initJustChat();
+  window.scrollTo(0,0);
+}
+function setActiveNav(nav) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const item = document.querySelector('.nav-item[data-nav="'+nav+'"]');
+  if (item) item.classList.add('active');
+}
+function hideNav() { document.getElementById('main-nav').classList.add('hidden'); }
+function showNav() { document.getElementById('main-nav').classList.remove('hidden'); }
+
+function finishOnboarding() {
+  const initials = document.getElementById('initials-input').value.trim().toUpperCase();
+  if (!initials) { alert('Please enter your initials to continue.'); return; }
+  localStorage.setItem('hs_initials', initials);
+  localStorage.setItem('hs_uuid', crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2));
+  localStorage.setItem('hs_onboarded', 'true');
+  showScreen('companion-select-screen');
+  hideNav();
+}
+
+function selectCompanion(name) {
+  currentCompanion = name;
+  localStorage.setItem('hs_companion', name);
+  showScreen('home-screen');
+  showNav();
+  setActiveNav('home');
+  renderHome();
+}
+
+function renderHome() {
+  const c = COMPANIONS[currentCompanion] || COMPANIONS.Maya;
+  const hour = new Date().getHours();
+  let greeting = 'Good evening';
+  if (hour < 12) greeting = 'Good morning';
+  else if (hour < 17) greeting = 'Good afternoon';
+  document.getElementById('home-greeting').textContent = greeting + (localStorage.getItem('hs_initials') ? ', ' + localStorage.getItem('hs_initials') : '');
+  document.getElementById('home-sub').textContent = 'Your companion ' + c.name + ' ' + c.emoji + ' is ready when you are.';
+  document.getElementById('mode-companion-name').textContent = c.name;
+  document.getElementById('chat-checkin-sub').textContent = 'With ' + c.name + ' ' + c.emoji;
+  document.getElementById('just-chat-sub').textContent = 'With ' + c.name + ' ' + c.emoji;
+  const checkins = getCheckins();
+  const thisWeek = checkins.filter(ch => { const d = new Date(ch.date); const diff = (new Date() - d) / (1000*60*60*24); return diff <= 7; });
+  document.getElementById('recent-checkins-sub').textContent = thisWeek.length ? thisWeek.length + ' check-in' + (thisWeek.length>1?'s':'') + ' this week' : 'No check-ins yet this week.';
+  const list = document.getElementById('recent-checkins-list');
+  list.innerHTML = '';
+  thisWeek.slice(-3).reverse().forEach(ch => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;';
+    div.innerHTML = '<span>' + new Date(ch.date).toLocaleDateString() + '</span><span style="color:var(--accent);">Mood ' + (ch.mood||'-') + '/10</span>';
+    list.appendChild(div);
+  });
+}
+
+function initChatCheckin() {
+  chatState = { step: 0, data: {} };
+  const box = document.getElementById('chat-checkin-messages');
+  box.innerHTML = '';
+  const flow = CHAT_FLOWS[currentCompanion] || CHAT_FLOWS.Maya;
+  addBotMessage(box, flow[0]);
+  chatState.step = 1;
+  document.getElementById('chat-checkin-input-row').classList.remove('hidden');
+}
+function addBotMessage(box, text) { const d = document.createElement('div'); d.className = 'msg bot'; d.textContent = text; box.appendChild(d); box.scrollTop = box.scrollHeight; }
+function addUserMessage(box, text) { const d = document.createElement('div'); d.className = 'msg user'; d.textContent = text; box.appendChild(d); box.scrollTop = box.scrollHeight; }
+function sendChatCheckinMessage() {
+  const input = document.getElementById('chat-checkin-input');
+  const val = input.value.trim(); if (!val) return; input.value = '';
+  const box = document.getElementById('chat-checkin-messages');
+  addUserMessage(box, val);
+  const flow = CHAT_FLOWS[currentCompanion] || CHAT_FLOWS.Maya;
+  setTimeout(() => {
+    if (chatState.step===1){chatState.data.overall=val;addBotMessage(box,flow[1]);chatState.step=2;}
+    else if (chatState.step===2){chatState.data.intensity=parseInt(val)||5;addBotMessage(box,flow[2]);chatState.step=3;}
+    else if (chatState.step===3){chatState.data.clarity=parseInt(val)||5;addBotMessage(box,flow[3]);chatState.step=4;}
+    else if (chatState.step===4){chatState.data.stress=parseInt(val)||5;addBotMessage(box,flow[4]);chatState.step=5;}
+    else if (chatState.step===5){chatState.data.sleep=parseInt(val)||5;addBotMessage(box,flow[5]);chatState.step=6;}
+    else if (chatState.step===6){chatState.data.mood=parseInt(val)||5;addBotMessage(box,flow[6]);chatState.step=7;}
+    else if (chatState.step===7){chatState.data.notes=val.toLowerCase()==='no'?'':val;saveCheckin(chatState.data);addBotMessage(box,flow[7]);chatState.step=8;document.getElementById('chat-checkin-input-row').classList.add('hidden');setTimeout(()=>{showScreen('home-screen');setActiveNav('home');document.getElementById('chat-checkin-input-row').classList.remove('hidden');},2000);}
+  },400);
+}
+function startChatCheckin() { showScreen('chat-checkin-screen'); }
+
+function initJustChat() {
+  const box = document.getElementById('just-chat-messages'); box.innerHTML = '';
+  const c = COMPANIONS[currentCompanion] || COMPANIONS.Maya;
+  if (!justChatHistory.length) { addBotMessage(box, 'Hi ' + (localStorage.getItem('hs_initials')||'there') + '! It\'s ' + c.name + ' ' + c.emoji + '. What\'s on your mind?'); }
+  else { justChatHistory.forEach(h => { if(h.role==='bot') addBotMessage(box,h.text); else addUserMessage(box,h.text); }); }
+}
+function sendJustChatMessage() {
+  const input = document.getElementById('just-chat-input'); const val = input.value.trim(); if (!val) return; input.value = '';
+  const box = document.getElementById('just-chat-messages'); addUserMessage(box, val); justChatHistory.push({role:'user',text:val});
+  const responses = ['I hear you. That sounds like a lot.','Thanks for sharing that with me.','I\'m here with you. What else is coming up?','That makes total sense. How long has that been going on?','I appreciate you telling me. Do you want to talk more about it?','Got it. Is there anything specific that triggered that today?'];
+  const r = responses[Math.floor(Math.random()*responses.length)];
+  setTimeout(()=>{addBotMessage(box,r);justChatHistory.push({role:'bot',text:r});},500);
+}
+
+function submitQuickForm() {
+  const data = { intensity: parseInt(document.getElementById('qf-intensity').value), clarity: parseInt(document.getElementById('qf-clarity').value), stress: parseInt(document.getElementById('qf-stress').value), sleep: parseInt(document.getElementById('qf-sleep').value), mood: parseInt(document.getElementById('qf-mood').value), notes: 'Quick form check-in' };
+  saveCheckin(data); alert('Check-in saved! 💜'); showScreen('home-screen'); setActiveNav('home');
+}
+
+function getCheckins() { try { return JSON.parse(localStorage.getItem('hsig_checkins_v3')||'[]'); } catch(e) { return []; } }
+function saveCheckin(data) {
+  const checkins = getCheckins(); checkins.push({ date: new Date().toISOString(), ...data });
+  localStorage.setItem('hsig_checkins_v3', JSON.stringify(checkins)); syncToSupabase(checkins);
+}
+function syncToSupabase(checkins) {
+  if (!supabase) return; const uuid = localStorage.getItem('hs_uuid'); if (!uuid) return;
+  supabase.from('checkins').upsert({ uuid, data: checkins, updated_at: new Date().toISOString() }, { onConflict: 'uuid' }).then(()=>{}).catch(()=>{});
+}
+
+function seedDemoData() {
+  if (getCheckins().length > 0) return;
+  const checkins = []; const now = new Date();
+  for (let i = 5; i >= 0; i--) { const d = new Date(now); d.setDate(d.getDate() - i*7); checkins.push({ date: d.toISOString(), intensity: 3+Math.floor(Math.random()*4), clarity: 5+Math.floor(Math.random()*4), stress: 4+Math.floor(Math.random()*4), sleep: 5+Math.floor(Math.random()*3), mood: 5+Math.floor(Math.random()*3), notes: 'Demo check-in week '+(6-i) }); }
+  localStorage.setItem('hsig_checkins_v3', JSON.stringify(checkins));
+}
+
+function renderDashboard() {
+  const checkins = getCheckins();
+  document.getElementById('dash-checkins').textContent = checkins.length;
+  document.getElementById('dash-streak').textContent = calculateStreak(checkins);
+  document.getElementById('dash-avg').textContent = checkins.length ? (checkins.reduce((s,c)=>s+(c.mood||0),0)/checkins.length).toFixed(1) : '-';
+  const labels = checkins.slice(-14).map(c => new Date(c.date).toLocaleDateString(undefined,{month:'short',day:'numeric'}));
+  const moods = checkins.slice(-14).map(c => c.mood||0);
+  const intensities = checkins.slice(-14).map(c => c.intensity||0);
+  const sleeps = checkins.slice(-14).map(c => c.sleep||0);
+  const stresses = checkins.slice(-14).map(c => c.stress||0);
+  const common = { responsive:true, plugins:{legend:{display:false}}, scales:{y:{min:0,max:10,grid:{color:'rgba(107,79,160,0.2)'},ticks:{color:'var(--muted)'}},x:{grid:{display:false},ticks:{color:'var(--muted)'}}} };
+  if (moodChartInstance) moodChartInstance.destroy();
+  moodChartInstance = new Chart(document.getElementById('moodChart'), { type:'line', data:{labels,datasets:[{data:moods,borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,0.1)',fill:true,tension:0.4,pointRadius:3}]}, options:common });
+  if (intensityChartInstance) intensityChartInstance.destroy();
+  intensityChartInstance = new Chart(document.getElementById('intensityChart'), { type:'bar', data:{labels,datasets:[{data:intensities,backgroundColor:'rgba(107,79,160,0.6)',borderRadius:4}]}, options:common });
+  if (sleepStressChartInstance) sleepStressChartInstance.destroy();
+  sleepStressChartInstance = new Chart(document.getElementById('sleepStressChart'), { type:'line', data:{labels,datasets:[{label:'Sleep',data:sleeps,borderColor:'#4ABFBF',tension:0.4,pointRadius:3},{label:'Stress',data:stresses,borderColor:'#e74c3c',tension:0.4,pointRadius:3}]}, options:{...common,plugins:{legend:{display:true,labels:{color:'var(--muted)'}}}} });
+}
+function calculateStreak(checkins) {
+  if (!checkins.length) return 0;
+  const dates = [...new Set(checkins.map(c=>new Date(c.date).toDateString()))].sort((a,b)=>new Date(b)-new Date(a));
+  let streak = 0; const today = new Date().toDateString(); const yesterday = new Date(Date.now()-86400000).toDateString();
+  if (dates[0]!==today && dates[0]!==yesterday) return 0;
+  for (let i=0;i<dates.length;i++) { const expected = new Date(Date.now()-i*86400000).toDateString(); if(dates[i]===expected||(i===0&&dates[i]===yesterday)) streak++; else if(i>0) break; }
+  return streak;
+}
+
+function renderClinicianReport() {
+  const checkins = getCheckins();
+  document.getElementById('report-initials').textContent = localStorage.getItem('hs_initials') || '--';
+  document.getElementById('report-date').textContent = new Date().toLocaleDateString();
+  document.getElementById('report-total').textContent = checkins.length;
+  document.getElementById('report-companion').textContent = (COMPANIONS[currentCompanion]?.name||'Maya') + ' ' + (COMPANIONS[currentCompanion]?.emoji||'');
+  const sList = document.getElementById('report-symptoms'); sList.innerHTML = '';
+  if (!checkins.length) { sList.innerHTML = '<li>No data yet</li>'; }
+  else { const avgInt=(checkins.reduce((s,c)=>s+(c.intensity||0),0)/checkins.length).toFixed(1); const avgClarity=(checkins.reduce((s,c)=>s+(c.clarity||0),0)/checkins.length).toFixed(1); sList.innerHTML='<li>Average symptom intensity: '+avgInt+'/10 ('+(INTENSITY_MAP[Math.round(avgInt)]||'Moderate')+')</li><li>Average mental clarity: '+avgClarity+'/10 ('+(CLARITY_MAP[Math.round(avgClarity)]||'Neutral')+')</li>'; }
+  const ssList = document.getElementById('report-sleep-stress'); ssList.innerHTML = '';
+  if (!checkins.length) { ssList.innerHTML = '<li>No data yet</li>'; }
+  else { const avgSleep=(checkins.reduce((s,c)=>s+(c.sleep||0),0)/checkins.length).toFixed(1); const avgStress=(checkins.reduce((s,c)=>s+(c.stress||0),0)/checkins.length).toFixed(1); ssList.innerHTML='<li>Average sleep quality: '+avgSleep+'/10</li><li>Average stress level: '+avgStress+'/10 ('+(STRESS_MAP[Math.round(avgStress)]||'Moderate')+')</li>'; }
+  const nList = document.getElementById('report-notes'); nList.innerHTML = '';
+  const notes = checkins.filter(c=>c.notes).slice(-5);
+  if (!notes.length) { nList.innerHTML = '<li>No notes recorded</li>'; }
+  else notes.forEach(n=>{ const li=document.createElement('li'); li.textContent=new Date(n.date).toLocaleDateString()+': '+n.notes; nList.appendChild(li); });
+}
+function shareReport() {
+  const text = 'HerSignal Clinician Report\nPatient: '+(localStorage.getItem('hs_initials')||'--')+'\nDate: '+new Date().toLocaleDateString()+'\nTotal check-ins: '+getCheckins().length+'\n\nGenerated via HerSignal app.';
+  if (navigator.share) { navigator.share({title:'HerSignal Report',text}); } else { alert('Report ready to share (copy this summary)'); }
+}
+
+function init() {
+  seedDemoData();
+  if (localStorage.getItem('hs_onboarded') === 'true') {
+    hideNav();
+    if (!localStorage.getItem('hs_companion')) { showScreen('companion-select-screen'); }
+    else { showScreen('home-screen'); showNav(); setActiveNav('home'); }
+  } else { hideNav(); showScreen('onboarding-screen'); }
+}
+init();
+</script>
+</body>
+</html>
